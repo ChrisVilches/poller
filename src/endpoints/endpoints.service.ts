@@ -49,6 +49,12 @@ export class EndpointsService {
     }
   }
 
+  async create(createEndpointDto: CreateEndpointDto) {
+    console.log(createEndpointDto)
+    const endpoint = this.endpointsRepository.create(createEndpointDto)
+    return this.endpointsRepository.save(endpoint)
+  }
+
   async findAll() {
     return this.endpointsRepository.find({
       relations: {

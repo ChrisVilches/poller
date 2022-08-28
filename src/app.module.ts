@@ -9,17 +9,20 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
 import { AppController } from './app.controller';
+import { EventEmitterModule } from '@nestjs/event-emitter';
+import { PollingSuccessListener } from './listeners/polling-success.listener';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       validationSchema: Joi.object({
         NODE_ENV: Joi.string()
-          .valid('development', 'production', 'test', 'provision')
-          .default('development'),
+        .valid('development', 'production', 'test', 'provision')
+        .default('development'),
         PORT: Joi.number().default(3000),
       }),
     }),
+    EventEmitterModule.forRoot(),
     ScheduleModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'sqlite',
@@ -30,6 +33,6 @@ import { AppController } from './app.controller';
     EndpointsModule,
   ],
   controllers: [AppController],
-  providers: [],
+  providers: [PollingSuccessListener],
 })
 export class AppModule {}

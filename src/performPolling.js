@@ -1,18 +1,14 @@
 import axios from 'axios'
 import cheerio from 'cheerio'
 import { inspectArray, navigate } from './util'
-import { WhenHasTextRaw } from './rules/WhenHasTextRaw'
-
-const rules = {
-  WhenHasTextRaw
-}
+import { allRules } from './allRules'
 
 export const performPolling = async endpoint => {
   const { url, rule, not = false } = endpoint
 
   const args = endpoint.args()
 
-  const ruleInstance = new rules[rule]
+  const ruleInstance = new allRules[rule]
 
   if (!ruleInstance.validate(args)) {
     throw new Error(`Invalid arguments: ${inspectArray(args)}`)

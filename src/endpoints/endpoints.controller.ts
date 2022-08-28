@@ -18,7 +18,7 @@ export class EndpointsController {
   }
 
   @Post()
-  create(@Body() createEndpointDto: CreateEndpointDto): string {
-    return `This action adds a new cat. Params: ${JSON.stringify(createEndpointDto)}`;
+  create(@Body() createEndpointDto: CreateEndpointDto) {
+    return this.endpointsService.create(createEndpointDto)
   }
 }

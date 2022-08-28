@@ -1,7 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import { Cron, CronExpression } from '@nestjs/schedule';
+import { NotifyMe } from '../../notifiers/NotifyMe';
 import { EndpointsService } from '../endpoints.service';
 import { Endpoint } from '../entities/endpoint.entity';
+import { Polling } from '../entities/polling.entity';
 import { PollingsService } from '../pollings.service';
 
 const minutesDifference = (startDate: Date, endDate: Date) =>
@@ -14,6 +17,7 @@ export class PollService {
   constructor(
     private readonly endpointsService: EndpointsService,
     private readonly pollingsService: PollingsService,
+    private eventEmitter: EventEmitter2
   ) {}
 
   @Cron(CronExpression.EVERY_30_SECONDS)
@@ -33,7 +37,16 @@ export class PollService {
     for (const endpoint of toPoll) {
       const result = await this.pollingsService.poll(endpoint, false);
 
-      this.logger.debug(`Poll result: ${JSON.stringify(result)}`);
+      if (result?.shouldNotify) {
+        this.eventEmitter.emit(
+          'polling.success',
+          result!
+        );
+      }
+
+      if (result === null) continue
+      const { shouldNotify } = result
+      this.logger.debug(`(Notify? ${shouldNotify}) ${endpoint.url}`);
     }
   }
 
