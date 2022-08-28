@@ -20,33 +20,6 @@ export class PollingsController {
       throw new Error('Not found')
     }
 
-    const [result] = await pollMany([endpoint])
-
-    if (Object.keys(result).length === 0) {
-      return result
-    }
-
-    const polling = new Polling()
-    polling.endpoint = endpoint
-
-    if (result.error) {
-      polling.error = result.error
-    }
-
-    polling.manual = true
-    polling.requestCode = result.status
-    polling.shouldNotify = result.shouldNotify
-
-    const obj = {
-      manual: true,
-      requestCode: result.status,
-      shouldNotify: result.shouldNotify,
-      error: result.error,
-      endpoint
-    }
-
-    this.pollingsService.create(obj)
-
-    return result
+    return await this.pollingsService.pollOne(endpoint)
   }
 }

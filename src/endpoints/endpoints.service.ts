@@ -65,6 +65,18 @@ export class EndpointsService {
     });
   }
 
+  async findEnabled() {
+    return this.endpointsRepository.find({
+      where: {
+        enabled: true
+      },
+      relations: {
+        arguments: true,
+        navigations: true
+      },
+    });
+  }
+
   findOne(id: number) {
     return this.endpointsRepository.findOne({
       where: { id },

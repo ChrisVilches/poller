@@ -3,7 +3,7 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  await app.listen(3000);
+  await app.listen(process.env.PORT!);
 
   // TODO: Code below is probably trash
 
@@ -23,6 +23,5 @@ async function bootstrap() {
     })
     .filter((item: undefined) => item !== undefined);
   console.log(availableRoutes);
-
 }
 bootstrap();
