@@ -17,9 +17,10 @@ export class PollService {
   constructor(
     private readonly endpointsService: EndpointsService,
     private readonly pollingsService: PollingsService,
-    private eventEmitter: EventEmitter2
+    private eventEmitter: EventEmitter2,
   ) {}
 
+  // TODO: Move to env variables
   @Cron(CronExpression.EVERY_30_SECONDS)
   async handleCron() {
     const endpoints = await this.endpointsService.findEnabled();
@@ -34,19 +35,23 @@ export class PollService {
 
     this.logger.debug(`Polling ${toPoll.length} endpoints`);
 
+    // TODO: May want to add this to a queue as well.
+    //       And it'd be great if duplicate endpoints (e.g. if they
+    //       were added twice, since the time it takes to poll is long,
+    //       and this job runs every few seconds, it might be queued multiple
+    //       times) were removed from the queue.
     for (const endpoint of toPoll) {
       const result = await this.pollingsService.poll(endpoint, false);
 
       if (result?.shouldNotify) {
-        this.eventEmitter.emit(
-          'polling.success',
-          result!
-        );
+        this.eventEmitter.emit('polling.success', result!);
       }
 
-      if (result === null) continue
-      const { shouldNotify } = result
-      this.logger.debug(`(Notify? ${shouldNotify}) ${endpoint.url}`);
+      if (result === null) continue;
+      const { shouldNotify, responseCode } = result;
+      this.logger.debug(
+        `(${responseCode} | Notify? ${shouldNotify}) ${endpoint.url}`,
+      );
     }
   }
 

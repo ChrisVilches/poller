@@ -18,7 +18,15 @@ export class EndpointsService {
   //       For more refactoring, code while testing.
   async populateFromJson(jsonData: any[]) {
     for (const endpoint of jsonData) {
-      const { rule, title, url, enabled, periodMinutes, notificationMessage, not } = endpoint
+      const {
+        rule,
+        title,
+        url,
+        enabled,
+        periodMinutes,
+        notificationMessage,
+        not,
+      } = endpoint;
       const e = this.endpointsRepository.create({
         rule,
         title,
@@ -35,24 +43,24 @@ export class EndpointsService {
       e.navigations = (endpoint.navigation || []).map((selector: string) => {
         const n = new Navigation();
         n.selector = selector;
-        return n
-      })
+        return n;
+      });
 
       e.arguments = (endpoint.args || []).map((val: string) => {
         const a = new Argument();
         a.type = typeof val;
         a.value = String(val);
-        return a
-      })
+        return a;
+      });
 
       await this.endpointsRepository.save(e);
     }
   }
 
   async create(createEndpointDto: CreateEndpointDto) {
-    console.log(createEndpointDto)
-    const endpoint = this.endpointsRepository.create(createEndpointDto)
-    return this.endpointsRepository.save(endpoint)
+    console.log(createEndpointDto);
+    const endpoint = this.endpointsRepository.create(createEndpointDto);
+    return this.endpointsRepository.save(endpoint);
   }
 
   async findAll() {
@@ -79,7 +87,7 @@ export class EndpointsService {
   }
 
   async countAll() {
-    return this.endpointsRepository.count()
+    return this.endpointsRepository.count();
   }
 
   findOne(id: number) {

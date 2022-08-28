@@ -1,4 +1,11 @@
-import { Body, Controller, Get, NotFoundException, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  NotFoundException,
+  Param,
+  Post,
+} from '@nestjs/common';
 import { CreateEndpointDto } from './dto/create-endpoint.dto';
 import { EndpointsService } from './endpoints.service';
 
@@ -14,11 +21,11 @@ export class EndpointsController {
       throw new NotFoundException();
     }
 
-    return endpoint
+    return endpoint;
   }
 
   @Post()
   create(@Body() createEndpointDto: CreateEndpointDto) {
-    return this.endpointsService.create(createEndpointDto)
+    return this.endpointsService.create(createEndpointDto);
   }
 }

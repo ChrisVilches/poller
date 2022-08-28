@@ -1,32 +1,41 @@
-import { IsBoolean, IsIn, IsInt, IsNotEmpty, IsOptional, IsPositive, IsString, IsUrl } from "class-validator"
-import { allRules } from "../../allRules"
+import {
+  IsBoolean,
+  IsIn,
+  IsInt,
+  IsNotEmpty,
+  IsOptional,
+  IsPositive,
+  IsString,
+  IsUrl,
+} from 'class-validator';
+import { allRules } from '../../allRules';
 
 export class CreateEndpointDto {
   // TODO: Add string min/max size
   // TODO: Add how arguments / navigations are added
   @IsOptional()
   @IsString()
-  title: string
+  title: string;
 
   @IsOptional()
   @IsString()
-  notificationMessage: string
+  notificationMessage: string;
 
   @IsIn(Object.keys(allRules))
-  rule: string
+  rule: string;
 
   @IsIn(['html', 'json'])
-  type: string
+  type: string;
 
   @IsUrl()
-  url: string
+  url: string;
 
   @IsOptional()
   @IsPositive()
   @IsInt()
-  periodMinutes: number
+  periodMinutes: number;
 
   @IsOptional()
   @IsBoolean()
-  not: boolean
+  not: boolean;
 }

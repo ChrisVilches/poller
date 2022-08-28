@@ -6,15 +6,20 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { Exclude, Expose } from 'class-transformer';
 
 @Entity()
 export class Polling {
   @PrimaryGeneratedColumn()
   id: number;
 
-  // TODO: Maybe it should be called "responseCode" instead of "request".
   @Column({ nullable: true })
-  requestCode?: number;
+  responseCode?: number;
+
+  @Expose()
+  requestCompleted() {
+    return this.responseCode !== null
+  }
 
   @Column({ nullable: true })
   error: string;
@@ -32,6 +37,7 @@ export class Polling {
   endpoint: Endpoint;
 
   // TODO: This one shouldn't be here.
+  @Exclude()
   @Column()
   endpointId: number;
 }

@@ -48,7 +48,7 @@ export class PollingsService {
     endpoint: Endpoint,
     manual: boolean,
   ): Promise<Polling | null> {
-    const { enabled = false, type } = endpoint;
+    const { enabled = false } = endpoint;
     if (!enabled) {
       return null;
     }
@@ -60,7 +60,7 @@ export class PollingsService {
 
     try {
       const { status, shouldNotify } = await performPolling(endpoint);
-      polling.requestCode = status;
+      polling.responseCode = status;
       polling.shouldNotify = shouldNotify;
       return polling;
     } catch (e) {

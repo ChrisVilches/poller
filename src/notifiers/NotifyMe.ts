@@ -1,14 +1,21 @@
-const { execSync } = require("child_process");
+import { Logger } from '@nestjs/common';
+import { execSync } from 'child_process';
+import { Notifiable } from './Notifiable';
 
-export class NotifyMe {
+// Note: It seems https://ifttt.com also works.
+
+// https://github.com/ChrisVilches/Notify-Me
+export class NotifyMe implements Notifiable {
+  private readonly logger = new Logger(NotifyMe.name);
+
   notify(title: string, content: string) {
-    title = title.replace(/"/g, "\"")
-    content = content.replace(/"/g, "\"")
-    const cmd = `notify_me -title "${title}" -content "${content}"`
-    // TODO: Might want to keep the logging but use the NestJS logger.
-    console.log(cmd)
+    title = title.replace(/"/g, '"');
+    content = content.replace(/"/g, '"');
+    const cmd = `notify_me -title "${title}" -content "${content}"`;
 
-    const stdout = execSync(cmd)
-    console.log(stdout.toString())
+    this.logger.debug(cmd);
+
+    const stdout = execSync(cmd);
+    this.logger.debug(stdout.toString());
   }
 }

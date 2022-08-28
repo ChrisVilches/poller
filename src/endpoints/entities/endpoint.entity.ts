@@ -1,24 +1,34 @@
-import { Transform, TransformFnParams } from 'class-transformer';
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany, UpdateDateColumn, CreateDateColumn } from 'typeorm';
+import { Expose, Transform, TransformFnParams } from 'class-transformer';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  OneToMany,
+  UpdateDateColumn,
+  CreateDateColumn,
+} from 'typeorm';
 import { Argument } from './argument.entity';
 import { Navigation } from './navigation.entity';
 
-const sortById = (arr: (Navigation | Argument)[]) => arr.sort((a, b) => a.id - b.id)
+const sortById = (arr: (Navigation | Argument)[]) =>
+  arr.sort((a, b) => a.id - b.id);
 
-const cleanArguments = (args: any) => sortById(args).map((a: any) => {
-  switch (a.type) {
-    case 'boolean':
-      return a.value === 'true'
-    case 'string':
-      return a.value
-    case 'number':
-      return +a.value
-    default:
-      throw new Error('Wrong argument type came from the database')
-  }
-})
+const cleanArguments = (args: any) =>
+  sortById(args).map((a: any) => {
+    switch (a.type) {
+      case 'boolean':
+        return a.value === 'true';
+      case 'string':
+        return a.value;
+      case 'number':
+        return +a.value;
+      default:
+        throw new Error('Wrong argument type came from the database');
+    }
+  });
 
-const cleanNavigations = (nav: Navigation[]) => sortById(nav).map((n: Navigation) => n.selector)
+const cleanNavigations = (nav: Navigation[]) =>
+  sortById(nav).map((n: Navigation) => n.selector);
 
 @Entity()
 export class Endpoint {
@@ -50,11 +60,11 @@ export class Endpoint {
   periodMinutes: number;
 
   navigation() {
-    return cleanNavigations(this.navigations)
+    return cleanNavigations(this.navigations);
   }
 
   args() {
-    return cleanArguments(this.arguments)
+    return cleanArguments(this.arguments);
   }
 
   @Transform((params: TransformFnParams) => cleanNavigations(params.value))
