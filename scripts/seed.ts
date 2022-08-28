@@ -1,12 +1,9 @@
-import { NestFactory } from "@nestjs/core";
-import { AppModule } from "../src/app.module";
+import { INestApplicationContext } from "@nestjs/common";
 import { EndpointsService } from "../src/endpoints/endpoints.service";
+import { runContext } from "./runner";
 import * as seedData from './seed.json';
 
-async function bootstrap() {
-  const app = await NestFactory.createApplicationContext(AppModule, {
-    logger: false
-  });
+runContext(async (app: INestApplicationContext) => {
   const endpointsService = app.get(EndpointsService);
 
   const countBefore = await endpointsService.countAll()
@@ -14,8 +11,4 @@ async function bootstrap() {
   const countAfter = await endpointsService.countAll()
 
   console.log(`Count ${countBefore} -> ${countAfter}`)
-
-  await app.close()
-}
-
-bootstrap();
+})

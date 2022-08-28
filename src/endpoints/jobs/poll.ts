@@ -1,10 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { NotifyMe } from '../../notifiers/NotifyMe';
 import { EndpointsService } from '../endpoints.service';
 import { Endpoint } from '../entities/endpoint.entity';
-import { Polling } from '../entities/polling.entity';
 import { PollingsService } from '../pollings.service';
 
 const minutesDifference = (startDate: Date, endDate: Date) =>
@@ -33,7 +31,7 @@ export class PollService {
       }
     }
 
-    this.logger.debug(`Polling ${toPoll.length} endpoints`);
+    this.logger.log(`Polling ${toPoll.length} endpoints`);
 
     // TODO: May want to add this to a queue as well.
     //       And it'd be great if duplicate endpoints (e.g. if they
@@ -49,7 +47,7 @@ export class PollService {
 
       if (result === null) continue;
       const { shouldNotify, responseCode } = result;
-      this.logger.debug(
+      this.logger.log(
         `(${responseCode} | Notify? ${shouldNotify}) ${endpoint.url}`,
       );
     }

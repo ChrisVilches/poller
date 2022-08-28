@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, OnModuleInit } from '@nestjs/common';
 import { EndpointsModule } from './endpoints/endpoints.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Endpoint } from './endpoints/entities/endpoint.entity';
@@ -11,6 +11,10 @@ import * as Joi from 'joi';
 import { AppController } from './app.controller';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { PollingSuccessListener } from './listeners/polling-success.listener';
+import { BullModule, InjectQueue } from '@nestjs/bull';
+import { NotificationConsumer } from './consumers/notification.consumer';
+import { TestConsumer } from './consumers/test.consumer';
+import { Queue } from 'bull';
 
 @Module({
   imports: [
@@ -20,8 +24,18 @@ import { PollingSuccessListener } from './listeners/polling-success.listener';
           .valid('development', 'production', 'test', 'provision')
           .default('development'),
         PORT: Joi.number().default(3000),
+        REDIS_HOST: Joi.string().default('localhost'),
+        REDIS_PORT: Joi.number().default(6379)
       }),
     }),
+    BullModule.forRoot({
+      redis: {
+        host: process.env.REDIS_HOST,
+        port: Number(process.env.REDIS_PORT),
+      },
+    }),
+    BullModule.registerQueue({ name: 'notifications' }),
+    BullModule.registerQueue({ name: 'test' }),
     EventEmitterModule.forRoot(),
     ScheduleModule.forRoot(),
     TypeOrmModule.forRoot({
@@ -33,6 +47,12 @@ import { PollingSuccessListener } from './listeners/polling-success.listener';
     EndpointsModule,
   ],
   controllers: [AppController],
-  providers: [PollingSuccessListener],
+  providers: [PollingSuccessListener, NotificationConsumer, TestConsumer],
 })
-export class AppModule {}
+export class AppModule implements OnModuleInit {
+  constructor(@InjectQueue('test') private testQueue: Queue) {}
+
+  onModuleInit() {
+    this.testQueue.add({})
+  }
+}

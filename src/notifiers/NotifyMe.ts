@@ -1,5 +1,5 @@
 import { Logger } from '@nestjs/common';
-import { execSync } from 'child_process';
+import { spawnSync } from 'child_process';
 import { Notifiable } from './Notifiable';
 
 // Note: It seems https://ifttt.com also works.
@@ -9,13 +9,22 @@ export class NotifyMe implements Notifiable {
   private readonly logger = new Logger(NotifyMe.name);
 
   notify(title: string, content: string) {
-    title = title.replace(/"/g, '"');
-    content = content.replace(/"/g, '"');
-    const cmd = `notify_me -title "${title}" -content "${content}"`;
+    const args = []
 
-    this.logger.debug(cmd);
+    if (title) {
+      args.push(['-title', title])
+    }
 
-    const stdout = execSync(cmd);
-    this.logger.debug(stdout.toString());
+    if (content) {
+      args.push(['-content', content])
+    }
+
+    const { stdout, stderr } = spawnSync('notify_me', args.flat());
+
+    this.logger.debug(stdout.toString())
+
+    if (stderr.toString()) {
+      this.logger.error(stderr.toString())
+    }
   }
 }
