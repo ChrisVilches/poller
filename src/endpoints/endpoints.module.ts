@@ -13,6 +13,9 @@ import { PollService } from './jobs/poll';
 //       can be closely related. So that means I should be able to
 //       connect two modules that aren't 100% related (for example
 //       endpoints & polling)
+//
+//       Also there are many features that I'm not using, like DTO,
+//       pipes, injectors, middlewares, etc. Try to use as many as possible.
 @Module({
   imports: [TypeOrmModule.forFeature([Endpoint, Polling])],
   controllers: [EndpointsController, PollingsController],

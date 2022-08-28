@@ -1,6 +1,7 @@
 import { NestFactory } from "@nestjs/core";
 import { AppModule } from "../src/app.module";
 import { EndpointsService } from "../src/endpoints/endpoints.service";
+import * as seedData from './seed.json';
 
 async function bootstrap() {
   const app = await NestFactory.createApplicationContext(AppModule, {
@@ -9,7 +10,7 @@ async function bootstrap() {
   const endpointsService = app.get(EndpointsService);
 
   const countBefore = await endpointsService.countAll()
-  await endpointsService.seed();
+  await endpointsService.populateFromJson(seedData);
   const countAfter = await endpointsService.countAll()
 
   console.log(`Count ${countBefore} -> ${countAfter}`)

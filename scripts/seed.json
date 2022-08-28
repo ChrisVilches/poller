@@ -1,7 +1,7 @@
 [
   {
     "title": "Check if I don't have Map Tiles world record anymore",
-    "endpoint": "https://icpc.kattis.com/problems/maptiles/statistics",
+    "url": "https://icpc.kattis.com/problems/maptiles/statistics",
     "type": "html",
     "rule": "WhenHasTextRaw",
     "not": true,
@@ -22,7 +22,7 @@
     "periodMinutes": 10
   },
   {
-    "endpoint": "https://open.kattis.com/problems/puzzle2/statistics",
+    "url": "https://open.kattis.com/problems/puzzle2/statistics",
     "rule": "WhenHasTextRaw",
     "type": "html",
     "not": true,
@@ -43,7 +43,7 @@
     "periodMinutes": 10
   },
   {
-    "endpoint": "https://eight-akasaka.com/therapist/5",
+    "url": "https://eight-akasaka.com/therapist/5",
     "rule": "WhenHasTextRaw",
     "type": "html",
     "not": true,
@@ -57,7 +57,7 @@
     "periodMinutes": 10
   },
   {
-    "endpoint": "https://aroma-eight.com/schedule",
+    "url": "https://aroma-eight.com/schedule",
     "rule": "WhenHasTextRaw",
     "type": "html",
     "args": [
@@ -71,7 +71,7 @@
   },
   {
     "title": "Check if sexy Mogami Alice is working",
-    "endpoint": "https://eight-akasaka.com/schedule",
+    "url": "https://eight-akasaka.com/schedule",
     "type": "html",
     "rule": "WhenHasTextRaw",
     "args": [
@@ -85,7 +85,7 @@
   },
   {
     "title": "A disabled request",
-    "endpoint": "https://www.google.com",
+    "url": "https://www.google.com",
     "type": "html",
     "rule": "WhenHasTextRaw",
     "args": [
@@ -98,7 +98,7 @@
   {
     "title": "Did Algorithms (repo) star count change? (not 2 anymore)",
     "type": "html",
-    "endpoint": "https://github.com/ChrisVilches/Algorithms/stargazers",
+    "url": "https://github.com/ChrisVilches/Algorithms/stargazers",
     "navigation": [
       "#repo-stars-counter-star"
     ],
@@ -115,7 +115,7 @@
   {
     "title": "Github polling with invalid navigation object (should throw error)",
     "type": "html",
-    "endpoint": "https://github.com/ChrisVilches/Algorithms/stargazers",
+    "url": "https://github.com/ChrisVilches/Algorithms/stargazers",
     "navigation": [
       "#repo-stars-counter-star",
       "#incorrect-stuff"
@@ -131,7 +131,7 @@
   {
     "title": "Github polling with wrong arguments",
     "type": "html",
-    "endpoint": "https://github.com/ChrisVilches/Algorithms/stargazers",
+    "url": "https://github.com/ChrisVilches/Algorithms/stargazers",
     "rule": "WhenHasTextRaw",
     "args": [
       true,

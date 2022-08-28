@@ -23,7 +23,7 @@ import { AppController } from './app.controller';
     ScheduleModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'sqlite',
-      database: 'polling_db',
+      database: 'dist/polling_db',
       entities: [Endpoint, Argument, Navigation, Polling],
       synchronize: process.env.NODE_ENV === 'development',
     }),

@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { performPolling } from '../performPolling';
 import { Repository } from 'typeorm';
-import { CreatePollingDto } from './dto/create-polling.dto';
 import { Endpoint } from './entities/endpoint.entity';
 import { Polling } from './entities/polling.entity';
 
@@ -18,11 +17,6 @@ export class PollingsService {
     @InjectRepository(Polling)
     private pollingsRepository: Repository<Polling>,
   ) {}
-
-  async create(createPollingDto: CreatePollingDto) {
-    const polling = this.pollingsRepository.create(createPollingDto);
-    await this.pollingsRepository.save(polling);
-  }
 
   // TODO: Is it ok to add this?
   save(polling: Polling) {
@@ -44,7 +38,7 @@ export class PollingsService {
     const result = await this.pollAux(endpoint, manual);
 
     if (result !== null) {
-      this.create(result);
+      await this.pollingsRepository.save(result);
     }
 
     return result;
@@ -55,16 +49,14 @@ export class PollingsService {
     manual: boolean,
   ): Promise<Polling | null> {
     const { enabled = false, type } = endpoint;
-    console.assert(type === 'html');
+    if (!enabled) {
+      return null;
+    }
 
     const polling: Polling = this.pollingsRepository.create({
       endpoint,
       manual,
     });
-
-    if (!enabled) {
-      return null;
-    }
 
     try {
       const { status, shouldNotify } = await performPolling(endpoint);

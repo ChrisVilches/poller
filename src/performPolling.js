@@ -7,26 +7,10 @@ const rules = {
   WhenHasTextRaw
 }
 
-const cleanArguments = args => args.map(a => {
-  switch (a.type) {
-    case 'boolean':
-      return a.value === 'true'
-    case 'string':
-      return a.value
-    case 'number':
-      return +a.value
-    default:
-      throw new Error('Wrong argument type came from the database')
-  }
-})
-
-const sortById = arr => arr.sort((a, b) => a.id - b.id)
-
 export const performPolling = async endpoint => {
-  const { url, rule, navigations = [], not = false } = endpoint
+  const { url, rule, not = false } = endpoint
 
-  sortById(endpoint.arguments)
-  const args = cleanArguments(endpoint.arguments)
+  const args = endpoint.args()
 
   const ruleInstance = new rules[rule]
 
@@ -42,8 +26,7 @@ export const performPolling = async endpoint => {
   let domElement
 
   try {
-    sortById(navigations)
-    domElement = navigate(htmlResult, navigations.map(n => n.selector))
+    domElement = navigate(htmlResult, endpoint.navigation())
   } catch (e) {
     throw new Error('Incorrect navigations')
   }

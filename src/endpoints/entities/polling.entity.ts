@@ -12,6 +12,7 @@ export class Polling {
   @PrimaryGeneratedColumn()
   id: number;
 
+  // TODO: Maybe it should be called "responseCode" instead of "request".
   @Column({ nullable: true })
   requestCode?: number;
 

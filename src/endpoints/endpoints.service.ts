@@ -2,12 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateEndpointDto } from './dto/create-endpoint.dto';
-import { UpdateEndpointDto } from './dto/update-endpoint.dto';
 import { Argument } from './entities/argument.entity';
 import { Endpoint } from './entities/endpoint.entity';
 import { Navigation } from './entities/navigation.entity';
-
-import * as seedData from './seed.json';
 
 @Injectable()
 export class EndpointsService {
@@ -16,40 +13,37 @@ export class EndpointsService {
     private endpointsRepository: Repository<Endpoint>,
   ) {}
 
-  create(createEndpointDto: CreateEndpointDto) {
-    return 'This action adds a new endpoint';
-  }
-
   // TODO: Extremely bad code.
   //       I refactored it a bit but haven't tested.
   //       For more refactoring, code while testing.
-  async seed() {
-    for (const endpoint of seedData) {
+  async populateFromJson(jsonData: any[]) {
+    for (const endpoint of jsonData) {
+      const { rule, title, url, enabled, periodMinutes, notificationMessage, not } = endpoint
       const e = this.endpointsRepository.create({
-        rule: endpoint.rule,
-        title: endpoint.title,
-        not: endpoint.not || false,
+        rule,
+        title,
+        url,
+        enabled,
+        periodMinutes,
+        notificationMessage,
+        not,
         type: 'html',
-        url: endpoint.endpoint,
-        enabled: endpoint.enabled,
-        periodMinutes: endpoint.periodMinutes || 15,
-        notificationMessage: endpoint.notificationMessage,
         navigations: [],
         arguments: [],
       });
 
-      for (const selector of endpoint.navigation || []) {
+      e.navigations = (endpoint.navigation || []).map((selector: string) => {
         const n = new Navigation();
         n.selector = selector;
-        e.navigations.push(n);
-      }
+        return n
+      })
 
-      for (const val of endpoint.args || []) {
+      e.arguments = (endpoint.args || []).map((val: string) => {
         const a = new Argument();
         a.type = typeof val;
         a.value = String(val);
-        e.arguments.push(a);
-      }
+        return a
+      })
 
       await this.endpointsRepository.save(e);
     }
@@ -58,6 +52,7 @@ export class EndpointsService {
   async findAll() {
     return this.endpointsRepository.find({
       relations: {
+        // TODO: This data should be sorted by ID
         arguments: true,
         navigations: true,
       },
@@ -70,6 +65,7 @@ export class EndpointsService {
         enabled: true,
       },
       relations: {
+        // TODO: This data should be sorted by ID
         arguments: true,
         navigations: true,
       },
