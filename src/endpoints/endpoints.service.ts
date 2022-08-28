@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { getRepository, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { CreateEndpointDto } from './dto/create-endpoint.dto';
 import { UpdateEndpointDto } from './dto/update-endpoint.dto';
 import { Argument } from './entities/argument.entity';
@@ -29,7 +29,7 @@ export class EndpointsService {
       e.not = endpoint.not || false
       e.type = 'html'
       e.url = endpoint.endpoint
-      e.enabled = true
+      e.enabled = endpoint.enabled
       e.periodMinutes = endpoint.periodMinutes || 15
       e.notificationMessage = endpoint.notificationMessage
       e.navigations = []

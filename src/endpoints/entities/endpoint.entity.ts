@@ -2,6 +2,8 @@ import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 import { Argument } from './argument.entity';
 import { Navigation } from './navigation.entity';
 
+// TODO: Must add timestamps to every table
+
 @Entity()
 export class Endpoint {
   @PrimaryGeneratedColumn()

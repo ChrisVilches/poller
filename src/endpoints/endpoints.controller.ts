@@ -2,25 +2,10 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { EndpointsService } from './endpoints.service';
 import { CreateEndpointDto } from './dto/create-endpoint.dto';
 import { UpdateEndpointDto } from './dto/update-endpoint.dto';
-import { Endpoint } from './entities/endpoint.entity';
-import { pollMany } from '../pollMany';
 
 @Controller('endpoints')
 export class EndpointsController {
   constructor(private readonly endpointsService: EndpointsService) {}
-
-  @Post(':id/poll')
-  async poll(@Param('id') id: string) {
-    const endpoint: Endpoint | null = await this.endpointsService.findOne(+id)
-    
-    if (endpoint === null) {
-      // TODO: Error handling should be correct (and more concise)
-      throw new Error('Not found')
-    }
-
-    const results = await pollMany([endpoint])
-    return results.at(0)
-  }
 
   @Post()
   create(@Body() createEndpointDto: CreateEndpointDto) {

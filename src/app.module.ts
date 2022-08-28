@@ -5,13 +5,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Endpoint } from './endpoints/entities/endpoint.entity';
 import { Argument } from './endpoints/entities/argument.entity';
 import { Navigation } from './endpoints/entities/navigation.entity';
+import { Polling } from './endpoints/entities/polling.entity';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot({
       type :"sqlite",
       database: "polling_db",
-      entities: [Endpoint, Argument, Navigation],
+      entities: [Endpoint, Argument, Navigation, Polling],
       synchronize: true // TODO: Disable for production
     }),
     EndpointsModule
