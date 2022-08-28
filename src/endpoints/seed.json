@@ -1,0 +1,143 @@
+[
+  {
+    "title": "Check if I don't have Map Tiles world record anymore",
+    "endpoint": "https://icpc.kattis.com/problems/maptiles/statistics",
+    "type": "html",
+    "rule": "WhenHasTextRaw",
+    "not": true,
+    "args": [
+      "Chris Vilches",
+      1
+    ],
+    "navigation": [
+      "#toplist_fastest_0",
+      ".table2",
+      "tbody",
+      "tr",
+      "a"
+    ],
+    "enabled": true,
+    "notificationMessage": "I'm not #1 anymore (Map Tiles)",
+    "requestConfig": {},
+    "periodMinutes": 10
+  },
+  {
+    "endpoint": "https://open.kattis.com/problems/puzzle2/statistics",
+    "rule": "WhenHasTextRaw",
+    "type": "html",
+    "not": true,
+    "args": [
+      "Chris Vilches",
+      1
+    ],
+    "navigation": [
+      "#toplist_fastest_0",
+      ".table2",
+      "tbody",
+      "tr",
+      "a"
+    ],
+    "enabled": true,
+    "notificationMessage": "I'm not #1 anymore (Polygonal Puzzle)",
+    "requestConfig": {},
+    "periodMinutes": 10
+  },
+  {
+    "endpoint": "https://eight-akasaka.com/therapist/5",
+    "rule": "WhenHasTextRaw",
+    "type": "html",
+    "not": true,
+    "args": [
+      "お休み",
+      7
+    ],
+    "enabled": true,
+    "notificationMessage": "望月にいな is working!",
+    "requestConfig": {},
+    "periodMinutes": 10
+  },
+  {
+    "endpoint": "https://aroma-eight.com/schedule",
+    "rule": "WhenHasTextRaw",
+    "type": "html",
+    "args": [
+      "加藤みつき",
+      1
+    ],
+    "enabled": true,
+    "notificationMessage": "加藤みつき is working!",
+    "requestConfig": {},
+    "periodMinutes": 10
+  },
+  {
+    "title": "Check if sexy Mogami Alice is working",
+    "endpoint": "https://eight-akasaka.com/schedule",
+    "type": "html",
+    "rule": "WhenHasTextRaw",
+    "args": [
+      "最上ありす",
+      1
+    ],
+    "enabled": true,
+    "notificationMessage": "最上ありす is working! Sexy colaless",
+    "requestConfig": {},
+    "periodMinutes": 10
+  },
+  {
+    "title": "A disabled request",
+    "endpoint": "https://www.google.com",
+    "type": "html",
+    "rule": "WhenHasTextRaw",
+    "args": [
+      "...",
+      2
+    ],
+    "enabled": false,
+    "periodMinutes": 10
+  },
+  {
+    "title": "Did Algorithms (repo) star count change? (not 2 anymore)",
+    "type": "html",
+    "endpoint": "https://github.com/ChrisVilches/Algorithms/stargazers",
+    "navigation": [
+      "#repo-stars-counter-star"
+    ],
+    "rule": "WhenHasTextRaw",
+    "not": true,
+    "args": [
+      "2",
+      1
+    ],
+    "enabled": true,
+    "notificationMessage": "Star count changed! (Algorithms repository)",
+    "periodMinutes": 10
+  },
+  {
+    "title": "Github polling with invalid navigation object (should throw error)",
+    "type": "html",
+    "endpoint": "https://github.com/ChrisVilches/Algorithms/stargazers",
+    "navigation": [
+      "#repo-stars-counter-star",
+      "#incorrect-stuff"
+    ],
+    "rule": "WhenHasTextRaw",
+    "not": true,
+    "args": [
+      "2",
+      1
+    ],
+    "enabled": true
+  },
+  {
+    "title": "Github polling with wrong arguments",
+    "type": "html",
+    "endpoint": "https://github.com/ChrisVilches/Algorithms/stargazers",
+    "rule": "WhenHasTextRaw",
+    "args": [
+      true,
+      "this value shouldn't be a string",
+      123
+    ],
+    "enabled": true
+  }
+]
