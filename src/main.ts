@@ -11,7 +11,7 @@ async function bootstrap() {
   const router = server._events.request._router;
 
   const availableRoutes: [] = router.stack
-    .map((layer: { route: { path: any; stack: { method: any; }[]; }; }) => {
+    .map((layer: { route: { path: any; stack: { method: any }[] } }) => {
       if (layer.route) {
         return {
           route: {

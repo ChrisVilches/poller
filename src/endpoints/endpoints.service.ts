@@ -7,52 +7,51 @@ import { Argument } from './entities/argument.entity';
 import { Endpoint } from './entities/endpoint.entity';
 import { Navigation } from './entities/navigation.entity';
 
-import * as seedData from './seed.json'
+import * as seedData from './seed.json';
 
 @Injectable()
 export class EndpointsService {
   constructor(
     @InjectRepository(Endpoint)
     private endpointsRepository: Repository<Endpoint>,
-  ) { }
+  ) {}
 
   create(createEndpointDto: CreateEndpointDto) {
     return 'This action adds a new endpoint';
   }
 
   // TODO: Extremely bad code.
+  //       I refactored it a bit but haven't tested.
+  //       For more refactoring, code while testing.
   async seed() {
-    for (let endpoint of seedData) {
-      const e = new Endpoint()
-      e.rule = endpoint.rule
-      e.title = endpoint.title
-      e.not = endpoint.not || false
-      e.type = 'html'
-      e.url = endpoint.endpoint
-      e.enabled = endpoint.enabled
-      e.periodMinutes = endpoint.periodMinutes || 15
-      e.notificationMessage = endpoint.notificationMessage
-      e.navigations = []
-      e.arguments = []
+    for (const endpoint of seedData) {
+      const e = this.endpointsRepository.create({
+        rule: endpoint.rule,
+        title: endpoint.title,
+        not: endpoint.not || false,
+        type: 'html',
+        url: endpoint.endpoint,
+        enabled: endpoint.enabled,
+        periodMinutes: endpoint.periodMinutes || 15,
+        notificationMessage: endpoint.notificationMessage,
+        navigations: [],
+        arguments: [],
+      });
 
-      const added = await this.endpointsRepository.save(e)
-
-      for (let selector of endpoint.navigation || []) {
-        const n = new Navigation()
-        n.endpoint = added
-        n.selector = selector
-        added.navigations.push(n)
+      for (const selector of endpoint.navigation || []) {
+        const n = new Navigation();
+        n.selector = selector;
+        e.navigations.push(n);
       }
 
-      for (let val of endpoint.args || []) {
-        const a = new Argument()
-        a.endpoint = added
-        a.type = typeof val
-        a.value = String(val)
-        added.arguments.push(a)
+      for (const val of endpoint.args || []) {
+        const a = new Argument();
+        a.type = typeof val;
+        a.value = String(val);
+        e.arguments.push(a);
       }
 
-      await this.endpointsRepository.save(added)
+      await this.endpointsRepository.save(e);
     }
   }
 
@@ -60,7 +59,7 @@ export class EndpointsService {
     return this.endpointsRepository.find({
       relations: {
         arguments: true,
-        navigations: true
+        navigations: true,
       },
     });
   }
@@ -68,13 +67,17 @@ export class EndpointsService {
   async findEnabled() {
     return this.endpointsRepository.find({
       where: {
-        enabled: true
+        enabled: true,
       },
       relations: {
         arguments: true,
-        navigations: true
+        navigations: true,
       },
     });
+  }
+
+  async countAll() {
+    return this.endpointsRepository.count()
   }
 
   findOne(id: number) {
@@ -82,16 +85,8 @@ export class EndpointsService {
       where: { id },
       relations: {
         arguments: true,
-        navigations: true
-      }
-    })
-  }
-
-  update(id: number, updateEndpointDto: UpdateEndpointDto) {
-    return `This action updates a #${id} endpoint`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} endpoint`;
+        navigations: true,
+      },
+    });
   }
 }

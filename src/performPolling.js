@@ -22,7 +22,7 @@ const cleanArguments = args => args.map(a => {
 
 const sortById = arr => arr.sort((a, b) => a.id - b.id)
 
-const performPolling = async endpoint => {
+export const performPolling = async endpoint => {
   const { url, rule, navigations = [], not = false } = endpoint
 
   sortById(endpoint.arguments)
@@ -53,8 +53,4 @@ const performPolling = async endpoint => {
     shouldNotify: not ? !shouldNotify : shouldNotify,
     status
   }
-}
-
-module.exports = {
-  performPolling
 }

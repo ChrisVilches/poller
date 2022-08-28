@@ -7,8 +7,8 @@ export class Navigation {
   id: number;
 
   @Column()
-  selector: string
+  selector: string;
 
-  @ManyToOne(() => Endpoint, endpoint => endpoint.navigations)
-  endpoint: Endpoint
+  @ManyToOne(() => Endpoint, (endpoint) => endpoint.navigations)
+  endpoint: Endpoint;
 }

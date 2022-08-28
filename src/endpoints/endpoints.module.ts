@@ -16,6 +16,6 @@ import { PollService } from './jobs/poll';
 @Module({
   imports: [TypeOrmModule.forFeature([Endpoint, Polling])],
   controllers: [EndpointsController, PollingsController],
-  providers: [EndpointsService, PollingsService, PollService]
+  providers: [EndpointsService, PollingsService, PollService],
 })
 export class EndpointsModule {}

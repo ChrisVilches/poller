@@ -28,14 +28,18 @@ export class Endpoint {
   not: boolean;
 
   @Column({ nullable: true })
-  notificationMessage?: string
+  notificationMessage?: string;
 
   @Column()
-  periodMinutes: number
+  periodMinutes: number;
 
-  @OneToMany(() => Argument, arg => arg.endpoint, { cascade: ['insert', 'update'] })
+  @OneToMany(() => Argument, (arg) => arg.endpoint, {
+    cascade: ['insert', 'update'],
+  })
   arguments: Argument[];
 
-  @OneToMany(() => Navigation, nav => nav.endpoint, { cascade: ['insert', 'update'] })
+  @OneToMany(() => Navigation, (nav) => nav.endpoint, {
+    cascade: ['insert', 'update'],
+  })
   navigations: Navigation[];
 }

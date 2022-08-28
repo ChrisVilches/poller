@@ -7,11 +7,11 @@ export class Argument {
   id: number;
 
   @Column()
-  type: string
+  type: string;
 
   @Column()
-  value: string
+  value: string;
 
-  @ManyToOne(() => Endpoint, endpoint => endpoint.arguments)
-  endpoint: Endpoint
+  @ManyToOne(() => Endpoint, (endpoint) => endpoint.arguments)
+  endpoint: Endpoint;
 }

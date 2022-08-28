@@ -1,25 +1,25 @@
-import { Controller, Post, Param } from '@nestjs/common';
+import { Controller, Post, Param, NotFoundException } from '@nestjs/common';
 import { PollingsService } from './pollings.service';
-import { CreatePollingDto } from './dto/create-polling.dto';
-import { UpdatePollingDto } from './dto/update-polling.dto';
-import { Polling } from './entities/polling.entity';
 import { Endpoint } from '../endpoints/entities/endpoint.entity';
-import { pollMany } from '../pollMany';
 import { EndpointsService } from '../endpoints/endpoints.service';
+import { Polling } from './entities/polling.entity';
 
 @Controller('pollings')
 export class PollingsController {
-  constructor(private readonly pollingsService: PollingsService, private readonly endpointsService: EndpointsService) {}
+  constructor(
+    private readonly pollingsService: PollingsService,
+    private readonly endpointsService: EndpointsService,
+  ) {}
 
   @Post(':id/poll')
-  async poll(@Param('id') id: string) {
-    const endpoint: Endpoint | null = await this.endpointsService.findOne(+id)
-    
+  async poll(@Param('id') id: string): Promise<Polling | null> {
+    const endpoint: Endpoint | null = await this.endpointsService.findOne(+id);
+
+    // TODO: Can I do this with some decorator magic?
     if (endpoint === null) {
-      // TODO: Error handling should be correct (and more concise)
-      throw new Error('Not found')
+      throw new NotFoundException();
     }
 
-    return await this.pollingsService.pollOne(endpoint)
+    return await this.pollingsService.poll(endpoint, true);
   }
 }

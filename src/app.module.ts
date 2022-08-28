@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { AppService } from './app.service';
 import { EndpointsModule } from './endpoints/endpoints.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Endpoint } from './endpoints/entities/endpoint.entity';
@@ -23,14 +22,14 @@ import { AppController } from './app.controller';
     }),
     ScheduleModule.forRoot(),
     TypeOrmModule.forRoot({
-      type :"sqlite",
-      database: "polling_db",
+      type: 'sqlite',
+      database: 'polling_db',
       entities: [Endpoint, Argument, Navigation, Polling],
-      synchronize: process.env.NODE_ENV === 'development'
+      synchronize: process.env.NODE_ENV === 'development',
     }),
-    EndpointsModule
+    EndpointsModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [],
 })
 export class AppModule {}

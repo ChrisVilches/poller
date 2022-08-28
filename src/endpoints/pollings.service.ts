@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { pollMany } from '../pollMany';
+import { performPolling } from '../performPolling';
 import { Repository } from 'typeorm';
 import { CreatePollingDto } from './dto/create-polling.dto';
-import { UpdatePollingDto } from './dto/update-polling.dto';
 import { Endpoint } from './entities/endpoint.entity';
 import { Polling } from './entities/polling.entity';
 
@@ -18,57 +17,63 @@ export class PollingsService {
   constructor(
     @InjectRepository(Polling)
     private pollingsRepository: Repository<Polling>,
-  ) { }
+  ) {}
 
   async create(createPollingDto: CreatePollingDto) {
     const polling = this.pollingsRepository.create(createPollingDto);
-    await this.pollingsRepository.save(polling)
+    await this.pollingsRepository.save(polling);
   }
 
   // TODO: Is it ok to add this?
   save(polling: Polling) {
-    return this.pollingsRepository.save(polling)
+    return this.pollingsRepository.save(polling);
   }
 
   findLatest(endpointId: number) {
     return this.pollingsRepository.findOne({
       where: {
-        endpointId
+        endpointId,
       },
       order: {
-        createdAt: "DESC"
-      }
-    })
+        createdAt: 'DESC',
+      },
+    });
   }
 
-  async pollOne(endpoint: Endpoint) {
-    const [result] = await pollMany([endpoint])
+  async poll(endpoint: Endpoint, manual: boolean): Promise<Polling | null> {
+    const result = await this.pollAux(endpoint, manual);
 
-    if (Object.keys(result).length === 0) {
-      return result
+    if (result !== null) {
+      this.create(result);
     }
 
-    const polling = new Polling()
-    polling.endpoint = endpoint
+    return result;
+  }
 
-    if (result.error) {
-      polling.error = result.error
+  private async pollAux(
+    endpoint: Endpoint,
+    manual: boolean,
+  ): Promise<Polling | null> {
+    const { enabled = false, type } = endpoint;
+    console.assert(type === 'html');
+
+    const polling: Polling = this.pollingsRepository.create({
+      endpoint,
+      manual,
+    });
+
+    if (!enabled) {
+      return null;
     }
 
-    polling.manual = true
-    polling.requestCode = result.status
-    polling.shouldNotify = result.shouldNotify
-
-    const obj = {
-      manual: true,
-      requestCode: result.status || 0, // TODO: Status should be nullable
-      shouldNotify: result.shouldNotify || false,
-      error: result.error,
-      endpoint
+    try {
+      const { status, shouldNotify } = await performPolling(endpoint);
+      polling.requestCode = status;
+      polling.shouldNotify = shouldNotify;
+      return polling;
+    } catch (e) {
+      polling.error = e.message;
+      return polling;
     }
-
-    this.create(obj)
-
-    return result
   }
 }

@@ -1,7 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { PollingsService } from './pollings.service';
 
-/*
 describe('PollingsService', () => {
   let service: PollingsService;
 
@@ -17,4 +16,3 @@ describe('PollingsService', () => {
     expect(service).toBeDefined();
   });
 });
-*/
