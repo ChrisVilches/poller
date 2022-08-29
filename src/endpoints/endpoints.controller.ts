@@ -14,7 +14,7 @@ import { EndpointsService } from './endpoints.service';
 @UseInterceptors(NotFoundInterceptor)
 @Controller('endpoints')
 export class EndpointsController {
-  constructor(private readonly endpointsService: EndpointsService) { }
+  constructor(private readonly endpointsService: EndpointsService) {}
 
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {

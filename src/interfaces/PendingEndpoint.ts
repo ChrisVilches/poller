@@ -1,4 +1,4 @@
 export interface PendingEndpoint {
-  endpointId: number
-  manual: boolean
+  endpointId: number;
+  manual: boolean;
 }

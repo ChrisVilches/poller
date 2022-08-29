@@ -1,4 +1,4 @@
 export interface NotificationArguments {
-  title: string
-  content: string
+  title: string;
+  content: string;
 }

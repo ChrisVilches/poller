@@ -5,6 +5,6 @@ export class LogNotification implements Notifiable {
   private readonly logger = new Logger(LogNotification.name);
 
   notify(title: string, content: string) {
-    this.logger.log([title, content].filter(x => x).join(' | '));
+    this.logger.log([title, content].filter((x) => x).join(' | '));
   }
 }

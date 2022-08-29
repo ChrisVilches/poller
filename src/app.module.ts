@@ -29,7 +29,7 @@ import { PendingEndpointsConsumer } from './consumers/pending-endpoints.consumer
           .default('development'),
         PORT: Joi.number().default(3000),
         REDIS_HOST: Joi.string().default('localhost'),
-        REDIS_PORT: Joi.number().default(6379)
+        REDIS_PORT: Joi.number().default(6379),
       }),
     }),
     BullModule.forRoot({
@@ -62,13 +62,13 @@ import { PendingEndpointsConsumer } from './consumers/pending-endpoints.consumer
     PendingEndpointsConsumer,
     EndpointsService,
     PollingsService,
-    FetchPendingEndpointsJob
-  ]
+    FetchPendingEndpointsJob,
+  ],
 })
 export class AppModule implements OnModuleInit {
   constructor(@InjectQueue('test') private testQueue: Queue) {}
 
   onModuleInit() {
-    this.testQueue.add({})
+    this.testQueue.add({});
   }
 }

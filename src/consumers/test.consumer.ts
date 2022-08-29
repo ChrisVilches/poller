@@ -7,11 +7,11 @@ export class TestConsumer {
 
   @Process()
   execute() {
-    this.logger.debug('Test queue OK')
+    this.logger.debug('Test queue OK');
   }
 
   @OnQueueError()
   onError(err: Error) {
-    this.logger.error(err)
+    this.logger.error(err);
   }
 }

@@ -6,7 +6,10 @@ import { Endpoint } from '../endpoints/entities/endpoint.entity';
 import { Polling } from '../endpoints/entities/polling.entity';
 
 export class PollingSuccessListener {
-  constructor(@InjectQueue('notifications') private notificationsQueue: Queue<NotificationArguments>) {}
+  constructor(
+    @InjectQueue('notifications')
+    private notificationsQueue: Queue<NotificationArguments>,
+  ) {}
   @OnEvent('polling.success')
   handlePollingSuccess(polling: Polling) {
     const endpoint: Endpoint = polling.endpoint;
@@ -15,7 +18,8 @@ export class PollingSuccessListener {
     const content = endpoint.notificationMessage || '';
 
     this.notificationsQueue.add({
-      title, content
-    })
+      title,
+      content,
+    });
   }
 }

@@ -9,22 +9,22 @@ export class NotifyMe implements Notifiable {
   private readonly logger = new Logger(NotifyMe.name);
 
   notify(title: string, content: string) {
-    const args = []
+    const args = [];
 
     if (title) {
-      args.push(['-title', title])
+      args.push(['-title', title]);
     }
 
     if (content) {
-      args.push(['-content', content])
+      args.push(['-content', content]);
     }
 
     const { stdout, stderr } = spawnSync('notify_me', args.flat());
 
-    this.logger.debug(stdout.toString())
+    this.logger.debug(stdout.toString());
 
     if (stderr.toString()) {
-      this.logger.error(stderr.toString())
+      this.logger.error(stderr.toString());
     }
   }
 }

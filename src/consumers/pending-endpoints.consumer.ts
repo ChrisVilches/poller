@@ -18,9 +18,9 @@ export class PendingEndpointsConsumer {
 
   @Process()
   async executePolling(job: Job<PendingEndpoint>) {
-    const { endpointId, manual } = job.data
+    const { endpointId, manual } = job.data;
 
-    const endpoint = (await this.endpointsService.findOne(endpointId))!
+    const endpoint = (await this.endpointsService.findOne(endpointId))!;
     const result = await this.pollingsService.poll(endpoint, manual);
 
     if (result?.shouldNotify) {
@@ -36,6 +36,6 @@ export class PendingEndpointsConsumer {
 
   @OnQueueError()
   onError(err: Error) {
-    this.logger.error(err)
+    this.logger.error(err);
   }
 }

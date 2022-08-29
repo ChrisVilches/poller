@@ -1,5 +1,5 @@
-import { WhenHasTextRaw } from './rules/WhenHasTextRaw'
+import { WhenHasTextRaw } from './rules/WhenHasTextRaw';
 
 export const allRules = {
-  WhenHasTextRaw
-}
+  WhenHasTextRaw,
+};

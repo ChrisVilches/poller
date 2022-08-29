@@ -13,21 +13,21 @@ export class NotificationConsumer {
 
   @Process()
   sendNotifications(job: Job<NotificationArguments>) {
-    const { title, content } = job.data
+    const { title, content } = job.data;
 
     const notifiers: Notifiable[] = [
       new NotifyMe(),
       new Mailer(),
-      new LogNotification()
-    ]
+      new LogNotification(),
+    ];
 
     notifiers.forEach((notif: Notifiable) => {
-      notif.notify(title, content)
+      notif.notify(title, content);
     });
   }
 
   @OnQueueError()
   onError(err: Error) {
-    this.logger.error(err)
+    this.logger.error(err);
   }
 }

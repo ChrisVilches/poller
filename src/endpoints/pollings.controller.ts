@@ -1,4 +1,10 @@
-import { Controller, Post, Param, UseInterceptors, ParseIntPipe } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Param,
+  UseInterceptors,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { PollingsService } from './pollings.service';
 import { EndpointsService } from '../endpoints/endpoints.service';
 import { Polling } from './entities/polling.entity';

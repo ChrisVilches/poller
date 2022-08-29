@@ -18,7 +18,7 @@ export class Polling {
 
   @Expose()
   requestCompleted() {
-    return this.responseCode !== null
+    return this.responseCode !== null;
   }
 
   @Column({ nullable: true })
