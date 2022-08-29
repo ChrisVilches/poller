@@ -5,17 +5,13 @@ import { NotificationArguments } from 'src/interfaces/NotificationArguments';
 import { Endpoint } from '../endpoints/entities/endpoint.entity';
 import { Polling } from '../endpoints/entities/polling.entity';
 
-// TODO: Remove @Injectable()
 export class PollingSuccessListener {
   constructor(@InjectQueue('notifications') private notificationsQueue: Queue<NotificationArguments>) {}
-  // TODO: Async set to false, to avoid abusing the Push Notification API
-  // One "Nest" way of dealing with this is by creating a queue (may require Redis)
-  // and setup just one worker. Don't use RxJS for this.
-  @OnEvent('polling.success', { async: false })
+  @OnEvent('polling.success')
   handlePollingSuccess(polling: Polling) {
     const endpoint: Endpoint = polling.endpoint;
 
-    const title = endpoint.title || 'Poll result!';
+    const title = endpoint.title || endpoint.url;
     const content = endpoint.notificationMessage || '';
 
     this.notificationsQueue.add({

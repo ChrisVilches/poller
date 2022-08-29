@@ -10,8 +10,6 @@ import { PollingsService } from '../pollings.service';
 const minutesDifference = (startDate: Date, endDate: Date) =>
   (endDate.getTime() - startDate.getTime()) / 60000;
 
-// TODO: Does it work if I remove the @Injectable?
-@Injectable()
 export class FetchPendingEndpointsJob {
   private readonly logger = new Logger(FetchPendingEndpointsJob.name);
 

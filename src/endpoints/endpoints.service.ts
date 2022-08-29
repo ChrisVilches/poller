@@ -63,7 +63,6 @@ export class EndpointsService {
   async findAll() {
     return this.endpointsRepository.find({
       relations: {
-        // TODO: This data should be sorted by ID
         arguments: true,
         navigations: true,
       },
@@ -76,7 +75,6 @@ export class EndpointsService {
         enabled: true,
       },
       relations: {
-        // TODO: This data should be sorted by ID
         arguments: true,
         navigations: true,
       },
