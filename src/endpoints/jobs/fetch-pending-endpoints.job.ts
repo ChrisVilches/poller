@@ -2,14 +2,10 @@ import { InjectQueue } from '@nestjs/bull';
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { Queue } from 'bull';
+import { PendingEndpoint } from 'src/interfaces/PendingEndpoint';
 import { EndpointsService } from '../endpoints.service';
 import { Endpoint } from '../entities/endpoint.entity';
 import { PollingsService } from '../pollings.service';
-
-interface PendingEndpoint {
-  endpoint: Endpoint
-  manual: boolean
-}
 
 const minutesDifference = (startDate: Date, endDate: Date) =>
   (endDate.getTime() - startDate.getTime()) / 60000;
@@ -22,7 +18,7 @@ export class FetchPendingEndpointsJob {
   constructor(
     private readonly endpointsService: EndpointsService,
     private readonly pollingsService: PollingsService,
-    @InjectQueue('pollings') private pollingsQueue: Queue<PendingEndpoint>
+    @InjectQueue('pending-endpoints') private pollingsQueue: Queue<PendingEndpoint>
   ) {}
 
   @Cron(CronExpression.EVERY_30_SECONDS)
@@ -41,7 +37,7 @@ export class FetchPendingEndpointsJob {
 
     for (const endpoint of toPoll) {
       this.pollingsQueue.add({
-        endpoint,
+        endpointId: endpoint.id,
         manual: false
       })
     }

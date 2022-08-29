@@ -8,7 +8,7 @@ export const performPolling = async endpoint => {
 
   const args = endpoint.args()
 
-  const ruleInstance = new allRules[rule]
+  const ruleInstance = new allRules[rule]()
 
   if (!ruleInstance.validate(args)) {
     throw new Error(`Invalid arguments: ${inspectArray(args)}`)

@@ -2,22 +2,25 @@ import { OnQueueError, Process, Processor } from '@nestjs/bull';
 import { Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Job } from 'bull';
+import { PendingEndpoint } from 'src/interfaces/PendingEndpoint';
+import { EndpointsService } from '../endpoints/endpoints.service';
 import { PollingsService } from '../endpoints/pollings.service';
 
-@Processor('pollings')
-export class PollingConsumer {
-  private readonly logger = new Logger(PollingConsumer.name);
+@Processor('pending-endpoints')
+export class PendingEndpointsConsumer {
+  private readonly logger = new Logger(PendingEndpointsConsumer.name);
 
   constructor(
     private readonly pollingsService: PollingsService,
+    private readonly endpointsService: EndpointsService,
     private eventEmitter: EventEmitter2,
   ) {}
 
-  // TODO: Don't use "unknown".
   @Process()
-  async executePolling(job: Job<unknown>) {
-    const { endpoint, manual } = job.data as any
+  async executePolling(job: Job<PendingEndpoint>) {
+    const { endpointId, manual } = job.data
 
+    const endpoint = (await this.endpointsService.findOne(endpointId))!
     const result = await this.pollingsService.poll(endpoint, manual);
 
     if (result?.shouldNotify) {

@@ -15,10 +15,10 @@ import { BullModule, InjectQueue } from '@nestjs/bull';
 import { NotificationConsumer } from './consumers/notification.consumer';
 import { TestConsumer } from './consumers/test.consumer';
 import { Queue } from 'bull';
-import { PollingConsumer } from './consumers/polling.consumer';
 import { FetchPendingEndpointsJob } from './endpoints/jobs/fetch-pending-endpoints.job';
 import { PollingsService } from './endpoints/pollings.service';
 import { EndpointsService } from './endpoints/endpoints.service';
+import { PendingEndpointsConsumer } from './consumers/pending-endpoints.consumer';
 
 @Module({
   imports: [
@@ -42,7 +42,7 @@ import { EndpointsService } from './endpoints/endpoints.service';
     //       get banned from the endpoints I'm scraping)
     BullModule.registerQueue({ name: 'notifications' }),
     BullModule.registerQueue({ name: 'test' }),
-    BullModule.registerQueue({ name: 'pollings' }),
+    BullModule.registerQueue({ name: 'pending-endpoints' }),
     EventEmitterModule.forRoot(),
     ScheduleModule.forRoot(),
     TypeOrmModule.forRoot({
@@ -51,13 +51,18 @@ import { EndpointsService } from './endpoints/endpoints.service';
       entities: [Endpoint, Argument, Navigation, Polling],
       synchronize: process.env.NODE_ENV === 'development',
     }),
+    TypeOrmModule.forFeature([Endpoint, Polling]),
     EndpointsModule,
   ],
   controllers: [AppController],
   providers: [
     PollingSuccessListener,
     NotificationConsumer,
-    TestConsumer
+    TestConsumer,
+    PendingEndpointsConsumer,
+    EndpointsService,
+    PollingsService,
+    FetchPendingEndpointsJob
   ]
 })
 export class AppModule implements OnModuleInit {

@@ -1,6 +1,7 @@
 import { OnQueueError, Process, Processor } from '@nestjs/bull';
 import { Logger } from '@nestjs/common';
 import { Job } from 'bull';
+import { NotificationArguments } from 'src/interfaces/NotificationArguments';
 import { LogNotification } from '../notifiers/LogNotification';
 import { Mailer } from '../notifiers/Mailer';
 import { Notifiable } from '../notifiers/Notifiable';
@@ -10,10 +11,9 @@ import { NotifyMe } from '../notifiers/NotifyMe';
 export class NotificationConsumer {
   private readonly logger = new Logger(NotificationConsumer.name);
 
-  // TODO: Can I use something different from "unknown"??
   @Process()
-  sendNotifications(job: Job<unknown>) {
-    const { title, msg } = job.data as any
+  sendNotifications(job: Job<NotificationArguments>) {
+    const { title, content } = job.data
 
     const notifiers: Notifiable[] = [
       new NotifyMe(),
@@ -22,7 +22,7 @@ export class NotificationConsumer {
     ]
 
     notifiers.forEach((notif: Notifiable) => {
-      notif.notify(title, msg)
+      notif.notify(title, content)
     });
   }
 
