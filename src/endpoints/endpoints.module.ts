@@ -6,7 +6,8 @@ import { Endpoint } from './entities/endpoint.entity';
 import { PollingsService } from './pollings.service';
 import { PollingsController } from './pollings.controller';
 import { Polling } from './entities/polling.entity';
-import { PollService } from './jobs/poll';
+import { FetchPendingEndpointsJob } from './jobs/fetch-pending-endpoints.job';
+import { PollingConsumer } from '../consumers/polling.consumer';
 
 // TODO: The way the app is structured (modules and their imports, etc)
 //       is really bad right now. The documentation says that modules
@@ -19,6 +20,6 @@ import { PollService } from './jobs/poll';
 @Module({
   imports: [TypeOrmModule.forFeature([Endpoint, Polling])],
   controllers: [EndpointsController, PollingsController],
-  providers: [EndpointsService, PollingsService, PollService],
+  providers: [EndpointsService, PollingsService, PollingConsumer, FetchPendingEndpointsJob],
 })
 export class EndpointsModule {}

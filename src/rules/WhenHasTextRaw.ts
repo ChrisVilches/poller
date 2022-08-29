@@ -1,8 +1,10 @@
+import { CheerioAPI } from 'cheerio';
 import { isValidComparisonOperator, comparisonOperator } from '../util'
+import { Rule } from './Rule';
 
-class WhenHasTextRaw {
-  execute(text, times, op = '==') {
-    return dom => {
+export class WhenHasTextRaw implements Rule {
+  execute(text: string, times: number, op = '==') {
+    return (dom: CheerioAPI) => {
       const html = dom.text()
       const regex = new RegExp(text, 'g')
       const count = (html.match(regex) || []).length;
@@ -10,7 +12,7 @@ class WhenHasTextRaw {
     }
   }
 
-  validate(args) {
+  validate(args: any[]) {
     if (!([2, 3].includes(args.length))) return false
 
     const [text, times, op = '=='] = args
@@ -21,8 +23,4 @@ class WhenHasTextRaw {
 
     return times >= 0
   }
-}
-
-module.exports = {
-  WhenHasTextRaw
 }

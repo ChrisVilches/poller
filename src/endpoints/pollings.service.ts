@@ -5,23 +5,12 @@ import { Repository } from 'typeorm';
 import { Endpoint } from './entities/endpoint.entity';
 import { Polling } from './entities/polling.entity';
 
-/*
-TODO: Strange code... there's a "poll many" and a "poll one"
-which calls the "poll many" with a single element array.
-It can be refactored into a simpler way (just one function).
-*/
-
 @Injectable()
 export class PollingsService {
   constructor(
     @InjectRepository(Polling)
     private pollingsRepository: Repository<Polling>,
   ) {}
-
-  // TODO: Is it ok to add this?
-  save(polling: Polling) {
-    return this.pollingsRepository.save(polling);
-  }
 
   findLatest(endpointId: number) {
     return this.pollingsRepository.findOne({

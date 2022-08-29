@@ -13,9 +13,6 @@ export class EndpointsService {
     private endpointsRepository: Repository<Endpoint>,
   ) {}
 
-  // TODO: Extremely bad code.
-  //       I refactored it a bit but haven't tested.
-  //       For more refactoring, code while testing.
   async populateFromJson(jsonData: any[]) {
     for (const endpoint of jsonData) {
       const {

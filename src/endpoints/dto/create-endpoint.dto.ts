@@ -13,6 +13,7 @@ import { allRules } from '../../allRules';
 export class CreateEndpointDto {
   // TODO: Add string min/max size
   // TODO: Add how arguments / navigations are added
+  // TODO: Title should become URL if it's null.
   @IsOptional()
   @IsString()
   title: string;

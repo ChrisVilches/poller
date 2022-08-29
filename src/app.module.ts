@@ -15,6 +15,10 @@ import { BullModule, InjectQueue } from '@nestjs/bull';
 import { NotificationConsumer } from './consumers/notification.consumer';
 import { TestConsumer } from './consumers/test.consumer';
 import { Queue } from 'bull';
+import { PollingConsumer } from './consumers/polling.consumer';
+import { FetchPendingEndpointsJob } from './endpoints/jobs/fetch-pending-endpoints.job';
+import { PollingsService } from './endpoints/pollings.service';
+import { EndpointsService } from './endpoints/endpoints.service';
 
 @Module({
   imports: [
@@ -34,8 +38,11 @@ import { Queue } from 'bull';
         port: Number(process.env.REDIS_PORT),
       },
     }),
+    // TODO: Set queue worker count (should be 1 or so, since I may
+    //       get banned from the endpoints I'm scraping)
     BullModule.registerQueue({ name: 'notifications' }),
     BullModule.registerQueue({ name: 'test' }),
+    BullModule.registerQueue({ name: 'pollings' }),
     EventEmitterModule.forRoot(),
     ScheduleModule.forRoot(),
     TypeOrmModule.forRoot({
@@ -47,7 +54,11 @@ import { Queue } from 'bull';
     EndpointsModule,
   ],
   controllers: [AppController],
-  providers: [PollingSuccessListener, NotificationConsumer, TestConsumer],
+  providers: [
+    PollingSuccessListener,
+    NotificationConsumer,
+    TestConsumer
+  ]
 })
 export class AppModule implements OnModuleInit {
   constructor(@InjectQueue('test') private testQueue: Queue) {}

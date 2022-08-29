@@ -36,7 +36,6 @@ export class Polling {
   @ManyToOne(() => Endpoint, (endpoint) => endpoint.navigations)
   endpoint: Endpoint;
 
-  // TODO: This one shouldn't be here.
   @Exclude()
   @Column()
   endpointId: number;
