@@ -2,7 +2,6 @@ import {
   IsBoolean,
   IsIn,
   IsInt,
-  IsNotEmpty,
   IsOptional,
   IsPositive,
   IsString,

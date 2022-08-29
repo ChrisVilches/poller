@@ -10,6 +10,7 @@ import { PollingsService } from '../pollings.service';
 const minutesDifference = (startDate: Date, endDate: Date) =>
   (endDate.getTime() - startDate.getTime()) / 60000;
 
+@Injectable()
 export class FetchPendingEndpointsJob {
   private readonly logger = new Logger(FetchPendingEndpointsJob.name);
 
@@ -44,6 +45,8 @@ export class FetchPendingEndpointsJob {
 
   private async shouldPoll(now: Date, endpoint: Endpoint): Promise<boolean> {
     const lastPoll = await this.pollingsService.findLatest(endpoint.id);
+
+    // TODO: Check if the endpoint is not timed-out
 
     if (lastPoll === null) {
       return true;

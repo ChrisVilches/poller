@@ -6,7 +6,7 @@ export class WhenHasTextRaw implements Rule {
   execute(text: string, times: number, op = '==') {
     return (dom: CheerioAPI) => {
       const html = dom.text();
-      const regex = new RegExp(text, 'g');
+      const regex = new RegExp(text, 'gi');
       const count = (html.match(regex) || []).length;
       return comparisonOperator(op, count, times);
     };

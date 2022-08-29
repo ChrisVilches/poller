@@ -54,13 +54,12 @@ export class EndpointsService {
     }
   }
 
-  async create(createEndpointDto: CreateEndpointDto) {
-    console.log(createEndpointDto);
+  create(createEndpointDto: CreateEndpointDto) {
     const endpoint = this.endpointsRepository.create(createEndpointDto);
     return this.endpointsRepository.save(endpoint);
   }
 
-  async findAll() {
+  findAll() {
     return this.endpointsRepository.find({
       relations: {
         arguments: true,
@@ -69,7 +68,7 @@ export class EndpointsService {
     });
   }
 
-  async findEnabled() {
+  findEnabled() {
     return this.endpointsRepository.find({
       where: {
         enabled: true,
@@ -81,7 +80,11 @@ export class EndpointsService {
     });
   }
 
-  async countAll() {
+  updateTimeout(endpoint: Endpoint) {
+    console.log(`TODO: Update timeout for endpoint ID ${endpoint.id}`);
+  }
+
+  countAll() {
     return this.endpointsRepository.count();
   }
 

@@ -19,6 +19,7 @@ import { FetchPendingEndpointsJob } from './endpoints/jobs/fetch-pending-endpoin
 import { PollingsService } from './endpoints/pollings.service';
 import { EndpointsService } from './endpoints/endpoints.service';
 import { PendingEndpointsConsumer } from './consumers/pending-endpoints.consumer';
+import { CleanOldPollingRecordsJob } from './endpoints/jobs/clean-old-polling-records.job';
 
 @Module({
   imports: [
@@ -30,6 +31,10 @@ import { PendingEndpointsConsumer } from './consumers/pending-endpoints.consumer
         PORT: Joi.number().default(3000),
         REDIS_HOST: Joi.string().default('localhost'),
         REDIS_PORT: Joi.number().default(6379),
+        CLEAN_POLLING_OLDER_THAN_DAYS: Joi.number()
+          .default(10)
+          .min(3)
+          .max(1000),
       }),
     }),
     BullModule.forRoot({
@@ -63,6 +68,7 @@ import { PendingEndpointsConsumer } from './consumers/pending-endpoints.consumer
     EndpointsService,
     PollingsService,
     FetchPendingEndpointsJob,
+    CleanOldPollingRecordsJob
   ],
 })
 export class AppModule implements OnModuleInit {

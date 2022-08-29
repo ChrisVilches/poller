@@ -1,4 +1,4 @@
-import { Expose, Transform, TransformFnParams } from 'class-transformer';
+import { Transform, TransformFnParams } from 'class-transformer';
 import {
   Entity,
   Column,
@@ -78,6 +78,12 @@ export class Endpoint {
     cascade: ['insert', 'update'],
   })
   arguments: Argument[];
+
+  @Column({ nullable: true })
+  waitAfterNotificationMinutes: number;
+
+  @Column({ nullable: true })
+  timeout: Date;
 
   @CreateDateColumn()
   createdAt: Date;

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { performPolling } from '../performPolling';
-import { Repository } from 'typeorm';
+import { LessThan, Repository } from 'typeorm';
 import { Endpoint } from './entities/endpoint.entity';
 import { Polling } from './entities/polling.entity';
 
@@ -20,6 +20,12 @@ export class PollingsService {
       order: {
         createdAt: 'DESC',
       },
+    });
+  }
+
+  removeOlderThan(date: Date) {
+    return this.pollingsRepository.delete({
+      createdAt: LessThan(date)
     });
   }
 
