@@ -1,3 +1,4 @@
+import { Transform, TransformFnParams } from 'class-transformer';
 import {
   IsBoolean,
   IsIn,
@@ -13,6 +14,7 @@ import { allRules } from '../../allRules';
 export class CreateEndpointDto {
   @IsOptional()
   @IsString()
+  @Transform((params: TransformFnParams) => params.value.trim())
   title: string;
 
   @IsOptional()

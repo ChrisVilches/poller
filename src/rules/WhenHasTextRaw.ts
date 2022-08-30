@@ -1,9 +1,13 @@
 import { CheerioAPI } from 'cheerio';
-import { isValidComparisonOperator, comparisonOperator } from '../util';
+import {
+  isValidComparisonOperator,
+  comparisonOperator,
+  ComparisonOperator,
+} from '../util';
 import { Rule } from './Rule';
 
 export class WhenHasTextRaw implements Rule {
-  execute(text: string, times: number, op = '==') {
+  execute(text: string, times: number, op: ComparisonOperator = '==') {
     return (dom: CheerioAPI) => {
       const html = dom.text();
       const regex = new RegExp(text, 'gi');

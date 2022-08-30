@@ -4,11 +4,13 @@ import {
   Get,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
   UseInterceptors,
 } from '@nestjs/common';
 import { NotFoundInterceptor } from '../interceptors/NotFoundInterceptor';
 import { CreateEndpointDto } from './dto/create-endpoint.dto';
+import { UpdateEndpointDto } from './dto/update-endpoint.dto';
 import { EndpointsService } from './endpoints.service';
 
 @UseInterceptors(NotFoundInterceptor)
@@ -24,5 +26,13 @@ export class EndpointsController {
   @Post()
   create(@Body() createEndpointDto: CreateEndpointDto) {
     return this.endpointsService.create(createEndpointDto);
+  }
+
+  @Patch(':id')
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateEndpointDto: UpdateEndpointDto,
+  ) {
+    return this.endpointsService.update(id, updateEndpointDto);
   }
 }

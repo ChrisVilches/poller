@@ -1,5 +1,10 @@
 import cheerio from 'cheerio';
-import { comparisonOperator, inspectArray, navigate } from './util';
+import {
+  ComparisonOperator,
+  comparisonOperator,
+  inspectArray,
+  navigate,
+} from './util';
 
 describe(comparisonOperator.name, () => {
   it('should compare correctly using ==', () => {
@@ -32,14 +37,22 @@ describe(comparisonOperator.name, () => {
   });
 
   it('should validate the operator', () => {
-    expect(() => comparisonOperator('<<', 1, 1)).toThrow();
-    expect(() => comparisonOperator('< ', 1, 1)).toThrow();
-    expect(() => comparisonOperator('>>', 1, 1)).toThrow();
-    expect(() => comparisonOperator('===', 1, 1)).toThrow();
-    expect(() => comparisonOperator('', 1, 1)).toThrow();
-    expect(() => comparisonOperator(undefined, 1, 1)).toThrow();
-    expect(() => comparisonOperator(null, 1, 1)).toThrow();
-    expect(() => comparisonOperator(true, 1, 1)).toThrow();
+    expect(() =>
+      comparisonOperator('<<' as ComparisonOperator, 1, 1),
+    ).toThrow();
+    expect(() =>
+      comparisonOperator('< ' as ComparisonOperator, 1, 1),
+    ).toThrow();
+    expect(() =>
+      comparisonOperator('>>' as ComparisonOperator, 1, 1),
+    ).toThrow();
+    expect(() =>
+      comparisonOperator('===' as ComparisonOperator, 1, 1),
+    ).toThrow();
+    expect(() => comparisonOperator('' as ComparisonOperator, 1, 1)).toThrow();
+    expect(() => comparisonOperator(undefined as any, 1, 1)).toThrow();
+    expect(() => comparisonOperator(null as any, 1, 1)).toThrow();
+    expect(() => comparisonOperator(true as any, 1, 1)).toThrow();
   });
 });
 

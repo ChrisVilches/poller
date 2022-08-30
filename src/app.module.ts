@@ -68,7 +68,7 @@ import { CleanOldPollingRecordsJob } from './endpoints/jobs/clean-old-polling-re
     EndpointsService,
     PollingsService,
     FetchPendingEndpointsJob,
-    CleanOldPollingRecordsJob
+    CleanOldPollingRecordsJob,
   ],
 })
 export class AppModule implements OnModuleInit {

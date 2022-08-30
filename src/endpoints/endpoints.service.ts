@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
+import { validateAndTransform } from '../util';
+import { EntityManager, Repository } from 'typeorm';
 import { CreateEndpointDto } from './dto/create-endpoint.dto';
+import { UpdateEndpointDto } from './dto/update-endpoint.dto';
 import { Argument } from './entities/argument.entity';
 import { Endpoint } from './entities/endpoint.entity';
 import { Navigation } from './entities/navigation.entity';
@@ -11,6 +13,7 @@ export class EndpointsService {
   constructor(
     @InjectRepository(Endpoint)
     private endpointsRepository: Repository<Endpoint>,
+    @InjectEntityManager() private readonly entityManager: EntityManager,
   ) {}
 
   async populateFromJson(jsonData: any[]) {
@@ -54,9 +57,25 @@ export class EndpointsService {
     }
   }
 
-  create(createEndpointDto: CreateEndpointDto) {
-    const endpoint = this.endpointsRepository.create(createEndpointDto);
+  async create(createEndpointDto: CreateEndpointDto) {
+    const endpoint: Endpoint = this.endpointsRepository.create(
+      await validateAndTransform(CreateEndpointDto, createEndpointDto),
+    );
     return this.endpointsRepository.save(endpoint);
+  }
+
+  async update(
+    id: number,
+    updateEndpointDto: UpdateEndpointDto,
+  ): Promise<Endpoint | null> {
+    await this.entityManager
+      .createQueryBuilder()
+      .update(Endpoint)
+      .set(await validateAndTransform(UpdateEndpointDto, updateEndpointDto))
+      .where('id = :id', { id })
+      .execute();
+
+    return await this.findOne(id);
   }
 
   findAll() {

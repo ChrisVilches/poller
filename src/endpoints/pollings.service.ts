@@ -25,7 +25,7 @@ export class PollingsService {
 
   removeOlderThan(date: Date) {
     return this.pollingsRepository.delete({
-      createdAt: LessThan(date)
+      createdAt: LessThan(date),
     });
   }
 
