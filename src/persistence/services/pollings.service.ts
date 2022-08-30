@@ -4,6 +4,8 @@ import { performPolling } from '../../performPolling';
 import { LessThan, Repository } from 'typeorm';
 import { Endpoint } from '@persistence/entities/endpoint.entity';
 import { Polling } from '@persistence/entities/polling.entity';
+import { CreatePollingDto } from '@persistence/dto/create-polling.dto';
+import { validateAndTransform } from '../../util';
 
 @Injectable()
 export class PollingsService {
@@ -11,6 +13,18 @@ export class PollingsService {
     @InjectRepository(Polling)
     private pollingsRepository: Repository<Polling>,
   ) {}
+
+  findAll() {
+    return this.pollingsRepository.find();
+  }
+
+  findAllForEndpoint(endpointId: number) {
+    return this.pollingsRepository.find({
+      where: {
+        endpointId,
+      },
+    });
+  }
 
   findLatest(endpointId: number) {
     return this.pollingsRepository.findOne({
@@ -29,33 +43,41 @@ export class PollingsService {
     });
   }
 
+  /**
+   * Does not check whether the record is enabled or not.
+   */
   async poll(endpoint: Endpoint, manual: boolean): Promise<Polling | null> {
     const result = await this.pollAux(endpoint, manual);
+    return await this.create(result);
+  }
 
-    if (result !== null) {
-      await this.pollingsRepository.save(result);
-    }
+  async create(createPollingDto: CreatePollingDto) {
+    const polling: Polling = this.pollingsRepository.create(
+      await validateAndTransform(CreatePollingDto, createPollingDto),
+    );
+    const saved: Polling = await this.pollingsRepository.save(polling);
+    return await this.findOne(saved.id);
+  }
 
-    return result;
+  findOne(id: number) {
+    return this.pollingsRepository.findOne({
+      where: { id },
+      relations: {
+        endpoint: true,
+      },
+    });
   }
 
   private async pollAux(
     endpoint: Endpoint,
     manual: boolean,
-  ): Promise<Polling | null> {
-    const { enabled = false } = endpoint;
-    if (!enabled) {
-      return null;
-    }
-
-    const polling: Polling = this.pollingsRepository.create({
-      endpoint,
-      manual,
-    });
+  ): Promise<CreatePollingDto> {
+    const polling = new CreatePollingDto();
+    polling.endpointId = endpoint.id;
+    polling.manual = manual;
 
     try {
       // TODO: This module is about persistence, so is it OK that this is executed here?
-      //       Specially if I convert it to just a "repository"
       const { status, shouldNotify } = await performPolling(endpoint);
       polling.responseCode = status;
       polling.shouldNotify = shouldNotify;

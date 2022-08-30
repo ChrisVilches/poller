@@ -35,7 +35,7 @@ import { ConfigModule } from '@nestjs/config';
     BullModule.registerQueue({ name: 'notifications' }),
     BullModule.registerQueue({ name: 'test' }),
     BullModule.registerQueue({ name: 'pending-endpoints' }),
-    PersistenceModule
+    PersistenceModule,
   ],
   controllers: [],
   providers: [
@@ -44,7 +44,7 @@ import { ConfigModule } from '@nestjs/config';
     TestConsumer,
     PendingEndpointsConsumer,
     FetchPendingEndpointsJob,
-    CleanOldPollingRecordsJob
+    CleanOldPollingRecordsJob,
   ],
 })
 export class BackgroundProcessModule implements OnModuleInit {

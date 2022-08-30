@@ -12,6 +12,8 @@ export class Argument {
   @Column()
   value: string;
 
-  @ManyToOne(() => Endpoint, (endpoint) => endpoint.arguments)
+  @ManyToOne(() => Endpoint, (endpoint) => endpoint.arguments, {
+    orphanedRowAction: 'delete',
+  })
   endpoint: Endpoint;
 }

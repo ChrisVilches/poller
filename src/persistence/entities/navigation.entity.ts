@@ -9,6 +9,8 @@ export class Navigation {
   @Column()
   selector: string;
 
-  @ManyToOne(() => Endpoint, (endpoint) => endpoint.navigations)
+  @ManyToOne(() => Endpoint, (endpoint) => endpoint.navigations, {
+    orphanedRowAction: 'delete',
+  })
   endpoint: Endpoint;
 }

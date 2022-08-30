@@ -4,6 +4,7 @@ import {
   Param,
   UseInterceptors,
   ParseIntPipe,
+  Get,
 } from '@nestjs/common';
 import { NotFoundInterceptor } from '../interceptors/NotFoundInterceptor';
 import { Polling } from '@persistence/entities/polling.entity';
@@ -17,6 +18,21 @@ export class PollingsController {
     private readonly pollingsService: PollingsService,
     private readonly endpointsService: EndpointsService,
   ) {}
+
+  @Get()
+  findAll() {
+    return this.pollingsService.findAll();
+  }
+
+  @Get(':endpointId')
+  findAllForEndpoint(@Param('endpointId', ParseIntPipe) endpointId: number) {
+    return this.pollingsService.findAllForEndpoint(endpointId);
+  }
+
+  @Get(':endpointId/latest')
+  findLatest(@Param('endpointId', ParseIntPipe) endpointId: number) {
+    return this.pollingsService.findLatest(endpointId);
+  }
 
   @Post(':id/poll')
   async poll(@Param('id', ParseIntPipe) id: number): Promise<Polling | null> {

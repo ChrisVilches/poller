@@ -43,15 +43,33 @@ export class FetchPendingEndpointsJob {
     }
   }
 
-  private async shouldPoll(now: Date, endpoint: Endpoint): Promise<boolean> {
-    const lastPoll = await this.pollingsService.findLatest(endpoint.id);
-
-    // TODO: Check if the endpoint is not timed-out
-
-    if (lastPoll === null) {
-      return true;
+  isTimedOut(now: Date, endpoint: Endpoint): boolean {
+    if (endpoint.timeout === null || typeof endpoint === 'undefined') {
+      return false;
     }
 
-    return endpoint.periodMinutes <= minutesDifference(lastPoll.createdAt, now);
+    return now < (endpoint.timeout as Date);
+  }
+
+  async hasRecentPoll(now: Date, endpoint: Endpoint): Promise<boolean> {
+    const lastPoll = await this.pollingsService.findLatest(endpoint.id);
+
+    if (lastPoll === null) {
+      return false;
+    }
+
+    return minutesDifference(lastPoll.createdAt, now) <= endpoint.periodMinutes;
+  }
+
+  private async shouldPoll(now: Date, endpoint: Endpoint): Promise<boolean> {
+    if (this.isTimedOut(now, endpoint)) {
+      return false;
+    }
+
+    if (await this.hasRecentPoll(now, endpoint)) {
+      return false;
+    }
+
+    return true;
   }
 }

@@ -1,32 +1,44 @@
-import { Module } from "@nestjs/common";
-import { ConfigModule } from "@nestjs/config";
-import { TypeOrmModule } from "@nestjs/typeorm";
-import * as Joi from "joi";
-import { Argument } from "./entities/argument.entity";
-import { Endpoint } from "./entities/endpoint.entity";
-import { Navigation } from "./entities/navigation.entity";
-import { Polling } from "./entities/polling.entity";
-import { EndpointsService } from "./services/endpoints.service";
-import { PollingsService } from "./services/pollings.service";
+import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import * as Joi from 'joi';
+import { Argument } from './entities/argument.entity';
+import { Endpoint } from './entities/endpoint.entity';
+import { Navigation } from './entities/navigation.entity';
+import { Polling } from './entities/polling.entity';
+import { EndpointsService } from './services/endpoints.service';
+import { PollingsService } from './services/pollings.service';
+
+const entities = [Endpoint, Argument, Navigation, Polling];
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       validationSchema: Joi.object({
-        SQLITE_DB_FILE_PATH: Joi.string().required()
+        PG_HOST: Joi.string().required(),
+        PG_PORT: Joi.number().required(),
+        PG_USERNAME: Joi.string().required(),
+        PG_PASSWORD: Joi.string().required(),
+        PG_DATABASE: Joi.string().required(),
       }),
     }),
-    TypeOrmModule.forRoot({
-      type: 'sqlite',
-      database: process.env.SQLITE_DB_FILE_PATH,
-      entities: [Endpoint, Argument, Navigation, Polling], // TODO: Can I abbreviate this? (or remove)
-      synchronize: process.env.NODE_ENV === 'development',
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: () => ({
+        type: 'postgres',
+        host: process.env.PG_HOST,
+        port: +(process.env.PG_PORT as string),
+        username: process.env.PG_USERNAME,
+        password: process.env.PG_PASSWORD,
+        database: process.env.PG_DATABASE,
+        entities,
+        synchronize: true,
+      }),
     }),
-    TypeOrmModule.forFeature([Endpoint, Polling]), // TODO: Necessary?
+    TypeOrmModule.forFeature(entities), // TODO: Necessary?
   ],
   providers: [EndpointsService, PollingsService],
   // TODO: Without this, it breaks. Learn about exports.
-  exports: [EndpointsService, PollingsService]
+  exports: [EndpointsService, PollingsService],
 })
-export class PersistenceModule {
-}
+export class PersistenceModule {}

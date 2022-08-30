@@ -9,9 +9,10 @@ import { ApiModule } from '@api/api.module';
   imports: [
     ConfigModule.forRoot({
       validationSchema: Joi.object({
-        NODE_ENV: Joi.string().required()
+        NODE_ENV: Joi.string()
+          .required()
           .valid('development', 'production', 'test', 'provision'),
-        PORT: Joi.number().required()
+        PORT: Joi.number().required(),
       }),
     }),
     ApiModule,

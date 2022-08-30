@@ -12,6 +12,7 @@ export class PollingSuccessListener {
     private notificationsQueue: Queue<NotificationArguments>,
     private endpointsService: EndpointsService,
   ) {}
+
   @OnEvent('polling.success')
   async handlePollingSuccess(polling: Polling) {
     const endpoint: Endpoint = polling.endpoint;

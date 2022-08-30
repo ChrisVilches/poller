@@ -106,4 +106,43 @@ describe(EndpointsService.name, () => {
       expect(await service.findOne(1)).toHaveProperty('arguments');
     });
   });
+
+  describe('updateTimeout', () => {
+    let endpoint: Endpoint;
+    beforeEach(async () => {
+      await service.create(mockEndpoint());
+      endpoint = (await service.findOne(1)) as Endpoint;
+    });
+
+    it('has a null default timeout value', async () => {
+      expect(endpoint.timeout).toBeNull;
+    });
+
+    it('updates the timeout date', async () => {
+      const now = new Date('2022-01-05');
+      await service.updateTimeout(endpoint, now);
+      endpoint = (await service.findOne(1)) as Endpoint;
+      expect(endpoint.timeout).toStrictEqual(
+        new Date('2022-01-05 00:10:00.000Z'),
+      );
+    });
+
+    it('updates the timeout date (larger wait time)', async () => {
+      const now = new Date('2022-01-05');
+      endpoint.waitAfterNotificationMinutes = 101;
+      await service.updateTimeout(endpoint, now);
+      endpoint = (await service.findOne(1)) as Endpoint;
+      expect(endpoint.timeout).toStrictEqual(
+        new Date('2022-01-05 01:41:00.000Z'),
+      );
+    });
+
+    it('does not update the timeout date if the wait time is null', async () => {
+      const now = new Date('2022-01-05');
+      endpoint.waitAfterNotificationMinutes = undefined;
+      await service.updateTimeout(endpoint, now);
+      endpoint = (await service.findOne(1)) as Endpoint;
+      expect(endpoint.timeout).toBeNull();
+    });
+  });
 });

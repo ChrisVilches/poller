@@ -1,5 +1,6 @@
 import { Transform, TransformFnParams } from 'class-transformer';
 import {
+  IsArray,
   IsBoolean,
   IsIn,
   IsInt,
@@ -7,9 +8,12 @@ import {
   IsPositive,
   IsString,
   IsUrl,
+  Validate,
 } from 'class-validator';
-// import { allRules } from '@rules/allRules';
-import { allRules } from '@rules/allRules'
+import { allRules } from '@rules/allRules';
+import { IsStringNumberBoolean } from '@persistence/validators/is-string-number-boolean.validator';
+
+// TODO: Consider removing the "create" part from each DTO.
 
 // TODO: Add how arguments / navigations are added
 export class CreateEndpointDto {
@@ -39,4 +43,19 @@ export class CreateEndpointDto {
   @IsOptional()
   @IsBoolean()
   not: boolean;
+
+  @IsOptional()
+  @IsInt()
+  @IsPositive()
+  waitAfterNotificationMinutes: number;
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  navigations: string[];
+
+  @IsOptional()
+  @IsArray()
+  @Validate(IsStringNumberBoolean)
+  arguments: (string | number | boolean)[];
 }

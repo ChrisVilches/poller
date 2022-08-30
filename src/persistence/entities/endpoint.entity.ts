@@ -79,11 +79,11 @@ export class Endpoint {
   })
   arguments: Argument[];
 
-  @Column({ nullable: true })
-  waitAfterNotificationMinutes: number;
+  @Column({ nullable: true, default: 60 })
+  waitAfterNotificationMinutes?: number;
 
   @Column({ nullable: true })
-  timeout: Date;
+  timeout?: Date;
 
   @CreateDateColumn()
   createdAt: Date;

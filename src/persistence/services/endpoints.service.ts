@@ -1,29 +1,21 @@
 import { Injectable } from '@nestjs/common';
-import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 import { validateAndTransform } from '../../util';
-import { EntityManager, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { CreateEndpointDto } from '@persistence/dto/create-endpoint.dto';
 import { UpdateEndpointDto } from '@persistence/dto/update-endpoint.dto';
 import { Argument } from '@persistence/entities/argument.entity';
 import { Endpoint } from '@persistence/entities/endpoint.entity';
 import { Navigation } from '@persistence/entities/navigation.entity';
-
-/**
- * TODO: Make sure the name of the classes, filename and folder is consistent.
- * 
- * TODO: Try to implement it like this (extend a repository to make a custom one):
- *       https://github.com/nestjs/typeorm/issues/39
- *       Or like this example: https://deno.land/x/typeorm@v0.2.23-rc9/docs/custom-repository.md?code=&source=
- *       (But this example is different from NestJS since Nest uses injection.)
- * 
-*/
+import * as moment from 'moment';
+import { CreateNavigationDto } from '@persistence/dto/create-navigation.dto';
+import { CreateArgumentDto } from '@persistence/dto/create-argument.dto';
 
 @Injectable()
 export class EndpointsService {
   constructor(
     @InjectRepository(Endpoint)
     private endpointsRepository: Repository<Endpoint>,
-    @InjectEntityManager() private readonly entityManager: EntityManager,
   ) {}
 
   async populateFromJson(jsonData: any[]) {
@@ -78,12 +70,42 @@ export class EndpointsService {
     id: number,
     updateEndpointDto: UpdateEndpointDto,
   ): Promise<Endpoint | null> {
-    await this.entityManager
-      .createQueryBuilder()
-      .update(Endpoint)
-      .set(await validateAndTransform(UpdateEndpointDto, updateEndpointDto))
-      .where('id = :id', { id })
-      .execute();
+    // TODO: Test validations in pipes (manual testing is OK). <--- I think this one is DONE.
+    // TODO: Test validations in isolated service (without pipes).
+    const convertNavigation = async (selector: string) => {
+      const nav = new Navigation();
+      Object.assign(
+        nav,
+        await validateAndTransform(CreateNavigationDto, { selector }),
+      );
+      return nav;
+    };
+
+    const convertArgument = async (value: string | number | boolean) => {
+      const arg = new Argument();
+      const type = typeof value;
+      value = `${value}`;
+      Object.assign(
+        arg,
+        { type, value },
+        await validateAndTransform(CreateArgumentDto, { type, value }),
+      );
+      return arg;
+    };
+
+    const navigations: Navigation[] = await Promise.all(
+      (updateEndpointDto.navigations || [])?.map(convertNavigation),
+    );
+    const argumentArray: Argument[] = await Promise.all(
+      (updateEndpointDto.arguments || [])?.map(convertArgument),
+    );
+
+    await this.endpointsRepository.save({
+      id,
+      ...(await validateAndTransform(UpdateEndpointDto, updateEndpointDto)),
+      navigations,
+      arguments: argumentArray,
+    });
 
     return await this.findOne(id);
   }
@@ -109,8 +131,18 @@ export class EndpointsService {
     });
   }
 
-  updateTimeout(endpoint: Endpoint) {
-    console.log(`TODO: Update timeout for endpoint ID ${endpoint.id}`);
+  async updateTimeout(endpoint: Endpoint, now = new Date()) {
+    const wait = endpoint.waitAfterNotificationMinutes;
+
+    if (wait === null || typeof wait === 'undefined') {
+      return;
+    }
+
+    const newTimeoutDate: Date = moment(now).add(wait, 'minutes').toDate();
+    await this.endpointsRepository.update(
+      { id: endpoint.id },
+      { timeout: newTimeoutDate },
+    );
   }
 
   countAll() {

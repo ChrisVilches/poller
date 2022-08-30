@@ -29,15 +29,15 @@ describe(EndpointsController.name, () => {
 
     controller = module.get<EndpointsController>(EndpointsController);
   });
-  
+
   describe('findOne', () => {
     it('should return null when the record does not exist', async () => {
       expect(await controller.findOne(1000)).toBe(null);
     });
 
     it('should return the record when it exists', async () => {
-      await controller.create(mockEndpoint({ title: '   endpoint title  ' }))
-      const endpoint = await controller.findOne(1)
+      await controller.create(mockEndpoint({ title: '   endpoint title  ' }));
+      const endpoint = await controller.findOne(1);
       expect(endpoint?.id).toBe(1);
       expect(endpoint?.title).toBe('endpoint title');
     });
