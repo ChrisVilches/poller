@@ -2,10 +2,10 @@ import { InjectQueue } from '@nestjs/bull';
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { Queue } from 'bull';
-import { PendingEndpoint } from 'src/interfaces/PendingEndpoint';
-import { EndpointsService } from '../endpoints.service';
-import { Endpoint } from '../entities/endpoint.entity';
-import { PollingsService } from '../pollings.service';
+import { PendingEndpoint } from '@interfaces/PendingEndpoint';
+import { EndpointsService } from '@persistence/services/endpoints.service';
+import { Endpoint } from '@persistence/entities/endpoint.entity';
+import { PollingsService } from '@persistence/services/pollings.service';
 
 const minutesDifference = (startDate: Date, endDate: Date) =>
   (endDate.getTime() - startDate.getTime()) / 60000;

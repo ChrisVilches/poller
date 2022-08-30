@@ -1,11 +1,11 @@
 import { OnQueueError, Process, Processor } from '@nestjs/bull';
 import { Logger } from '@nestjs/common';
 import { Job } from 'bull';
-import { NotificationArguments } from 'src/interfaces/NotificationArguments';
-import { LogNotification } from '../notifiers/LogNotification';
-import { Mailer } from '../notifiers/Mailer';
-import { Notifiable } from '../notifiers/Notifiable';
-import { NotifyMe } from '../notifiers/NotifyMe';
+import { NotificationArguments } from '@interfaces/NotificationArguments';
+import { LogNotification } from '@notifiers/LogNotification';
+import { Mailer } from '@notifiers/Mailer';
+import { Notifiable } from '@notifiers/Notifiable';
+import { NotifyMe } from '@notifiers/NotifyMe';
 
 @Processor('notifications')
 export class NotificationConsumer {

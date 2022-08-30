@@ -1,23 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { EndpointsService } from './endpoints.service';
-import { Argument } from './entities/argument.entity';
-import { Endpoint } from './entities/endpoint.entity';
-import { Navigation } from './entities/navigation.entity';
-import '../../test/matchers/toHaveValidationError';
+import { Argument } from '@persistence/entities/argument.entity';
+import { Endpoint } from '@persistence/entities/endpoint.entity';
+import { Navigation } from '@persistence/entities/navigation.entity';
+import '@test/matchers/toHaveValidationError';
+import { mockEndpoint } from '@test/helpers/mockEndpoint';
 
-const mockEndpoint = (props: object = {}) => ({
-  title: 'endpoint mock',
-  url: 'https://www.some-url.com',
-  notificationMessage: 'my message',
-  type: 'html',
-  rule: 'WhenHasTextRaw',
-  periodMinutes: 15,
-  not: false,
-  ...props,
-});
-
-describe('EndpointsService', () => {
+describe(EndpointsService.name, () => {
   let service: EndpointsService;
   let moduleRef: TestingModule;
 

@@ -2,10 +2,10 @@ import { OnQueueError, Process, Processor } from '@nestjs/bull';
 import { Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Job } from 'bull';
-import { Endpoint } from 'src/endpoints/entities/endpoint.entity';
-import { PendingEndpoint } from 'src/interfaces/PendingEndpoint';
-import { EndpointsService } from '../endpoints/endpoints.service';
-import { PollingsService } from '../endpoints/pollings.service';
+import { PendingEndpoint } from '@interfaces/PendingEndpoint';
+import { EndpointsService } from '@persistence/services/endpoints.service';
+import { Endpoint } from '@persistence/entities/endpoint.entity';
+import { PollingsService } from '@persistence/services/pollings.service';
 
 @Processor('pending-endpoints')
 export class PendingEndpointsConsumer {

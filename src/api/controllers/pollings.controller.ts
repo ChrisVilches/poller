@@ -5,10 +5,10 @@ import {
   UseInterceptors,
   ParseIntPipe,
 } from '@nestjs/common';
-import { PollingsService } from './pollings.service';
-import { EndpointsService } from '../endpoints/endpoints.service';
-import { Polling } from './entities/polling.entity';
 import { NotFoundInterceptor } from '../interceptors/NotFoundInterceptor';
+import { Polling } from '@persistence/entities/polling.entity';
+import { EndpointsService } from '@persistence/services/endpoints.service';
+import { PollingsService } from '@persistence/services/pollings.service';
 
 @UseInterceptors(NotFoundInterceptor)
 @Controller('pollings')

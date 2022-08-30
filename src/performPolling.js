@@ -1,7 +1,9 @@
 import axios from 'axios'
 import cheerio from 'cheerio'
 import { inspectArray, navigate } from './util'
-import { allRules } from './allRules'
+import { allRules } from '@rules/allRules'
+
+// TODO: Move this file to some module.
 
 export const performPolling = async endpoint => {
   const { url, rule, not = false } = endpoint

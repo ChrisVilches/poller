@@ -9,9 +9,9 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { NotFoundInterceptor } from '../interceptors/NotFoundInterceptor';
-import { CreateEndpointDto } from './dto/create-endpoint.dto';
-import { UpdateEndpointDto } from './dto/update-endpoint.dto';
-import { EndpointsService } from './endpoints.service';
+import { CreateEndpointDto } from '@persistence/dto/create-endpoint.dto';
+import { UpdateEndpointDto } from '@persistence/dto/update-endpoint.dto';
+import { EndpointsService } from '@persistence/services/endpoints.service';
 
 @UseInterceptors(NotFoundInterceptor)
 @Controller('endpoints')

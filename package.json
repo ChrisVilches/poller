@@ -36,6 +36,7 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.13.2",
     "joi": "^17.6.0",
+    "module-alias": "^2.2.2",
     "moment": "^2.29.4",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
@@ -74,7 +75,7 @@
       "json",
       "ts"
     ],
-    "rootDir": "src",
+    "rootDir": "./",
     "testRegex": ".*\\.spec\\.ts$",
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
@@ -83,6 +84,24 @@
       "**/*.(t|j)s"
     ],
     "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "moduleNameMapper": {
+      "@persistence/(.*)": "<rootDir>/src/persistence/$1",
+      "@background-process/(.*)": "<rootDir>/src/background-process/$1",
+      "@api/(.*)": "<rootDir>/src/api/$1",
+      "@interfaces/(.*)": "<rootDir>/src/interfaces/$1",
+      "@notifiers/(.*)": "<rootDir>/src/notifiers/$1",
+      "@rules/(.*)": "<rootDir>/src/rules/$1",
+      "@test/(.*)": "<rootDir>/test/$1"
+    }
+  },
+  "_moduleAliases": {
+    "@persistence": "./src/persistence",
+    "@background-process": "./src/background-process",
+    "@api": "./src/api",
+    "@interfaces": "./src/interfaces",
+    "@notifiers": "./src/notifiers",
+    "@rules": "./src/rules",
+    "@test": "./test"
   }
 }

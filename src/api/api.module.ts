@@ -1,11 +1,7 @@
 import { Module } from '@nestjs/common';
-import { EndpointsService } from './endpoints.service';
-import { EndpointsController } from './endpoints.controller';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { Endpoint } from './entities/endpoint.entity';
-import { PollingsService } from './pollings.service';
-import { PollingsController } from './pollings.controller';
-import { Polling } from './entities/polling.entity';
+import { PersistenceModule } from '@persistence/persistence.module';
+import { EndpointsController } from './controllers/endpoints.controller';
+import { PollingsController } from './controllers/pollings.controller';
 
 // TODO: The way the app is structured (modules and their imports, etc)
 //       is really bad right now. The documentation says that modules
@@ -15,9 +11,10 @@ import { Polling } from './entities/polling.entity';
 //
 //       Also there are many features that I'm not using, like DTO,
 //       pipes, injectors, middlewares, etc. Try to use as many as possible.
+
 @Module({
-  imports: [TypeOrmModule.forFeature([Endpoint, Polling])],
+  imports: [PersistenceModule],
   controllers: [EndpointsController, PollingsController],
-  providers: [EndpointsService, PollingsService],
+  providers: [],
 })
-export class EndpointsModule {}
+export class ApiModule {}

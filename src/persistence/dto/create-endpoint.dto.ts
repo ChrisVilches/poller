@@ -8,7 +8,8 @@ import {
   IsString,
   IsUrl,
 } from 'class-validator';
-import { allRules } from '../../allRules';
+// import { allRules } from '@rules/allRules';
+import { allRules } from '@rules/allRules'
 
 // TODO: Add how arguments / navigations are added
 export class CreateEndpointDto {

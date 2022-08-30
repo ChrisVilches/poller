@@ -17,5 +17,5 @@ runApp(async (app: INestApplication) => {
       }
     })
     .filter((item: undefined) => item !== undefined);
-  console.log(availableRoutes);
+  console.log(availableRoutes.map((obj: any) => obj.route));
 })

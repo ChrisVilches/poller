@@ -20,6 +20,29 @@
     "resolveJsonModule": true,
     "allowJs": true,
     "noUnusedParameters": true,
-    "noUnusedLocals": true
+    "noUnusedLocals": true,
+    "paths": {
+      "@persistence/*": [
+        "src/persistence/*"
+      ],
+      "@background-process/*": [
+        "src/background-process/*"
+      ],
+      "@api/*": [
+        "src/api/*"
+      ],
+      "@interfaces/*": [
+        "src/interfaces/*"
+      ],
+      "@notifiers/*": [
+        "src/notifiers/*"
+      ],
+      "@rules/*": [
+        "src/rules/*"
+      ],
+      "@test/*": [
+        "test/*"
+      ]
+    }
   }
 }

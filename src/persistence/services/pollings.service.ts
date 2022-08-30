@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { performPolling } from '../performPolling';
+import { performPolling } from '../../performPolling';
 import { LessThan, Repository } from 'typeorm';
-import { Endpoint } from './entities/endpoint.entity';
-import { Polling } from './entities/polling.entity';
+import { Endpoint } from '@persistence/entities/endpoint.entity';
+import { Polling } from '@persistence/entities/polling.entity';
 
 @Injectable()
 export class PollingsService {
@@ -54,6 +54,8 @@ export class PollingsService {
     });
 
     try {
+      // TODO: This module is about persistence, so is it OK that this is executed here?
+      //       Specially if I convert it to just a "repository"
       const { status, shouldNotify } = await performPolling(endpoint);
       polling.responseCode = status;
       polling.shouldNotify = shouldNotify;

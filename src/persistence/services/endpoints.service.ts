@@ -1,12 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
-import { validateAndTransform } from '../util';
+import { validateAndTransform } from '../../util';
 import { EntityManager, Repository } from 'typeorm';
-import { CreateEndpointDto } from './dto/create-endpoint.dto';
-import { UpdateEndpointDto } from './dto/update-endpoint.dto';
-import { Argument } from './entities/argument.entity';
-import { Endpoint } from './entities/endpoint.entity';
-import { Navigation } from './entities/navigation.entity';
+import { CreateEndpointDto } from '@persistence/dto/create-endpoint.dto';
+import { UpdateEndpointDto } from '@persistence/dto/update-endpoint.dto';
+import { Argument } from '@persistence/entities/argument.entity';
+import { Endpoint } from '@persistence/entities/endpoint.entity';
+import { Navigation } from '@persistence/entities/navigation.entity';
+
+/**
+ * TODO: Make sure the name of the classes, filename and folder is consistent.
+ * 
+ * TODO: Try to implement it like this (extend a repository to make a custom one):
+ *       https://github.com/nestjs/typeorm/issues/39
+ *       Or like this example: https://deno.land/x/typeorm@v0.2.23-rc9/docs/custom-repository.md?code=&source=
+ *       (But this example is different from NestJS since Nest uses injection.)
+ * 
+*/
 
 @Injectable()
 export class EndpointsService {

@@ -1,10 +1,10 @@
 import { InjectQueue } from '@nestjs/bull';
 import { OnEvent } from '@nestjs/event-emitter';
 import { Queue } from 'bull';
-import { EndpointsService } from '../endpoints/endpoints.service';
-import { NotificationArguments } from 'src/interfaces/NotificationArguments';
-import { Endpoint } from '../endpoints/entities/endpoint.entity';
-import { Polling } from '../endpoints/entities/polling.entity';
+import { NotificationArguments } from '@interfaces/NotificationArguments';
+import { EndpointsService } from '@persistence/services/endpoints.service';
+import { Endpoint } from '@persistence/entities/endpoint.entity';
+import { Polling } from '@persistence/entities/polling.entity';
 
 export class PollingSuccessListener {
   constructor(

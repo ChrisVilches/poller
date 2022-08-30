@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { PollingsService } from '../pollings.service';
 import * as moment from 'moment';
+import { PollingsService } from '@persistence/services/pollings.service';
 
 @Injectable()
 export class CleanOldPollingRecordsJob {
