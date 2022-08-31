@@ -88,7 +88,9 @@ describe(removeUrlQueryString.name, () => {
     );
     expect(removeUrlQueryString('www.google.com')).toBe('www.google.com');
     expect(removeUrlQueryString('www.google.com????')).toBe('www.google.com');
-    expect(removeUrlQueryString('www.google.com?a=5?b=1?c=1?')).toBe('www.google.com');
+    expect(removeUrlQueryString('www.google.com?a=5?b=1?c=1?')).toBe(
+      'www.google.com',
+    );
     expect(removeUrlQueryString('')).toBe('');
     expect(removeUrlQueryString('?')).toBe('');
     expect(removeUrlQueryString('1')).toBe('1');

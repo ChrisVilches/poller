@@ -57,7 +57,7 @@ export class PollingsService {
     );
 
     const saved: Polling = await this.pollingsRepository.save(polling);
-    return await this.findOne(saved.id) as Polling;
+    return (await this.findOne(saved.id)) as Polling;
   }
 
   findOne(id: number) {
