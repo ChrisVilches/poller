@@ -161,6 +161,13 @@ export class EndpointsService {
     return this.endpointsRepository.count();
   }
 
+  async enable(id: number, enabledValue: boolean): Promise<boolean> {
+    const endpoint = await this.findOne(id)
+    endpoint.enabled = enabledValue
+    const saved = await this.endpointsRepository.save(endpoint);
+    return saved.enabled
+  }
+
   async findOne(id: number): Promise<Endpoint> {
     const endpoint: Endpoint | null = await this.endpointsRepository.findOne({
       where: { id },

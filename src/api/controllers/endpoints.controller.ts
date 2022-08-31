@@ -36,4 +36,14 @@ export class EndpointsController {
   ) {
     return this.endpointsService.update(id, endpointDto);
   }
+
+  @Patch(':id/enable')
+  enable(@Param('id', ParseIntPipe) id: number) {
+    return this.endpointsService.enable(id, true);
+  }
+
+  @Patch(':id/disable')
+  disable(@Param('id', ParseIntPipe) id: number) {
+    return this.endpointsService.enable(id, false);
+  }
 }
