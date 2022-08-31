@@ -12,7 +12,6 @@ import { Polling } from '@persistence/entities/polling.entity';
 import { Repository } from 'typeorm';
 import * as moment from 'moment';
 import { shuffle } from 'lodash';
-import '@test/matchers/toHaveValidationError';
 
 // TODO: Recycle code.
 //       Also, some of this code may be unnecessary.

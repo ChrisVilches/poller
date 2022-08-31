@@ -4,7 +4,7 @@ import { performPolling } from '../../performPolling';
 import { LessThan, Repository } from 'typeorm';
 import { Endpoint } from '@persistence/entities/endpoint.entity';
 import { Polling } from '@persistence/entities/polling.entity';
-import { CreatePollingDto } from '@persistence/dto/create-polling.dto';
+import { PollingDto } from '@persistence/dto/polling.dto';
 import { validateAndTransform } from '../../util';
 
 @Injectable()
@@ -51,10 +51,11 @@ export class PollingsService {
     return await this.create(result);
   }
 
-  async create(createPollingDto: CreatePollingDto) {
+  async create(createPollingDto: PollingDto) {
     const polling: Polling = this.pollingsRepository.create(
-      await validateAndTransform(CreatePollingDto, createPollingDto),
+      await validateAndTransform(PollingDto, createPollingDto),
     );
+
     const saved: Polling = await this.pollingsRepository.save(polling);
     return await this.findOne(saved.id);
   }
@@ -71,13 +72,17 @@ export class PollingsService {
   private async pollAux(
     endpoint: Endpoint,
     manual: boolean,
-  ): Promise<CreatePollingDto> {
-    const polling = new CreatePollingDto();
+  ): Promise<PollingDto> {
+    const polling = new PollingDto();
     polling.endpointId = endpoint.id;
     polling.manual = manual;
+    polling.shouldNotify = false;
 
     try {
       // TODO: This module is about persistence, so is it OK that this is executed here?
+      //       It's also not OK if I move it to the background process module, because polling
+      //       is not necessarily a background job (it can be done manually too). So where?
+      //       Maybe it's own POJO model (it doesn't depend on NestJS).
       const { status, shouldNotify } = await performPolling(endpoint);
       polling.responseCode = status;
       polling.shouldNotify = shouldNotify;

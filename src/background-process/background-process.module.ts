@@ -30,8 +30,6 @@ import { ConfigModule } from '@nestjs/config';
         port: Number(process.env.REDIS_PORT),
       },
     }),
-    // TODO: Set queue worker count (should be 1 or so, since I may
-    //       get banned from the endpoints I'm scraping)
     BullModule.registerQueue({ name: 'notifications' }),
     BullModule.registerQueue({ name: 'test' }),
     BullModule.registerQueue({ name: 'pending-endpoints' }),

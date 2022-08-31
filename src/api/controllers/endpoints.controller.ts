@@ -8,12 +8,13 @@ import {
   Post,
   UseInterceptors,
 } from '@nestjs/common';
-import { NotFoundInterceptor } from '../interceptors/NotFoundInterceptor';
-import { CreateEndpointDto } from '@persistence/dto/create-endpoint.dto';
-import { UpdateEndpointDto } from '@persistence/dto/update-endpoint.dto';
+import { ProcessErrorInterceptor } from '../interceptors/process-error.interceptor';
+import { EmptyReturnInterceptor } from '../interceptors/empty-return.interceptor';
+import { EndpointDto } from '@persistence/dto/endpoint.dto';
 import { EndpointsService } from '@persistence/services/endpoints.service';
 
-@UseInterceptors(NotFoundInterceptor)
+@UseInterceptors(EmptyReturnInterceptor)
+@UseInterceptors(ProcessErrorInterceptor)
 @Controller('endpoints')
 export class EndpointsController {
   constructor(private readonly endpointsService: EndpointsService) {}
@@ -24,15 +25,15 @@ export class EndpointsController {
   }
 
   @Post()
-  create(@Body() createEndpointDto: CreateEndpointDto) {
-    return this.endpointsService.create(createEndpointDto);
+  create(@Body() endpointDto: EndpointDto) {
+    return this.endpointsService.create(endpointDto);
   }
 
   @Patch(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
-    @Body() updateEndpointDto: UpdateEndpointDto,
+    @Body() endpointDto: Partial<EndpointDto>,
   ) {
-    return this.endpointsService.update(id, updateEndpointDto);
+    return this.endpointsService.update(id, endpointDto);
   }
 }

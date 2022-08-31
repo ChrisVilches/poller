@@ -1,6 +1,6 @@
 import { IsIn, IsString, MinLength } from 'class-validator';
 
-export class CreateArgumentDto {
+export class ArgumentDto {
   @IsString()
   @MinLength(1)
   @IsIn(['string', 'boolean', 'number'])

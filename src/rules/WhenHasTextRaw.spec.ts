@@ -28,11 +28,11 @@ describe(WhenHasTextRaw.name, () => {
       <span>hello my name is></span>
     </div>`;
 
-    expect(rule.execute('hello', 2, '==')(cheerio.load(html))).toBe(true);
-    expect(rule.execute('ell', 2, '==')(cheerio.load(html))).toBe(true);
-    expect(rule.execute('hello', 2, '>=')(cheerio.load(html))).toBe(true);
-    expect(rule.execute('hello', 1, '>')(cheerio.load(html))).toBe(true);
-    expect(rule.execute('hello', 2, '>')(cheerio.load(html))).toBe(false);
+    expect(rule.execute(['hello', 2, '=='])(cheerio.load(html))).toBe(true);
+    expect(rule.execute(['ell', 2, '=='])(cheerio.load(html))).toBe(true);
+    expect(rule.execute(['hello', 2, '>='])(cheerio.load(html))).toBe(true);
+    expect(rule.execute(['hello', 1, '>'])(cheerio.load(html))).toBe(true);
+    expect(rule.execute(['hello', 2, '>'])(cheerio.load(html))).toBe(false);
   });
 
   it('should count occurrences case-insensitive', () => {
@@ -42,10 +42,10 @@ describe(WhenHasTextRaw.name, () => {
       <span>hELLO my name is></span>
     </div>`;
 
-    expect(rule.execute('hello', 2, '==')(cheerio.load(html))).toBe(true);
-    expect(rule.execute('ell', 2, '==')(cheerio.load(html))).toBe(true);
-    expect(rule.execute('hello', 2, '>=')(cheerio.load(html))).toBe(true);
-    expect(rule.execute('hello', 1, '>')(cheerio.load(html))).toBe(true);
-    expect(rule.execute('hello', 2, '>')(cheerio.load(html))).toBe(false);
+    expect(rule.execute(['hello', 2, '=='])(cheerio.load(html))).toBe(true);
+    expect(rule.execute(['ell', 2, '=='])(cheerio.load(html))).toBe(true);
+    expect(rule.execute(['hello', 2, '>='])(cheerio.load(html))).toBe(true);
+    expect(rule.execute(['hello', 1, '>'])(cheerio.load(html))).toBe(true);
+    expect(rule.execute(['hello', 2, '>'])(cheerio.load(html))).toBe(false);
   });
 });

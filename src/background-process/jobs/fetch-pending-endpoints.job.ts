@@ -33,7 +33,11 @@ export class FetchPendingEndpointsJob {
       }
     }
 
-    this.logger.log(`Polling ${toPoll.length} endpoints`);
+    this.logger.log(
+      `Sending ${toPoll.length} endpoints to the pending queue, IDs: [${toPoll
+        .map((p) => p.id)
+        .join(', ')}]`,
+    );
 
     for (const endpoint of toPoll) {
       this.pollingsQueue.add({

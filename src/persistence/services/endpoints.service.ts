@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { validateAndTransform } from '../../util';
-import { Repository } from 'typeorm';
-import { CreateEndpointDto } from '@persistence/dto/create-endpoint.dto';
-import { UpdateEndpointDto } from '@persistence/dto/update-endpoint.dto';
+import { EntityNotFoundError, Repository } from 'typeorm';
 import { Argument } from '@persistence/entities/argument.entity';
 import { Endpoint } from '@persistence/entities/endpoint.entity';
 import { Navigation } from '@persistence/entities/navigation.entity';
 import * as moment from 'moment';
-import { CreateNavigationDto } from '@persistence/dto/create-navigation.dto';
-import { CreateArgumentDto } from '@persistence/dto/create-argument.dto';
+import { EndpointDto } from '@persistence/dto/endpoint.dto';
+import { NavigationDto } from '@persistence/dto/navigation.dto';
+import { ArgumentDto } from '@persistence/dto/argument.dto';
+import { PartialType } from '@nestjs/mapped-types';
 
 @Injectable()
 export class EndpointsService {
@@ -59,24 +59,20 @@ export class EndpointsService {
     }
   }
 
-  async create(createEndpointDto: CreateEndpointDto) {
-    const endpoint: Endpoint = this.endpointsRepository.create(
-      await validateAndTransform(CreateEndpointDto, createEndpointDto),
-    );
-    return this.endpointsRepository.save(endpoint);
+  async create(endpointDto: EndpointDto): Promise<Endpoint> {
+    const created = await this.endpointsRepository.save({
+      ...(await this.buildEndpoint(endpointDto)),
+    });
+
+    return await this.findOne(created.id);
   }
 
-  async update(
-    id: number,
-    updateEndpointDto: UpdateEndpointDto,
-  ): Promise<Endpoint | null> {
-    // TODO: Test validations in pipes (manual testing is OK). <--- I think this one is DONE.
-    // TODO: Test validations in isolated service (without pipes).
+  private async buildEndpoint(obj: any, partial = false) {
     const convertNavigation = async (selector: string) => {
       const nav = new Navigation();
       Object.assign(
         nav,
-        await validateAndTransform(CreateNavigationDto, { selector }),
+        await validateAndTransform(NavigationDto, { selector }),
       );
       return nav;
     };
@@ -88,23 +84,39 @@ export class EndpointsService {
       Object.assign(
         arg,
         { type, value },
-        await validateAndTransform(CreateArgumentDto, { type, value }),
+        await validateAndTransform(ArgumentDto, { type, value }),
       );
       return arg;
     };
 
     const navigations: Navigation[] = await Promise.all(
-      (updateEndpointDto.navigations || [])?.map(convertNavigation),
+      (obj.navigations || [])?.map(convertNavigation),
     );
     const argumentArray: Argument[] = await Promise.all(
-      (updateEndpointDto.arguments || [])?.map(convertArgument),
+      (obj.arguments || [])?.map(convertArgument),
     );
+
+    return {
+      ...(await validateAndTransform(
+        partial ? PartialType(EndpointDto) : EndpointDto,
+        obj,
+      )),
+      navigations,
+      arguments: argumentArray,
+    };
+  }
+
+  async update(
+    id: number,
+    endpointDto: Partial<EndpointDto>,
+  ): Promise<Endpoint> {
+    if ((await this.findOne(id)) === null) {
+      throw new EntityNotFoundError(Endpoint.name, {});
+    }
 
     await this.endpointsRepository.save({
       id,
-      ...(await validateAndTransform(UpdateEndpointDto, updateEndpointDto)),
-      navigations,
-      arguments: argumentArray,
+      ...(await this.buildEndpoint(endpointDto, true)),
     });
 
     return await this.findOne(id);
@@ -149,13 +161,19 @@ export class EndpointsService {
     return this.endpointsRepository.count();
   }
 
-  findOne(id: number) {
-    return this.endpointsRepository.findOne({
+  async findOne(id: number): Promise<Endpoint> {
+    const endpoint: Endpoint | null = await this.endpointsRepository.findOne({
       where: { id },
       relations: {
         arguments: true,
         navigations: true,
       },
     });
+
+    if (endpoint === null) {
+      throw new EntityNotFoundError(Endpoint.name, {});
+    }
+
+    return endpoint;
   }
 }

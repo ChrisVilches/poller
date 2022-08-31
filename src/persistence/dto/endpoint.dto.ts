@@ -13,10 +13,7 @@ import {
 import { allRules } from '@rules/allRules';
 import { IsStringNumberBoolean } from '@persistence/validators/is-string-number-boolean.validator';
 
-// TODO: Consider removing the "create" part from each DTO.
-
-// TODO: Add how arguments / navigations are added
-export class CreateEndpointDto {
+export class EndpointDto {
   @IsOptional()
   @IsString()
   @Transform((params: TransformFnParams) => params.value.trim())

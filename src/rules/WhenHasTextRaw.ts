@@ -7,7 +7,21 @@ import {
 import { Rule } from './Rule';
 
 export class WhenHasTextRaw implements Rule {
-  execute(text: string, times: number, op: ComparisonOperator = '==') {
+  execute(args: (string | number | boolean)[]) {
+    const [text, times, op = '=='] = args;
+
+    return this.executeAux(
+      text as string,
+      times as number,
+      op as ComparisonOperator,
+    );
+  }
+
+  private executeAux(
+    text: string,
+    times: number,
+    op: ComparisonOperator = '==',
+  ) {
     return (dom: CheerioAPI) => {
       const html = dom.text();
       const regex = new RegExp(text, 'gi');

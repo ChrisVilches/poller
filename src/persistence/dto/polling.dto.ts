@@ -6,7 +6,7 @@ import {
   IsString,
 } from 'class-validator';
 
-export class CreatePollingDto {
+export class PollingDto {
   @IsPositive()
   @IsInt()
   endpointId: number;

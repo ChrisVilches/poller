@@ -35,10 +35,9 @@ const entities = [Endpoint, Argument, Navigation, Polling];
         synchronize: true,
       }),
     }),
-    TypeOrmModule.forFeature(entities), // TODO: Necessary?
+    TypeOrmModule.forFeature(entities),
   ],
   providers: [EndpointsService, PollingsService],
-  // TODO: Without this, it breaks. Learn about exports.
   exports: [EndpointsService, PollingsService],
 })
 export class PersistenceModule {}

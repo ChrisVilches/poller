@@ -13,10 +13,10 @@ export const performPolling = async endpoint => {
   const ruleInstance = new allRules[rule]()
 
   if (!ruleInstance.validate(args)) {
-    throw new Error(`Invalid arguments: ${inspectArray(args)}`)
+    throw new Error(`Invalid arguments: [${inspectArray(args)}]`)
   }
 
-  const ruleFunction = ruleInstance.execute.apply(ruleInstance, args)
+  const ruleFunction = ruleInstance.execute.call(ruleInstance, args)
 
   const { data, status } = await axios.get(url)
 
@@ -26,7 +26,7 @@ export const performPolling = async endpoint => {
   try {
     domElement = navigate(htmlResult, endpoint.navigation())
   } catch (e) {
-    throw new Error('Incorrect navigations')
+    throw new Error(`Incorrect navigations: [${endpoint.navigation().join(', ')}]`)
   }
   const shouldNotify = ruleFunction(domElement)
 

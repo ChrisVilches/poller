@@ -21,9 +21,7 @@ export class PendingEndpointsConsumer {
   async executePolling(job: Job<PendingEndpoint>) {
     const { endpointId, manual } = job.data;
 
-    const endpoint = (await this.endpointsService.findOne(
-      endpointId,
-    )) as Endpoint;
+    const endpoint: Endpoint = await this.endpointsService.findOne(endpointId);
     const result = await this.pollingsService.poll(endpoint, manual);
 
     if (result?.shouldNotify) {
