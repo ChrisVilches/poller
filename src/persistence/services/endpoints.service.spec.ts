@@ -83,7 +83,12 @@ describe(EndpointsService.name, () => {
     let endpoint: Endpoint;
 
     beforeEach(async () => {
-      endpoint = await service.create(mockEndpoint());
+      endpoint = await service.create(
+        mockEndpoint({
+          navigations: [' abc ', ' def  '],
+          arguments: ['xyz', 1],
+        }),
+      );
     });
 
     it('trims the strings', async () => {
@@ -132,6 +137,28 @@ describe(EndpointsService.name, () => {
         );
       }).toThrowErrorType(ValidationError);
     });
+
+    it('keeps previous navigations/arguments when the data to patch omits those properties', async () => {
+      await service.update(endpoint.id, { title: ' ....new title.... ' });
+      const found = await service.findOne(endpoint.id);
+      expect(found.title).toBe('....new title....');
+      expect(found.navigation()).toStrictEqual(['abc', 'def']);
+      expect(found.args()).toStrictEqual(['xyz', 1]);
+    });
+
+    it('keeps previous navigations if the data omits that property', async () => {
+      await service.update(endpoint.id, { arguments: ['text', 123] });
+      const found = await service.findOne(endpoint.id);
+      expect(found.navigation()).toStrictEqual(['abc', 'def']);
+      expect(found.args()).toStrictEqual(['text', 123]);
+    });
+
+    it('keeps previous arguments if the data omits that property', async () => {
+      await service.update(endpoint.id, { navigations: [' nav1 ', 'nav2 '] });
+      const found = await service.findOne(endpoint.id);
+      expect(found.navigation()).toStrictEqual(['nav1', 'nav2']);
+      expect(found.args()).toStrictEqual(['xyz', 1]);
+    });
   });
 
   describe('findEnabled', () => {
@@ -160,7 +187,12 @@ describe(EndpointsService.name, () => {
   describe('updateTimeout', () => {
     let endpoint: Endpoint;
     beforeEach(async () => {
-      await service.create(mockEndpoint());
+      await service.create(
+        mockEndpoint({
+          periodMinutes: 25,
+          waitAfterNotificationMinutes: 107,
+        }),
+      );
       endpoint = await service.findOne(1);
     });
 
@@ -168,28 +200,39 @@ describe(EndpointsService.name, () => {
       expect(endpoint.timeout).toBeNull;
     });
 
-    it('updates the timeout date', async () => {
+    it('uses periodMinutes when there is no notification', async () => {
       const now = new Date('2022-01-05');
-      await service.updateTimeout(endpoint, now);
+      await service.updateTimeout(false, endpoint, now);
       expect((await service.findOne(1)).timeout).toStrictEqual(
-        new Date('2022-01-05 00:10:00.000Z'),
+        new Date('2022-01-05 00:25:00.000Z'),
       );
     });
 
-    it('updates the timeout date (larger wait time)', async () => {
+    it('chooses largest value (periodMinutes, has notification)', async () => {
       const now = new Date('2022-01-05');
-      endpoint.waitAfterNotificationMinutes = 101;
-      await service.updateTimeout(endpoint, now);
+      endpoint.periodMinutes = 200;
+      await service.updateTimeout(true, endpoint, now);
       expect((await service.findOne(1)).timeout).toStrictEqual(
-        new Date('2022-01-05 01:41:00.000Z'),
+        new Date('2022-01-05 03:20:00.000Z'),
       );
     });
 
-    it('does not update the timeout date if the wait time is null', async () => {
+    it('chooses largest value (waitAfterNotificationMinutes, has notification)', async () => {
       const now = new Date('2022-01-05');
+      await service.updateTimeout(true, endpoint, now);
+      expect((await service.findOne(1)).timeout).toStrictEqual(
+        new Date('2022-01-05 01:47:00.000Z'),
+      );
+    });
+
+    it('chooses the only value (waitAfterNotificationMinutes not defined, has notification)', async () => {
+      const now = new Date('2022-01-05');
+      endpoint.periodMinutes = 19;
       endpoint.waitAfterNotificationMinutes = undefined;
-      await service.updateTimeout(endpoint, now);
-      expect((await service.findOne(1)).timeout).toBeNull();
+      await service.updateTimeout(true, endpoint, now);
+      expect((await service.findOne(1)).timeout).toStrictEqual(
+        new Date('2022-01-05 00:19:00.000Z'),
+      );
     });
   });
 });

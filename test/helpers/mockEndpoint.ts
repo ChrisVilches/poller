@@ -9,10 +9,11 @@ export const mockEndpoint = (props: object = {}) => ({
   type: 'html',
   rule: 'WhenHasTextRaw',
   periodMinutes: 15,
-  waitAfterNotificationMinutes: 10,
+  waitAfterNotificationMinutes: 120,
   navigations: [],
   arguments: [],
   not: false,
+  staticHtml: true,
   ...props,
 });
 

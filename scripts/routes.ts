@@ -6,7 +6,7 @@ runApp(async (app: INestApplication) => {
   const router = server._events.request._router;
 
   const availableRoutes: [] = router.stack
-    .map((layer: { route: { path: any; stack: { method: any; }[]; }; }) => {
+    .map((layer: { route: { path: any; stack: { method: any }[] } }) => {
       if (layer.route) {
         return {
           route: {
@@ -18,4 +18,4 @@ runApp(async (app: INestApplication) => {
     })
     .filter((item: undefined) => item !== undefined);
   console.log(availableRoutes.map((obj: any) => obj.route));
-})
+});

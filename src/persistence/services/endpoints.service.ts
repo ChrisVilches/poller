@@ -89,21 +89,24 @@ export class EndpointsService {
       return arg;
     };
 
-    const navigations: Navigation[] = await Promise.all(
-      (obj.navigations || [])?.map(convertNavigation),
-    );
-    const argumentArray: Argument[] = await Promise.all(
-      (obj.arguments || [])?.map(convertArgument),
+    const returnObj: any = await validateAndTransform(
+      partial ? PartialType(EndpointDto) : EndpointDto,
+      obj,
     );
 
-    return {
-      ...(await validateAndTransform(
-        partial ? PartialType(EndpointDto) : EndpointDto,
-        obj,
-      )),
-      navigations,
-      arguments: argumentArray,
-    };
+    if ('navigations' in obj) {
+      returnObj.navigations = await Promise.all(
+        (obj.navigations || [])?.map(convertNavigation),
+      );
+    }
+
+    if ('arguments' in obj) {
+      returnObj.arguments = await Promise.all(
+        (obj.arguments || [])?.map(convertArgument),
+      );
+    }
+
+    return returnObj;
   }
 
   async update(
@@ -143,14 +146,22 @@ export class EndpointsService {
     });
   }
 
-  async updateTimeout(endpoint: Endpoint, now = new Date()) {
-    const wait = endpoint.waitAfterNotificationMinutes;
+  async updateTimeout(
+    notification: boolean,
+    endpoint: Endpoint,
+    now = new Date(),
+  ) {
+    let minutesFromNow: number = endpoint.periodMinutes;
 
-    if (wait === null || typeof wait === 'undefined') {
-      return;
+    if (notification) {
+      minutesFromNow = Math.max(
+        minutesFromNow,
+        endpoint.waitAfterNotificationMinutes || 0,
+      );
     }
 
-    const newTimeoutDate: Date = moment(now).add(wait, 'minutes').toDate();
+    const newTimeoutDate = moment(now).add(minutesFromNow, 'minutes').toDate();
+
     await this.endpointsRepository.update(
       { id: endpoint.id },
       { timeout: newTimeoutDate },
@@ -162,10 +173,10 @@ export class EndpointsService {
   }
 
   async enable(id: number, enabledValue: boolean): Promise<boolean> {
-    const endpoint = await this.findOne(id)
-    endpoint.enabled = enabledValue
+    const endpoint = await this.findOne(id);
+    endpoint.enabled = enabledValue;
     const saved = await this.endpointsRepository.save(endpoint);
-    return saved.enabled
+    return saved.enabled;
   }
 
   async findOne(id: number): Promise<Endpoint> {

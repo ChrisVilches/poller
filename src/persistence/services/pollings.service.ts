@@ -46,18 +46,18 @@ export class PollingsService {
   /**
    * Does not check whether the record is enabled or not.
    */
-  async poll(endpoint: Endpoint, manual: boolean): Promise<Polling | null> {
+  async poll(endpoint: Endpoint, manual: boolean): Promise<Polling> {
     const result = await this.pollAux(endpoint, manual);
     return await this.create(result);
   }
 
-  async create(createPollingDto: PollingDto) {
+  async create(createPollingDto: PollingDto): Promise<Polling> {
     const polling: Polling = this.pollingsRepository.create(
       await validateAndTransform(PollingDto, createPollingDto),
     );
 
     const saved: Polling = await this.pollingsRepository.save(polling);
-    return await this.findOne(saved.id);
+    return await this.findOne(saved.id) as Polling;
   }
 
   findOne(id: number) {

@@ -5,10 +5,6 @@ import { Queue } from 'bull';
 import { PendingEndpoint } from '@interfaces/PendingEndpoint';
 import { EndpointsService } from '@persistence/services/endpoints.service';
 import { Endpoint } from '@persistence/entities/endpoint.entity';
-import { PollingsService } from '@persistence/services/pollings.service';
-
-const minutesDifference = (startDate: Date, endDate: Date) =>
-  (endDate.getTime() - startDate.getTime()) / 60000;
 
 @Injectable()
 export class FetchPendingEndpointsJob {
@@ -16,7 +12,6 @@ export class FetchPendingEndpointsJob {
 
   constructor(
     private readonly endpointsService: EndpointsService,
-    private readonly pollingsService: PollingsService,
     @InjectQueue('pending-endpoints')
     private pollingsQueue: Queue<PendingEndpoint>,
   ) {}
@@ -55,22 +50,8 @@ export class FetchPendingEndpointsJob {
     return now < (endpoint.timeout as Date);
   }
 
-  async hasRecentPoll(now: Date, endpoint: Endpoint): Promise<boolean> {
-    const lastPoll = await this.pollingsService.findLatest(endpoint.id);
-
-    if (lastPoll === null) {
-      return false;
-    }
-
-    return minutesDifference(lastPoll.createdAt, now) <= endpoint.periodMinutes;
-  }
-
   private async shouldPoll(now: Date, endpoint: Endpoint): Promise<boolean> {
     if (this.isTimedOut(now, endpoint)) {
-      return false;
-    }
-
-    if (await this.hasRecentPoll(now, endpoint)) {
       return false;
     }
 

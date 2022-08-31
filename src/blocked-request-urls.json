@@ -1,0 +1,24 @@
+{
+  "blockedUrls": [
+    "https://www.google-analytics.com",
+    "carbonads.net",
+    "https://use.fontawesome.com",
+    "cdn.carbonads.com",
+    "https://www.googletagmanager.com"
+  ],
+  "blockedTypes": [
+    "image",
+    "font",
+    "stylesheet",
+    "websocket",
+    "media"
+  ],
+  "blockedExtensions": [
+    "mp3",
+    "mp4",
+    "mov",
+    "flv",
+    "avi",
+    "wmv"
+  ]
+}

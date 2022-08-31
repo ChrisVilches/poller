@@ -4,6 +4,7 @@ import {
   comparisonOperator,
   inspectArray,
   navigate,
+  removeUrlQueryString,
 } from './util';
 
 describe(comparisonOperator.name, () => {
@@ -69,6 +70,28 @@ describe(inspectArray.name, () => {
 
   it('should convert the string correctly with no elements', () => {
     expect(inspectArray([])).toBe('');
+  });
+});
+
+describe(removeUrlQueryString.name, () => {
+  it('removes it correctly', () => {
+    expect(removeUrlQueryString('aaaa?aa')).toBe('aaaa');
+    expect(removeUrlQueryString('www.google.com?a=2&b=6')).toBe(
+      'www.google.com',
+    );
+    expect(removeUrlQueryString('www.google.com?')).toBe('www.google.com');
+    expect(removeUrlQueryString('www.google.com/some/path?a')).toBe(
+      'www.google.com/some/path',
+    );
+    expect(removeUrlQueryString('www.google.com/some/path?a=1&b=2')).toBe(
+      'www.google.com/some/path',
+    );
+    expect(removeUrlQueryString('www.google.com')).toBe('www.google.com');
+    expect(removeUrlQueryString('www.google.com????')).toBe('www.google.com');
+    expect(removeUrlQueryString('www.google.com?a=5?b=1?c=1?')).toBe('www.google.com');
+    expect(removeUrlQueryString('')).toBe('');
+    expect(removeUrlQueryString('?')).toBe('');
+    expect(removeUrlQueryString('1')).toBe('1');
   });
 });
 

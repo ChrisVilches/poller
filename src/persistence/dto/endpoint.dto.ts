@@ -55,4 +55,9 @@ export class EndpointDto {
   @IsArray()
   @Validate(IsStringNumberBoolean)
   arguments: (string | number | boolean)[];
+
+  // TODO: IsBoolean works manually but not via pipes. Probably a framework bug.
+  @IsOptional()
+  @IsBoolean()
+  staticHtml: boolean;
 }

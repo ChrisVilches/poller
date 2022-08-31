@@ -85,6 +85,9 @@ export class Endpoint {
   @Column({ nullable: true })
   timeout?: Date;
 
+  @Column({ default: true })
+  staticHtml: boolean;
+
   @CreateDateColumn()
   createdAt: Date;
 

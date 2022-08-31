@@ -52,3 +52,5 @@ export const validateAndTransform = async (className: any, data: object) => {
   }
   return instance;
 };
+
+export const removeUrlQueryString = (url: string) => url.replace(/\?.*/, '');
