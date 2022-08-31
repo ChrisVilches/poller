@@ -43,7 +43,7 @@ export class FetchPendingEndpointsJob {
   }
 
   isTimedOut(now: Date, endpoint: Endpoint): boolean {
-    if (endpoint.timeout === null || typeof endpoint === 'undefined') {
+    if (endpoint.timeout === null || typeof endpoint.timeout === 'undefined') {
       return false;
     }
 
