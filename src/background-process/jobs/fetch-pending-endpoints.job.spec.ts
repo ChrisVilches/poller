@@ -1,42 +1,23 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { Argument } from '@persistence/entities/argument.entity';
+import { TestingModule } from '@nestjs/testing';
 import { Endpoint } from '@persistence/entities/endpoint.entity';
-import { Navigation } from '@persistence/entities/navigation.entity';
 import { mockEndpoint, mockEndpointInstance } from '@test/helpers/mockEndpoint';
 import { EndpointsService } from '@persistence/services/endpoints.service';
 import { FetchPendingEndpointsJob } from './fetch-pending-endpoints.job';
-import { BackgroundProcessModule } from '@background-process/background-process.module';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Polling } from '@persistence/entities/polling.entity';
 import { Repository } from 'typeorm';
 import * as moment from 'moment';
 import { shuffle } from 'lodash';
+import { createTestingModule } from '@test/helpers/createTestingModule';
 
-// TODO: Recycle code.
-//       Also, some of this code may be unnecessary.
 describe(FetchPendingEndpointsJob.name, () => {
-  let job: FetchPendingEndpointsJob;
   let moduleRef: TestingModule;
+  let job: FetchPendingEndpointsJob;
   let pollingsRepository: Repository<Polling>;
   let endpointsService: EndpointsService;
 
   beforeEach(async () => {
-    moduleRef = await Test.createTestingModule({
-      imports: [
-        TypeOrmModule.forRoot({
-          type: 'sqlite',
-          database: ':memory:',
-          dropSchema: true,
-          autoLoadEntities: true,
-          synchronize: true,
-        }),
-        TypeOrmModule.forFeature([Endpoint, Navigation, Argument]),
-        BackgroundProcessModule,
-      ],
-      providers: [],
-    }).compile();
-
+    moduleRef = await createTestingModule();
     job = moduleRef.get<FetchPendingEndpointsJob>(FetchPendingEndpointsJob);
     pollingsRepository = moduleRef.get<Repository<Polling>>(
       getRepositoryToken(Polling),

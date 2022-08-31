@@ -1,14 +1,11 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { TestingModule } from '@nestjs/testing';
 import { mockEndpoint } from '@test/helpers/mockEndpoint';
-import { Argument } from '@persistence/entities/argument.entity';
 import { Endpoint } from '@persistence/entities/endpoint.entity';
-import { Navigation } from '@persistence/entities/navigation.entity';
-import { EndpointsService } from '@persistence/services/endpoints.service';
 import { EndpointsController } from './endpoints.controller';
 import '@test/matchers/toThrowErrorType';
 import { EntityNotFoundError } from 'typeorm';
 import { ValidationError } from 'class-validator';
+import { createTestingModule } from '@test/helpers/createTestingModule';
 
 const wrongArgs: any = [1, null, 'aaaa'];
 
@@ -25,33 +22,23 @@ const expectStringsTrimmed = (endpoint: Endpoint) => {
 };
 
 describe(EndpointsController.name, () => {
+  let moduleRef: TestingModule;
   let controller: EndpointsController;
   let endpoint: Endpoint;
 
   beforeEach(async () => {
-    // TODO: Make it lighter. Recycle some code.
-    const module: TestingModule = await Test.createTestingModule({
-      controllers: [EndpointsController],
-      imports: [
-        TypeOrmModule.forRoot({
-          type: 'sqlite',
-          database: ':memory:',
-          dropSchema: true,
-          autoLoadEntities: true,
-          synchronize: true,
-        }),
-        TypeOrmModule.forFeature([Endpoint, Navigation, Argument]),
-      ],
-      providers: [EndpointsService],
-    }).compile();
-
-    controller = module.get<EndpointsController>(EndpointsController);
+    moduleRef = await createTestingModule();
+    controller = moduleRef.get<EndpointsController>(EndpointsController);
   });
 
   beforeEach(async () => {
     endpoint = await controller.create(
       mockEndpoint({ title: '   endpoint title  ' }),
     );
+  });
+
+  afterEach(async () => {
+    await moduleRef.close();
   });
 
   describe('findOne', () => {

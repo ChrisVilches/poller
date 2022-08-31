@@ -1,32 +1,17 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { TestingModule } from '@nestjs/testing';
 import { EndpointsService } from './endpoints.service';
-import { Argument } from '@persistence/entities/argument.entity';
 import { Endpoint } from '@persistence/entities/endpoint.entity';
-import { Navigation } from '@persistence/entities/navigation.entity';
 import { mockEndpoint } from '@test/helpers/mockEndpoint';
 import { ValidationError } from 'class-validator';
 import '@test/matchers/toThrowErrorType';
+import { createTestingModule } from '@test/helpers/createTestingModule';
 
 describe(EndpointsService.name, () => {
   let service: EndpointsService;
   let moduleRef: TestingModule;
 
   beforeEach(async () => {
-    moduleRef = await Test.createTestingModule({
-      imports: [
-        TypeOrmModule.forRoot({
-          type: 'sqlite',
-          database: ':memory:',
-          dropSchema: true,
-          autoLoadEntities: true,
-          synchronize: true,
-        }),
-        TypeOrmModule.forFeature([Endpoint, Navigation, Argument]),
-      ],
-      providers: [EndpointsService],
-    }).compile();
-
+    moduleRef = await createTestingModule();
     service = moduleRef.get<EndpointsService>(EndpointsService);
   });
 
