@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { performPolling } from '../../performPolling';
+import { performPolling } from '@scraping/performPolling';
 import { LessThan, Repository } from 'typeorm';
 import { Endpoint } from '@persistence/entities/endpoint.entity';
 import { Polling } from '@persistence/entities/polling.entity';

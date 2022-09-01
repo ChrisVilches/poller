@@ -1,4 +1,4 @@
-import { Transform, TransformFnParams } from 'class-transformer';
+import { Transform, TransformFnParams, Type } from 'class-transformer';
 import {
   IsArray,
   IsBoolean,
@@ -8,10 +8,12 @@ import {
   IsPositive,
   IsString,
   IsUrl,
-  Validate,
 } from 'class-validator';
 import { allRules } from '@rules/allRules';
-import { IsStringNumberBoolean } from '@persistence/validators/is-string-number-boolean.validator';
+import { validateAndTransform } from '../../util';
+import { ArgumentDto } from './argument.dto';
+import { NavigationDto } from './navigation.dto';
+import 'reflect-metadata';
 
 export class EndpointDto {
   @IsOptional()
@@ -48,13 +50,23 @@ export class EndpointDto {
 
   @IsOptional()
   @IsArray()
-  @IsString({ each: true })
-  navigations: string[];
+  @Transform((params: TransformFnParams) =>
+    params.value.map((arg: any) =>
+      validateAndTransform(ArgumentDto, { value: arg }),
+    ),
+  )
+  @Type(() => ArgumentDto)
+  arguments: any[];
 
+  @Transform((params: TransformFnParams) =>
+    params.value.map((selector: string) =>
+      validateAndTransform(NavigationDto, { selector }),
+    ),
+  )
+  @Type(() => NavigationDto)
   @IsOptional()
   @IsArray()
-  @Validate(IsStringNumberBoolean)
-  arguments: (string | number | boolean)[];
+  navigations: string[];
 
   // TODO: IsBoolean works manually but not via pipes. Probably a framework bug.
   @IsOptional()

@@ -1,6 +1,6 @@
 import axios from 'axios';
 import cheerio from 'cheerio';
-import { inspectArray, navigate } from './util';
+import { inspectArray, navigate } from '../util';
 import { allRules } from '@rules/allRules';
 import { Endpoint } from '@persistence/entities/endpoint.entity';
 import { getDynamicHTML } from './getDynamicHTML';

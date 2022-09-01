@@ -42,6 +42,9 @@
       ],
       "@test/*": [
         "test/*"
+      ],
+      "@scraping/*": [
+        "src/scraping/*"
       ]
     }
   }

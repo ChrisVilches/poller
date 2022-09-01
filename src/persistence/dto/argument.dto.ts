@@ -1,11 +1,16 @@
-import { IsIn, IsString, MinLength } from 'class-validator';
+import { Expose, Transform, TransformFnParams } from 'class-transformer';
+import { IsIn } from 'class-validator';
 
 export class ArgumentDto {
-  @IsString()
-  @MinLength(1)
-  @IsIn(['string', 'boolean', 'number'])
+  @Expose()
+  @IsIn(['number', 'string', 'boolean'])
+  @Transform((params: TransformFnParams) => {
+    return typeof params.obj.value;
+  })
   type: string;
 
-  @IsString()
+  @Transform((params: TransformFnParams) => {
+    return `${params.value}`;
+  })
   value: string;
 }

@@ -94,7 +94,8 @@
       "@interfaces/(.*)": "<rootDir>/src/interfaces/$1",
       "@notifiers/(.*)": "<rootDir>/src/notifiers/$1",
       "@rules/(.*)": "<rootDir>/src/rules/$1",
-      "@test/(.*)": "<rootDir>/test/$1"
+      "@test/(.*)": "<rootDir>/test/$1",
+      "@scraping/(.*)": "<rootDir>/src/scraping/$1"
     }
   },
   "_moduleAliases": {
@@ -104,6 +105,7 @@
     "@interfaces": "./src/interfaces",
     "@notifiers": "./src/notifiers",
     "@rules": "./src/rules",
-    "@test": "./test"
+    "@test": "./test",
+    "@scraping": "./src/scraping"
   }
 }

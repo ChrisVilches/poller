@@ -2,13 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { validateAndTransform } from '../../util';
 import { EntityNotFoundError, Repository } from 'typeorm';
-import { Argument } from '@persistence/entities/argument.entity';
 import { Endpoint } from '@persistence/entities/endpoint.entity';
-import { Navigation } from '@persistence/entities/navigation.entity';
 import * as moment from 'moment';
 import { EndpointDto } from '@persistence/dto/endpoint.dto';
-import { NavigationDto } from '@persistence/dto/navigation.dto';
-import { ArgumentDto } from '@persistence/dto/argument.dto';
 import { PartialType } from '@nestjs/mapped-types';
 
 @Injectable()
@@ -18,95 +14,12 @@ export class EndpointsService {
     private endpointsRepository: Repository<Endpoint>,
   ) {}
 
-  async populateFromJson(jsonData: any[]) {
-    for (const endpoint of jsonData) {
-      const {
-        rule,
-        title,
-        url,
-        enabled,
-        periodMinutes,
-        notificationMessage,
-        not,
-      } = endpoint;
-      const e = this.endpointsRepository.create({
-        rule,
-        title,
-        url,
-        enabled,
-        periodMinutes,
-        notificationMessage,
-        not,
-        type: 'html',
-        navigations: [],
-        arguments: [],
-      });
-
-      e.navigations = (endpoint.navigation || []).map((selector: string) => {
-        const n = new Navigation();
-        n.selector = selector;
-        return n;
-      });
-
-      e.arguments = (endpoint.args || []).map((val: string) => {
-        const a = new Argument();
-        a.type = typeof val;
-        a.value = String(val);
-        return a;
-      });
-
-      await this.endpointsRepository.save(e);
-    }
-  }
-
   async create(endpointDto: EndpointDto): Promise<Endpoint> {
     const created = await this.endpointsRepository.save({
-      ...(await this.buildEndpoint(endpointDto)),
+      ...(await validateAndTransform(EndpointDto, endpointDto)),
     });
 
     return await this.findOne(created.id);
-  }
-
-  private async buildEndpoint(obj: any, partial = false) {
-    const convertNavigation = async (selector: string) => {
-      const nav = new Navigation();
-      Object.assign(
-        nav,
-        await validateAndTransform(NavigationDto, { selector }),
-      );
-      return nav;
-    };
-
-    const convertArgument = async (value: string | number | boolean) => {
-      const arg = new Argument();
-      const type = typeof value;
-      value = `${value}`;
-      Object.assign(
-        arg,
-        { type, value },
-        await validateAndTransform(ArgumentDto, { type, value }),
-      );
-      return arg;
-    };
-
-    const returnObj: any = await validateAndTransform(
-      partial ? PartialType(EndpointDto) : EndpointDto,
-      obj,
-    );
-
-    if ('navigations' in obj) {
-      returnObj.navigations = await Promise.all(
-        (obj.navigations || [])?.map(convertNavigation),
-      );
-    }
-
-    if ('arguments' in obj) {
-      returnObj.arguments = await Promise.all(
-        (obj.arguments || [])?.map(convertArgument),
-      );
-    }
-
-    return returnObj;
   }
 
   async clearTimeout(id: number) {
@@ -123,7 +36,7 @@ export class EndpointsService {
 
     await this.endpointsRepository.save({
       id,
-      ...(await this.buildEndpoint(endpointDto, true)),
+      ...(await validateAndTransform(PartialType(EndpointDto), endpointDto)),
     });
 
     return await this.findOne(id);

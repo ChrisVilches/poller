@@ -1,5 +1,5 @@
 import { plainToInstance } from 'class-transformer';
-import { validate } from 'class-validator';
+import { validateSync } from 'class-validator';
 
 export type ComparisonOperator = '==' | '>=' | '<=' | '>' | '<';
 
@@ -44,9 +44,15 @@ export const navigate = ($: any, navigationList: string[]) => {
 export const inspectArray = (arr: any[]) =>
   arr.map((v) => `${v} (${typeof v})`).join(', ');
 
-export const validateAndTransform = async (className: any, data: object) => {
+/**
+ * Implementation:
+ * (1) Calls `plainToInstance` first to transform, and then
+ * (2) Calls `validateSync` to validate.
+ */
+export const validateAndTransform = (className: any, data: object) => {
   const instance: object = plainToInstance(className, data);
-  const error = await validate(instance);
+  const error = validateSync(instance);
+
   if (error.length) {
     throw error[0];
   }

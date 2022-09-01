@@ -140,10 +140,34 @@ describe(replaceTokens.name, () => {
     expect(replaceTokens('', { count: 124 })).toBe('');
   });
 
+  it('converts the string if the string is wrong (converts only the parts with correct format)', () => {
+    expect(
+      replaceTokens('some %count%%name%%%m%AA%% count%', {
+        count: 15,
+        name: ' the_name ',
+      }),
+    ).toBe('some 15 the_name %%m%AA%% count%');
+  });
+
   it('replaces the token even if there are non-space characters around it', () => {
     expect(replaceTokens('here is the%count%token', { count: 2000 })).toBe(
       'here is the2000token',
     );
+  });
+
+  it('replaces booleans correctly', () => {
+    expect(
+      replaceTokens('should it notify: (%should%)', { should: true }),
+    ).toBe('should it notify: (true)');
+    expect(
+      replaceTokens('should it notify: (%should%)', { should: false }),
+    ).toBe('should it notify: (false)');
+  });
+
+  it('is case sensitive', () => {
+    expect(
+      replaceTokens('should it notify: (%Should%)', { should: true }),
+    ).toBe('should it notify: (%Should%)');
   });
 });
 
