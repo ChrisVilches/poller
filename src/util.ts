@@ -53,4 +53,20 @@ export const validateAndTransform = async (className: any, data: object) => {
   return instance;
 };
 
-export const removeUrlQueryString = (url: string) => url.replace(/\?.*/, '');
+const tokenReplaceRegex = /%([A-Za-z0-9_]+)%/g;
+
+export const replaceTokens = (str: string, tokens: object) => {
+  return str.replace(tokenReplaceRegex, (match: string) => {
+    const token = match.substring(1, match.length - 1);
+
+    if (token in tokens) {
+      return tokens[token as keyof typeof tokens];
+    }
+    return match;
+  });
+};
+
+const removeUrlQueryStringRegex = /\?.*/;
+
+export const removeUrlQueryString = (url: string) =>
+  url.replace(removeUrlQueryStringRegex, '');

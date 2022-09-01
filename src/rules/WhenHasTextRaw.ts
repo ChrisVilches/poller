@@ -3,10 +3,13 @@ import {
   isValidComparisonOperator,
   comparisonOperator,
   ComparisonOperator,
+  replaceTokens,
 } from '../util';
 import { Rule } from './Rule';
 
 export class WhenHasTextRaw implements Rule {
+  private latestCount = 0;
+
   execute(args: (string | number | boolean)[]) {
     const [text, times, op = '=='] = args;
 
@@ -15,6 +18,16 @@ export class WhenHasTextRaw implements Rule {
       times as number,
       op as ComparisonOperator,
     );
+  }
+
+  messageFromLatestResult(inputMessage?: string): string | undefined {
+    if (inputMessage === null || typeof inputMessage === 'undefined') {
+      return undefined;
+    }
+
+    return replaceTokens(inputMessage, {
+      count: this.latestCount,
+    });
   }
 
   private executeAux(
@@ -26,11 +39,14 @@ export class WhenHasTextRaw implements Rule {
       const html = dom.text();
       const regex = new RegExp(text, 'gi');
       const count = (html.match(regex) || []).length;
+
+      this.latestCount = count;
+
       return comparisonOperator(op, count, times);
     };
   }
 
-  validate(args: any[]) {
+  validate(args: any[]): boolean {
     if (![2, 3].includes(args.length)) return false;
 
     const [text, times, op = '=='] = args;

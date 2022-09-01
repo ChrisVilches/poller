@@ -25,4 +25,8 @@ export class PollingDto {
   @IsOptional()
   @IsString()
   error: string;
+
+  @IsOptional()
+  @IsString()
+  computedMessage?: string;
 }

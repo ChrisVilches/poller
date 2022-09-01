@@ -5,6 +5,7 @@ import {
   inspectArray,
   navigate,
   removeUrlQueryString,
+  replaceTokens,
 } from './util';
 
 describe(comparisonOperator.name, () => {
@@ -94,6 +95,55 @@ describe(removeUrlQueryString.name, () => {
     expect(removeUrlQueryString('')).toBe('');
     expect(removeUrlQueryString('?')).toBe('');
     expect(removeUrlQueryString('1')).toBe('1');
+  });
+});
+
+describe(replaceTokens.name, () => {
+  it('replaces it correctly', () => {
+    expect(replaceTokens('The count is %count%', { count: 84 })).toBe(
+      'The count is 84',
+    );
+  });
+
+  it('replaces it correctly when it is repeated', () => {
+    expect(
+      replaceTokens('The count is %count%, and %count%', { count: 14 }),
+    ).toBe('The count is 14, and 14');
+  });
+
+  it('replaces multiple tokens', () => {
+    expect(
+      replaceTokens('My name is %name% and my age is %age%', {
+        name: 'John',
+        age: 100,
+      }),
+    ).toBe('My name is John and my age is 100');
+  });
+
+  it('ignores tokens that are not present', () => {
+    expect(
+      replaceTokens('The count is %count%, and %hello% world', { count: 17 }),
+    ).toBe('The count is 17, and %hello% world');
+  });
+
+  it('ignores tokens that have a typo (extra space)', () => {
+    expect(replaceTokens('The number is % number%', { number: 1000 })).toBe(
+      'The number is % number%',
+    );
+  });
+
+  it('returns the original string if there are no tokens', () => {
+    expect(replaceTokens('hello world', { count: 24 })).toBe('hello world');
+  });
+
+  it('handles empty string correctly', () => {
+    expect(replaceTokens('', { count: 124 })).toBe('');
+  });
+
+  it('replaces the token even if there are non-space characters around it', () => {
+    expect(replaceTokens('here is the%count%token', { count: 2000 })).toBe(
+      'here is the2000token',
+    );
   });
 });
 

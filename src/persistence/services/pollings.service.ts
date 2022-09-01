@@ -83,9 +83,12 @@ export class PollingsService {
       //       It's also not OK if I move it to the background process module, because polling
       //       is not necessarily a background job (it can be done manually too). So where?
       //       Maybe it's own POJO model (it doesn't depend on NestJS).
-      const { status, shouldNotify } = await performPolling(endpoint);
+      const { status, shouldNotify, computedMessage } = await performPolling(
+        endpoint,
+      );
       polling.responseCode = status;
       polling.shouldNotify = shouldNotify;
+      polling.computedMessage = computedMessage;
       return polling;
     } catch (e) {
       polling.error = e.message;

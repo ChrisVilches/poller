@@ -4,12 +4,14 @@ import { inspectArray, navigate } from './util';
 import { allRules } from '@rules/allRules';
 import { Endpoint } from '@persistence/entities/endpoint.entity';
 import { getDynamicHTML } from './getDynamicHTML';
+import { Rule } from '@rules/Rule';
 
 // TODO: Move this file to some module.
 
 interface PollingResult {
   shouldNotify: boolean;
   status: number;
+  computedMessage?: string;
 }
 
 export const performPolling = async (
@@ -19,7 +21,7 @@ export const performPolling = async (
 
   const args = endpoint.args();
 
-  const ruleInstance = new (allRules as any)[rule]();
+  const ruleInstance: Rule = new (allRules as any)[rule]();
 
   if (!ruleInstance.validate(args)) {
     throw new Error(`Invalid arguments: [${inspectArray(args)}]`);
@@ -54,5 +56,8 @@ export const performPolling = async (
   return {
     shouldNotify: not ? !shouldNotify : shouldNotify,
     status,
+    computedMessage: ruleInstance.messageFromLatestResult(
+      endpoint.notificationMessage,
+    ),
   };
 };

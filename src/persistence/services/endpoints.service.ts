@@ -109,6 +109,10 @@ export class EndpointsService {
     return returnObj;
   }
 
+  async clearTimeout(id: number) {
+    await this.endpointsRepository.update({ id }, { timeout: null } as any);
+  }
+
   async update(
     id: number,
     endpointDto: Partial<EndpointDto>,
@@ -127,6 +131,9 @@ export class EndpointsService {
 
   findAll() {
     return this.endpointsRepository.find({
+      order: {
+        id: 'ASC',
+      },
       relations: {
         arguments: true,
         navigations: true,

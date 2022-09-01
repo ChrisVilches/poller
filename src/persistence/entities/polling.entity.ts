@@ -36,6 +36,9 @@ export class Polling {
   @ManyToOne(() => Endpoint, (endpoint) => endpoint.navigations)
   endpoint: Endpoint;
 
+  @Column({ nullable: true })
+  computedMessage?: string;
+
   @Exclude()
   @Column()
   endpointId: number;
