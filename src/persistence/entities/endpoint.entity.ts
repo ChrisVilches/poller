@@ -1,3 +1,5 @@
+import { ArgType } from '@persistence/enum/arg-type.enum';
+import { RequestType } from '@persistence/enum/request-type.enum';
 import { Expose, Transform, TransformFnParams } from 'class-transformer';
 import {
   Entity,
@@ -7,13 +9,13 @@ import {
   UpdateDateColumn,
   CreateDateColumn,
 } from 'typeorm';
-import { ArgType, Argument } from './argument.entity';
+import { Argument } from './argument.entity';
 import { Navigation } from './navigation.entity';
 
 const sortById = (arr: (Navigation | Argument)[]) =>
   arr.sort((a, b) => a.id - b.id);
 
-const cleanArguments = (args: any[]) => 
+const cleanArguments = (args: any[]) =>
   sortById(args || []).map((a: any) => {
     switch (a.type) {
       case ArgType.BOOLEAN:
@@ -23,18 +25,12 @@ const cleanArguments = (args: any[]) =>
       case ArgType.NUMBER:
         return +a.value;
       default:
-        throw new Error(`Wrong argument type came from the database`);
+        throw new Error('Wrong argument type came from the database');
     }
   });
 
 const cleanNavigations = (nav: Navigation[]) =>
   sortById(nav).map((n: Navigation) => n.selector);
-
-// TODO: Move somewhere else, along with the other enums
-export enum RequestType {
-  HTML,
-  JSON
-}
 
 @Entity()
 export class Endpoint {
@@ -48,11 +44,13 @@ export class Endpoint {
   enabled: boolean;
 
   @Column({
-    type: "enum",
+    type: 'enum',
     enum: RequestType,
     default: RequestType.HTML,
   })
-  @Transform((params: TransformFnParams) => params.value === RequestType.HTML ? 'html' : 'json')
+  @Transform((params: TransformFnParams) =>
+    params.value === RequestType.HTML ? 'html' : 'json',
+  )
   type: RequestType;
 
   @Column()

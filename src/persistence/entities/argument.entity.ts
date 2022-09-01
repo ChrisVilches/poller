@@ -1,13 +1,6 @@
+import { ArgType } from '@persistence/enum/arg-type.enum';
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 import { Endpoint } from './endpoint.entity';
-
-
-export enum ArgType {
-  NUMBER,
-  STRING,
-  BOOLEAN,
-  INVALID
-}
 
 @Entity()
 export class Argument {
@@ -15,8 +8,8 @@ export class Argument {
   id: number;
 
   @Column({
-    type: "enum",
-    enum: ArgType
+    type: 'enum',
+    enum: ArgType,
   })
   type: ArgType;
 

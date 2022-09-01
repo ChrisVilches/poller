@@ -1,0 +1,201 @@
+{
+  "client": "Thunder Client",
+  "collectionName": "Test",
+  "dateExported": "2022-09-01T10:44:50.819Z",
+  "version": "1.1",
+  "folders": [],
+  "requests": [
+    {
+      "_id": "2d861024-2ee2-4568-b373-1cb644a57cca",
+      "colId": "aa6f5700-fefe-4e1e-ae7d-cf5923d2dd76",
+      "containerId": "",
+      "name": "GET endpoints",
+      "url": "localhost:3000/endpoints",
+      "method": "GET",
+      "sortNum": 10000,
+      "created": "2022-09-01T10:34:19.582Z",
+      "modified": "2022-09-01T10:34:19.582Z",
+      "headers": [],
+      "params": [],
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "200"
+        },
+        {
+          "type": "Content-Type",
+          "custom": "",
+          "action": "equal",
+          "value": "application/json; charset=utf-8"
+        }
+      ]
+    },
+    {
+      "_id": "1fe3e83a-d9eb-4d7c-bf4a-3dd336604301",
+      "colId": "aa6f5700-fefe-4e1e-ae7d-cf5923d2dd76",
+      "containerId": "",
+      "name": "Create endpoint",
+      "url": "localhost:3000/endpoints",
+      "method": "POST",
+      "sortNum": 20000,
+      "created": "2022-09-01T10:38:15.898Z",
+      "modified": "2022-09-01T10:38:15.898Z",
+      "headers": [],
+      "params": [],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"url\": \"https://www.google.com\",\n  \"title\": \" the title \",\n  \"type\": \"HTML\",\n  \"rule\": \"WhenHasTextRaw\"\n}",
+        "form": []
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "201"
+        },
+        {
+          "type": "json-query",
+          "custom": "json.title",
+          "action": "equal",
+          "value": "the title"
+        },
+        {
+          "type": "json-query",
+          "custom": "json.type",
+          "action": "equal",
+          "value": "html"
+        },
+        {
+          "type": "json-query",
+          "custom": "json.timeout",
+          "action": "equal",
+          "value": "null"
+        }
+      ]
+    },
+    {
+      "_id": "4808ffc0-2e8d-4a3f-91c6-77524ebfd376",
+      "colId": "aa6f5700-fefe-4e1e-ae7d-cf5923d2dd76",
+      "containerId": "",
+      "name": "Create endpoint with typo",
+      "url": "localhost:3000/endpoints",
+      "method": "POST",
+      "sortNum": 30000,
+      "created": "2022-09-01T10:39:25.593Z",
+      "modified": "2022-09-01T10:39:25.593Z",
+      "headers": [],
+      "params": [],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"url\": \"https://www.google.com\",\n  \"title\": \" the title \",\n  \"type\": \"HTML\",\n  \"rule\": \"WhenHasTextRaw\",\n  \"navigation\": [\n  ]\n}",
+        "form": []
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "400"
+        },
+        {
+          "type": "json-query",
+          "custom": "json.message.0",
+          "action": "equal",
+          "value": "property navigation should not exist"
+        }
+      ]
+    },
+    {
+      "_id": "5fe03ca6-d0ce-47dd-bb24-e1d73473f236",
+      "colId": "aa6f5700-fefe-4e1e-ae7d-cf5923d2dd76",
+      "containerId": "",
+      "name": "Create endpoint with navigations",
+      "url": "localhost:3000/endpoints",
+      "method": "POST",
+      "sortNum": 40000,
+      "created": "2022-09-01T10:40:22.240Z",
+      "modified": "2022-09-01T10:40:22.240Z",
+      "headers": [],
+      "params": [],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"url\": \"https://www.google.com\",\n  \"title\": \" the title \",\n  \"type\": \"HTML\",\n  \"rule\": \"WhenHasTextRaw\",\n  \"navigations\": [\n    \"  aa \",\n    \" b \"\n  ]\n}",
+        "form": []
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "201"
+        },
+        {
+          "type": "json-query",
+          "custom": "json.navigations.0",
+          "action": "equal",
+          "value": "aa"
+        },
+        {
+          "type": "json-query",
+          "custom": "json.navigations.1",
+          "action": "equal",
+          "value": "b"
+        }
+      ]
+    },
+    {
+      "_id": "06f8f522-89b0-4d33-83a2-99b40cbf9ebe",
+      "colId": "aa6f5700-fefe-4e1e-ae7d-cf5923d2dd76",
+      "containerId": "",
+      "name": "Create endpoint with arguments",
+      "url": "localhost:3000/endpoints",
+      "method": "POST",
+      "sortNum": 50000,
+      "created": "2022-09-01T10:42:36.262Z",
+      "modified": "2022-09-01T10:43:44.992Z",
+      "headers": [],
+      "params": [],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"url\": \"https://www.google.com\",\n  \"title\": \" the title \",\n  \"type\": \"HTML\",\n  \"rule\": \"WhenHasTextRaw\",\n  \"arguments\": [\n    \" aa \",\n    1,\n    true\n  ]\n}",
+        "form": []
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "201"
+        },
+        {
+          "type": "json-query",
+          "custom": "json.arguments.0",
+          "action": "equal",
+          "value": " aa "
+        },
+        {
+          "type": "json-query",
+          "custom": "json.arguments.1",
+          "action": "equal",
+          "value": "1"
+        },
+        {
+          "type": "json-query",
+          "custom": "json.arguments.2",
+          "action": "equal",
+          "value": "true"
+        }
+      ]
+    }
+  ],
+  "settings": {
+    "runOptions": {
+      "delay": 0,
+      "iterations": 3,
+      "dataFilePath": ""
+    }
+  }
+}

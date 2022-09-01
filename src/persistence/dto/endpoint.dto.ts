@@ -16,7 +16,7 @@ import { Trim } from '@persistence/transformations/trim.transformation';
 import 'reflect-metadata';
 import { PartialType } from '@nestjs/mapped-types';
 import { Type } from 'class-transformer';
-import { RequestType } from '@persistence/entities/endpoint.entity';
+import { RequestType } from '@persistence/enum/request-type.enum';
 
 export class EndpointDto {
   @IsOptional()
@@ -31,9 +31,9 @@ export class EndpointDto {
   @IsIn(Object.keys(allRules))
   rule: string;
 
-  // TODO: Cannot send a "html" string from the HTTP client. Wow... this framework sucks.
-  //       Create a transformer pipe.
-  @IsIn([RequestType.HTML, RequestType.JSON], { message: "Only HTML and JSON are supported" })
+  @IsIn([RequestType.HTML, RequestType.JSON], {
+    message: 'Only HTML and JSON are supported',
+  })
   type: RequestType;
 
   @IsUrl()
@@ -70,7 +70,7 @@ export class EndpointDto {
   staticHtml: boolean;
 }
 
-// TODO: Observation, for update method, if I don't use THIS type of classes (with the PartialType(...))
-//       it throws a unprocessable entity without explanation. Before, I was using Partial<EndpointDto>
-//       which failed. Eventually delete this comment.
+/**
+ * Must use this class for patch method. Using `Partial<T>` does not work.
+ */
 export class PartialEndpointDto extends PartialType(EndpointDto) {}

@@ -6,7 +6,7 @@ import { NavigationDto } from './navigation.dto';
 import { ArgumentDto } from './argument.dto';
 import { validateAndTransform } from '../../util';
 import '@test/matchers/toThrowErrorType';
-import { ArgType } from '@persistence/entities/argument.entity';
+import { argTypeFromValue } from '@persistence/enum/arg-type.enum';
 
 describe(EndpointDto.name, () => {
   it('trims title', () => {
@@ -32,8 +32,7 @@ describe(EndpointDto.name, () => {
     const e = new EndpointDto();
     e.arguments = [1, 'some string', true].map((value: any) => {
       const a = new ArgumentDto();
-      // TODO: Improve this line!
-      a.type = typeof value === 'number' ? ArgType.NUMBER : (typeof value === 'boolean' ? ArgType.BOOLEAN : ArgType.STRING);
+      a.type = argTypeFromValue(value);
       a.value = `${value}`;
       return a;
     }) as any;

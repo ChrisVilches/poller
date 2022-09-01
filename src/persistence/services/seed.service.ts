@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ArgType, Argument } from '@persistence/entities/argument.entity';
-import { Endpoint, RequestType } from '@persistence/entities/endpoint.entity';
+import { Argument } from '@persistence/entities/argument.entity';
+import { Endpoint } from '@persistence/entities/endpoint.entity';
 import { Navigation } from '@persistence/entities/navigation.entity';
+import { argTypeFromValue } from '@persistence/enum/arg-type.enum';
+import { RequestType } from '@persistence/enum/request-type.enum';
 import { Repository } from 'typeorm';
 
 @Injectable()
@@ -44,8 +46,7 @@ export class SeedService {
 
       e.arguments = (endpoint.args || []).map((val: string) => {
         const a = new Argument();
-        // TODO: This code is garbage.
-        a.type = typeof val === 'number' ? ArgType.NUMBER : (typeof val === 'boolean' ? ArgType.BOOLEAN : ArgType.STRING);
+        a.type = argTypeFromValue(val);
         a.value = String(val);
         return a;
       });

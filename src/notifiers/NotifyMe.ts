@@ -21,10 +21,10 @@ export class NotifyMe implements Notifiable {
 
     const { stdout, stderr } = spawnSync('notify_me', args.flat());
 
-    this.logger.debug(stdout.toString());
+    this.logger.debug(stdout);
 
-    if (stderr.toString()) {
-      this.logger.error(stderr.toString());
+    if (stderr !== null && stderr.toString().length) {
+      this.logger.error(stderr);
     }
   }
 }
