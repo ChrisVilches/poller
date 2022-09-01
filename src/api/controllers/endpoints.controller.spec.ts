@@ -6,6 +6,8 @@ import '@test/matchers/toThrowErrorType';
 import { EntityNotFoundError } from 'typeorm';
 import { ValidationError } from 'class-validator';
 import { createTestingModule } from '@test/helpers/createTestingModule';
+import { convertNav } from '@test/helpers/convertNav';
+import { convertArgs } from '@test/helpers/convertArgs';
 
 const wrongArgs: any = [1, null, 'aaaa'];
 
@@ -20,6 +22,9 @@ const expectStringsTrimmed = (endpoint: Endpoint) => {
   expect(endpoint.navigation()).toStrictEqual(['nav1', 'nav2']);
   expect(endpoint.args()).toStrictEqual([11, '  abc  ', true]);
 };
+
+// TODO: Some of these tests verify that the endpoints throw a validation error, but they don't validate that
+//       the pipes are returning a Bad Request. Must test this as well (that pipes are working as expected).
 
 describe(EndpointsController.name, () => {
   let moduleRef: TestingModule;
@@ -120,26 +125,31 @@ describe(EndpointsController.name, () => {
     });
 
     it('returns the transformed data', async () => {
-      const response = await controller.update(
-        endpoint.id,
-        endpointStringsNonTrimmed,
-      );
+      const response = await controller.update(endpoint.id, {
+        title: endpointStringsNonTrimmed.title,
+        navigations: convertNav(endpointStringsNonTrimmed.navigations),
+        arguments: convertArgs(endpointStringsNonTrimmed.arguments) as any,
+      });
       expectStringsTrimmed(response);
     });
 
     it('transforms nested data', async () => {
-      await controller.update(endpoint.id, endpointStringsNonTrimmed);
+      await controller.update(endpoint.id, {
+        title: endpointStringsNonTrimmed.title,
+        navigations: convertNav(endpointStringsNonTrimmed.navigations),
+        arguments: convertArgs(endpointStringsNonTrimmed.arguments) as any,
+      });
       expectStringsTrimmed((await controller.findOne(1)) as Endpoint);
     });
 
     it('validates navigation', async () => {
       await expect(async () => {
-        await controller.update(endpoint.id, { navigations: [''] });
+        await controller.update(endpoint.id, { navigations: convertNav(['']) });
       }).toThrowErrorType(ValidationError);
 
       await expect(async () => {
         await controller.update(endpoint.id, {
-          navigations: ['hello'],
+          navigations: convertNav(['hello']),
         });
       }).not.toThrowErrorType(ValidationError);
     });
@@ -151,7 +161,7 @@ describe(EndpointsController.name, () => {
 
       await expect(async () => {
         await controller.update(endpoint.id, {
-          arguments: ['hello', 111, true],
+          arguments: convertArgs(['hello', 111, true]) as any,
         });
       }).not.toThrowErrorType(ValidationError);
     });

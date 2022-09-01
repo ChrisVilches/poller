@@ -6,8 +6,6 @@ import { Endpoint } from '@persistence/entities/endpoint.entity';
 import { getDynamicHTML } from './getDynamicHTML';
 import { Rule } from '@rules/Rule';
 
-// TODO: Move this file to some module.
-
 interface PollingResult {
   shouldNotify: boolean;
   status: number;

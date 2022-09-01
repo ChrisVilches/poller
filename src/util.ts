@@ -51,7 +51,11 @@ export const inspectArray = (arr: any[]) =>
  */
 export const validateAndTransform = (className: any, data: object) => {
   const instance: object = plainToInstance(className, data);
-  const error = validateSync(instance);
+  
+  const error = validateSync(instance, {
+    whitelist: true,
+    forbidNonWhitelisted: true
+  });
 
   if (error.length) {
     throw error[0];

@@ -1,13 +1,24 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 import { Endpoint } from './endpoint.entity';
 
+
+export enum ArgType {
+  NUMBER,
+  STRING,
+  BOOLEAN,
+  INVALID
+}
+
 @Entity()
 export class Argument {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  type: string;
+  @Column({
+    type: "enum",
+    enum: ArgType
+  })
+  type: ArgType;
 
   @Column()
   value: string;

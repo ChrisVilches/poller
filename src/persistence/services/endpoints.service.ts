@@ -34,10 +34,11 @@ export class EndpointsService {
       throw new EntityNotFoundError(Endpoint.name, {});
     }
 
-    await this.endpointsRepository.save({
+    const objectToSave = {
       id,
-      ...(await validateAndTransform(PartialType(EndpointDto), endpointDto)),
-    });
+      ...(await validateAndTransform(PartialType(EndpointDto), endpointDto))
+    }
+    await this.endpointsRepository.save(objectToSave);
 
     return await this.findOne(id);
   }

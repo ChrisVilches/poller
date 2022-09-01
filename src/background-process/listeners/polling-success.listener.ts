@@ -15,8 +15,7 @@ export class PollingSuccessListener {
   async handlePollingSuccess(polling: Polling) {
     const endpoint: Endpoint = polling.endpoint;
 
-    // TODO: This could be implemented as entity method.
-    const title = endpoint.title || endpoint.url;
+    const title = endpoint.formattedTitle();
     const content = polling.computedMessage || '';
 
     this.notificationsQueue.add({

@@ -1,16 +1,31 @@
+import { ArgType } from '@persistence/entities/argument.entity';
+import { ToString } from '@persistence/transformations/to-string.transformation';
 import { Expose, Transform, TransformFnParams } from 'class-transformer';
-import { IsIn } from 'class-validator';
+import { Allow, IsIn } from 'class-validator';
+
+const argEnumValue = (value: any): ArgType => {
+  if(typeof value === 'number') {
+    return ArgType.NUMBER;
+  }
+  if(typeof value === 'boolean') {
+    return ArgType.BOOLEAN;
+  }
+  if(typeof value === 'string') {
+    return ArgType.STRING;
+  }
+
+  return ArgType.INVALID;
+}
 
 export class ArgumentDto {
-  @Expose()
-  @IsIn(['number', 'string', 'boolean'])
-  @Transform((params: TransformFnParams) => {
-    return typeof params.obj.value;
-  })
-  type: string;
-
-  @Transform((params: TransformFnParams) => {
-    return `${params.value}`;
-  })
+  @ToString()
+  @Allow()
   value: string;
+
+  @Expose()
+  @Allow()
+  @IsIn([ArgType.BOOLEAN, ArgType.NUMBER, ArgType.STRING], { message: "Only numbers, strings, or booleans allowed" })
+  @Transform((params: TransformFnParams) => argEnumValue(params.obj.value))
+  type: ArgType;
 }
+export const a = Expose;

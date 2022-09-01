@@ -9,6 +9,12 @@ import { Polling } from '@persistence/entities/polling.entity';
 import { PersistenceModule } from '@persistence/persistence.module';
 import { PollingsService } from '@persistence/services/pollings.service';
 
+// TODO: Probably broken. The app probably doesn't support SQLite anymore.
+
+// TODO: There's also another bug (unrelated to this file) that says that some promise was
+//       unhandled. The error appears while running the test suite. I don't know where it
+//       comes from.
+
 export const createTestingModule = async (): Promise<TestingModule> => {
   return await Test.createTestingModule({
     controllers: [EndpointsController, PollingsService],

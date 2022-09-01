@@ -1,4 +1,4 @@
-import { Transform, TransformFnParams } from 'class-transformer';
+import { Expose, Transform, TransformFnParams } from 'class-transformer';
 import {
   Entity,
   Column,
@@ -7,28 +7,34 @@ import {
   UpdateDateColumn,
   CreateDateColumn,
 } from 'typeorm';
-import { Argument } from './argument.entity';
+import { ArgType, Argument } from './argument.entity';
 import { Navigation } from './navigation.entity';
 
 const sortById = (arr: (Navigation | Argument)[]) =>
   arr.sort((a, b) => a.id - b.id);
 
-const cleanArguments = (args: any) =>
-  sortById(args).map((a: any) => {
+const cleanArguments = (args: any[]) => 
+  sortById(args || []).map((a: any) => {
     switch (a.type) {
-      case 'boolean':
+      case ArgType.BOOLEAN:
         return a.value === 'true';
-      case 'string':
+      case ArgType.STRING:
         return a.value;
-      case 'number':
+      case ArgType.NUMBER:
         return +a.value;
       default:
-        throw new Error('Wrong argument type came from the database');
+        throw new Error(`Wrong argument type came from the database`);
     }
   });
 
 const cleanNavigations = (nav: Navigation[]) =>
   sortById(nav).map((n: Navigation) => n.selector);
+
+// TODO: Move somewhere else, along with the other enums
+export enum RequestType {
+  HTML,
+  JSON
+}
 
 @Entity()
 export class Endpoint {
@@ -41,8 +47,13 @@ export class Endpoint {
   @Column({ default: false })
   enabled: boolean;
 
-  @Column()
-  type: string;
+  @Column({
+    type: "enum",
+    enum: RequestType,
+    default: RequestType.HTML,
+  })
+  @Transform((params: TransformFnParams) => params.value === RequestType.HTML ? 'html' : 'json')
+  type: RequestType;
 
   @Column()
   url: string;
@@ -67,12 +78,17 @@ export class Endpoint {
     return cleanArguments(this.arguments);
   }
 
+  formattedTitle() {
+    return this.title || this.url;
+  }
+
   @Transform((params: TransformFnParams) => cleanNavigations(params.value))
   @OneToMany(() => Navigation, (nav) => nav.endpoint, {
     cascade: ['insert', 'update'],
   })
   navigations: Navigation[];
 
+  @Expose()
   @Transform((params: TransformFnParams) => cleanArguments(params.value))
   @OneToMany(() => Argument, (arg) => arg.endpoint, {
     cascade: ['insert', 'update'],

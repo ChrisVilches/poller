@@ -5,6 +5,8 @@ import { mockEndpoint } from '@test/helpers/mockEndpoint';
 import { ValidationError } from 'class-validator';
 import '@test/matchers/toThrowErrorType';
 import { createTestingModule } from '@test/helpers/createTestingModule';
+import { convertNav } from '@test/helpers/convertNav';
+import { convertArgs } from '@test/helpers/convertArgs';
 
 describe(EndpointsService.name, () => {
   let service: EndpointsService;
@@ -129,11 +131,37 @@ describe(EndpointsService.name, () => {
       }).toThrowErrorType(ValidationError);
     });
 
+    it('rejects incorrect navigation (trim function does not crash)', async () => {
+      await expect(async () => {
+        await service.update(
+          endpoint.id,
+          mockEndpoint({ navigations: [' a ', true] }),
+        );
+      }).toThrowErrorType(ValidationError);
+    });
+
     it('rejects incorrect arguments', async () => {
       await expect(async () => {
         await service.update(
           endpoint.id,
-          mockEndpoint({ arguments: [' a ', null, ' b ', ''] }),
+          mockEndpoint({ arguments: [' a ', null, ' b '] }),
+        );
+      }).toThrowErrorType(ValidationError);
+    });
+
+    it('rejects incorrect arguments (includes function)', async () => {
+      await expect(async () => {
+        await service.update(
+          endpoint.id,
+          mockEndpoint({
+            arguments: [
+              ' a ',
+              ' b ',
+              () => {
+                console.log();
+              },
+            ],
+          }),
         );
       }).toThrowErrorType(ValidationError);
     });
@@ -147,14 +175,18 @@ describe(EndpointsService.name, () => {
     });
 
     it('keeps previous navigations if the data omits that property', async () => {
-      await service.update(endpoint.id, { arguments: ['text', 123] });
+      await service.update(endpoint.id, {
+        arguments: convertArgs(['text', 123]) as any,
+      });
       const found = await service.findOne(endpoint.id);
       expect(found.navigation()).toStrictEqual(['abc', 'def']);
       expect(found.args()).toStrictEqual(['text', 123]);
     });
 
     it('keeps previous arguments if the data omits that property', async () => {
-      await service.update(endpoint.id, { navigations: [' nav1 ', 'nav2 '] });
+      await service.update(endpoint.id, {
+        navigations: convertNav([' nav1 ', 'nav2 ']),
+      });
       const found = await service.findOne(endpoint.id);
       expect(found.navigation()).toStrictEqual(['nav1', 'nav2']);
       expect(found.args()).toStrictEqual(['xyz', 1]);
@@ -163,9 +195,12 @@ describe(EndpointsService.name, () => {
 
   describe('findEnabled', () => {
     it('fetches only the enabled ones', async () => {
-      await service.create(mockEndpoint({ enabled: true }));
-      await service.create(mockEndpoint({ enabled: true }));
-      await service.create(mockEndpoint({ enabled: false }));
+      const e1 = await service.create(mockEndpoint());
+      const e2 = await service.create(mockEndpoint());
+      const e3 = await service.create(mockEndpoint());
+      await service.enable(e1.id, true);
+      await service.enable(e2.id, true);
+      await service.enable(e3.id, false);
       expect(await service.findEnabled()).toHaveLength(2);
     });
   });

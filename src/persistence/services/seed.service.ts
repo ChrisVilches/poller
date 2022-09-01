@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Argument } from '@persistence/entities/argument.entity';
-import { Endpoint } from '@persistence/entities/endpoint.entity';
+import { ArgType, Argument } from '@persistence/entities/argument.entity';
+import { Endpoint, RequestType } from '@persistence/entities/endpoint.entity';
 import { Navigation } from '@persistence/entities/navigation.entity';
 import { Repository } from 'typeorm';
 
@@ -31,7 +31,7 @@ export class SeedService {
         periodMinutes,
         notificationMessage,
         not,
-        type: 'html',
+        type: RequestType.HTML,
         navigations: [],
         arguments: [],
       });
@@ -44,7 +44,8 @@ export class SeedService {
 
       e.arguments = (endpoint.args || []).map((val: string) => {
         const a = new Argument();
-        a.type = typeof val;
+        // TODO: This code is garbage.
+        a.type = typeof val === 'number' ? ArgType.NUMBER : (typeof val === 'boolean' ? ArgType.BOOLEAN : ArgType.STRING);
         a.value = String(val);
         return a;
       });

@@ -14,6 +14,9 @@ import { EntityNotFoundError } from 'typeorm';
  * This interceptor is used to transform some errors coming from other classes
  * (such as classes from the persistence module) into HTTP errors recognizable
  * by the HTTP client (such as 404, etc).
+ *
+ * Note that validation errors should be processed by the pipes, so this is
+ * a fallback in case the pipes fail.
  */
 @Injectable()
 export class ProcessErrorInterceptor implements NestInterceptor {
@@ -23,6 +26,7 @@ export class ProcessErrorInterceptor implements NestInterceptor {
         if (err instanceof EntityNotFoundError) {
           throw new NotFoundException();
         }
+
         if (err instanceof ValidationError) {
           throw new UnprocessableEntityException();
         }
