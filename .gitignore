@@ -1,6 +1,7 @@
 .env
 .env.development
 .env.test
+db-seed.json
 
 # compiled output
 /dist
