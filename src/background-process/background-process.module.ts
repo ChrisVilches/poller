@@ -12,10 +12,12 @@ import { FetchPendingEndpointsJob } from './jobs/fetch-pending-endpoints.job';
 import { PollingSuccessListener } from './listeners/polling-success.listener';
 import * as Joi from 'joi';
 import { ConfigModule } from '@nestjs/config';
+import { getEnvFilePath } from '../../src/util';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
+      envFilePath: getEnvFilePath(),
       validationSchema: Joi.object({
         REDIS_HOST: Joi.string().required(),
         REDIS_PORT: Joi.number().required(),

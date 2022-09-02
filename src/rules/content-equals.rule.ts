@@ -1,18 +1,14 @@
 import { CheerioAPI } from 'cheerio';
-import {
-  replaceTokens,
-} from '../util';
+import { replaceTokens } from '../util';
 import { Rule } from './Rule';
 
-export class ContentEquals implements Rule {
-  private latestMatch: string = '';
+export class ContentEqualsRule implements Rule {
+  private latestMatch = '';
 
   execute(args: (string | number | boolean)[]) {
     const [text] = args;
 
-    return this.executeAux(
-      text as string
-    );
+    return this.executeAux(text as string);
   }
 
   messageFromLatestResult(inputMessage?: string): string | undefined {
@@ -28,20 +24,15 @@ export class ContentEquals implements Rule {
   private executeAux(text: string) {
     return (dom: CheerioAPI) => {
       const html: string = dom.text();
-      console.log(html)
 
-      if (html.toLowerCase() === text.toLocaleLowerCase()) {
-        this.latestMatch = text
-        return true
-      }
+      this.latestMatch = html;
 
-      this.latestMatch = html
-      return false
+      return html.toLowerCase() === text.toLowerCase();
     };
   }
 
   validate(args: any[]): boolean {
     if (args.length !== 1) return false;
-    return typeof args[0] === 'string'
+    return typeof args[0] === 'string';
   }
 }

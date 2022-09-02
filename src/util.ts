@@ -1,3 +1,4 @@
+import { ArgType } from '@persistence/enum/arg-type.enum';
 import { plainToInstance } from 'class-transformer';
 import { validateSync } from 'class-validator';
 
@@ -80,3 +81,26 @@ const removeUrlQueryStringRegex = /\?.*/;
 
 export const removeUrlQueryString = (url: string) =>
   url.replace(removeUrlQueryStringRegex, '');
+
+export const getEnvFilePath = () => {
+  const environment: string = process.env.NODE_ENV || 'development';
+  if (!process.env.NODE_ENV) {
+    throw new Error('NODE_ENV is not set (needed to choose the .env file)');
+  }
+  const file = `.env.${environment}`;
+  return file;
+};
+
+export const valueToArgType = (value: any): ArgType => {
+  const types = {
+    string: ArgType.STRING,
+    boolean: ArgType.BOOLEAN,
+    number: ArgType.NUMBER,
+  };
+  const t = typeof value as keyof typeof types;
+
+  if (t in types) {
+    return types[t];
+  }
+  return ArgType.INVALID;
+};

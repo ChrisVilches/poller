@@ -15,7 +15,15 @@ runContext(async (app: INestApplicationContext) => {
     return;
   }
 
-  await seedService.populateFromJson(seedData);
+  try {
+    const createdIds = await seedService.populateFromJson(seedData);
+    console.log('Created. IDs:');
+    console.log(createdIds);
+  } catch (e) {
+    console.error('Aborted');
+    console.error(e);
+  }
+
   const countAfter = await endpointsService.countAll();
 
   console.log(`Count ${countBefore} -> ${countAfter}`);

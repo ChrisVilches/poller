@@ -4,10 +4,12 @@ import * as Joi from 'joi';
 import { AppController } from './app.controller';
 import { BackgroundProcessModule } from '@background-process/background-process.module';
 import { ApiModule } from '@api/api.module';
+import { getEnvFilePath } from './util';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
+      envFilePath: getEnvFilePath(),
       validationSchema: Joi.object({
         NODE_ENV: Joi.string()
           .required()

@@ -1,4 +1,3 @@
-import { TestingModule } from '@nestjs/testing';
 import { mockEndpoint } from '@test/helpers/mockEndpoint';
 import { Endpoint } from '@persistence/entities/endpoint.entity';
 import { EndpointsController } from './endpoints.controller';
@@ -8,6 +7,7 @@ import { ValidationError } from 'class-validator';
 import { createTestingModule } from '@test/helpers/createTestingModule';
 import { convertNav } from '@test/helpers/convertNav';
 import { convertArgs } from '@test/helpers/convertArgs';
+import { INestApplication } from '@nestjs/common';
 
 const wrongArgs: any = [1, null, 'aaaa'];
 
@@ -23,17 +23,19 @@ const expectStringsTrimmed = (endpoint: Endpoint) => {
   expect(endpoint.args()).toStrictEqual([11, '  abc  ', true]);
 };
 
-// TODO: Some of these tests verify that the endpoints throw a validation error, but they don't validate that
-//       the pipes are returning a Bad Request. Must test this as well (that pipes are working as expected).
-
+/**
+ * @deprecated
+ * Remove if it becomes a maintenance issue, or some tests start to fail.
+ * Use the e2e files instead to test controllers. (Don't add new test cases here)
+ */
 describe(EndpointsController.name, () => {
-  let moduleRef: TestingModule;
+  let app: INestApplication;
   let controller: EndpointsController;
   let endpoint: Endpoint;
 
   beforeEach(async () => {
-    moduleRef = await createTestingModule();
-    controller = moduleRef.get<EndpointsController>(EndpointsController);
+    app = await createTestingModule();
+    controller = app.get<EndpointsController>(EndpointsController);
   });
 
   beforeEach(async () => {
@@ -43,7 +45,7 @@ describe(EndpointsController.name, () => {
   });
 
   afterEach(async () => {
-    await moduleRef.close();
+    await app.close();
   });
 
   describe('findOne', () => {

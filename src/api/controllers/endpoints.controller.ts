@@ -1,5 +1,6 @@
 import {
   Body,
+  ClassSerializerInterceptor,
   Controller,
   Get,
   Param,
@@ -20,6 +21,7 @@ import { RequestTypeStringToEnumPipe } from '@api/pipes/request-type-string-to-e
 
 @UseInterceptors(EmptyReturnInterceptor)
 @UseInterceptors(ProcessErrorInterceptor)
+@UseInterceptors(ClassSerializerInterceptor)
 @Controller('endpoints')
 export class EndpointsController {
   constructor(private readonly endpointsService: EndpointsService) {}

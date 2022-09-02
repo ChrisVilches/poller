@@ -7,6 +7,7 @@ import {
   IsPositive,
   IsString,
   IsUrl,
+  MinLength,
   ValidateNested,
 } from 'class-validator';
 import { allRules } from '@rules/allRules';
@@ -22,10 +23,12 @@ export class EndpointDto {
   @IsOptional()
   @IsString()
   @Trim()
+  @MinLength(1)
   title: string;
 
   @IsOptional()
   @IsString()
+  @Trim()
   notificationMessage: string;
 
   @IsIn(Object.keys(allRules))

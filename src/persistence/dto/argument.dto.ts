@@ -1,33 +1,23 @@
 import { ArgType } from '@persistence/enum/arg-type.enum';
-import { ToString } from '@persistence/transformations/to-string.transformation';
 import { Expose, Transform, TransformFnParams } from 'class-transformer';
 import { Allow, IsIn } from 'class-validator';
-
-const argEnumValue = (value: any): ArgType => {
-  if (typeof value === 'number') {
-    return ArgType.NUMBER;
-  }
-  if (typeof value === 'boolean') {
-    return ArgType.BOOLEAN;
-  }
-  if (typeof value === 'string') {
-    return ArgType.STRING;
-  }
-
-  return ArgType.INVALID;
-};
+import { valueToArgType } from '../../../src/util';
 
 export class ArgumentDto {
-  @ToString()
+  // TODO: If I convert it to string, the next time the transformations
+  //       are applied (they execute multiple times, sadly) the type would
+  //       become string. So the only workaround is to simply leave it as is,
+  //       and expect the value to be inserted in the database without problems
+  //       (converted to string since that's the column type in Postgres)
+  // @ToString()
   @Allow()
-  value: string;
+  value: string | number | boolean;
 
   @Expose()
   @Allow()
   @IsIn([ArgType.BOOLEAN, ArgType.NUMBER, ArgType.STRING], {
     message: 'Only numbers, strings, or booleans allowed',
   })
-  @Transform((params: TransformFnParams) => argEnumValue(params.obj.value))
+  @Transform((params: TransformFnParams) => valueToArgType(params.obj.value))
   type: ArgType;
 }
-export const a = Expose;

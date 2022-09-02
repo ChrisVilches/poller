@@ -21,6 +21,8 @@ $ npm run start:prod
 
 ## Test
 
+**Note:** Tests must always be executed serially (using the `--runInBand` flag). The current scripts already include it. This is because the database is dropped after each test case, which must happen synchronously.
+
 ```bash
 # unit tests
 $ npm run test
@@ -36,10 +38,10 @@ $ npm run test:cov
 
 * Allow JSON requests.
 * (Done ✅) Allow requests where the HTML content is loaded using Javascript.
-* Add more polling rules.
+* (Done ✅) Add more polling rules.
 * Create a UI.
 * Configure request headers (e.g. API key, etc).
-* Allow rules to modify the notification message using tokens (e.g. `page contains $count occurrences of "hello world"`). Tokens should be specific to each individual rule.
+* (Done ✅) Allow rules to modify the notification message using tokens (e.g. `page contains $count occurrences of "hello world"`). Tokens should be specific to each individual rule.
 
 ## Tools Used
 

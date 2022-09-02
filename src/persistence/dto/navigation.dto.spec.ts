@@ -15,9 +15,7 @@ describe(NavigationDto.name, () => {
     expect(
       validateSync(
         plainToInstance(NavigationDto, {
-          selector: () => {
-            console.log();
-          },
+          selector: () => 0,
         }),
       ),
     ).not.toHaveLength(0);

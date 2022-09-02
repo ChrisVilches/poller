@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as Joi from 'joi';
+import { getEnvFilePath } from '../../src/util';
 import { Argument } from './entities/argument.entity';
 import { Endpoint } from './entities/endpoint.entity';
 import { Navigation } from './entities/navigation.entity';
@@ -12,9 +13,18 @@ import { SeedService } from './services/seed.service';
 
 const entities = [Endpoint, Argument, Navigation, Polling];
 
+const isTest = () => {
+  return process.env.NODE_ENV === 'test';
+};
+
+const isDev = () => {
+  return process.env.NODE_ENV === 'development';
+};
+
 @Module({
   imports: [
     ConfigModule.forRoot({
+      envFilePath: getEnvFilePath(),
       validationSchema: Joi.object({
         PG_HOST: Joi.string().required(),
         PG_PORT: Joi.number().required(),
@@ -33,7 +43,8 @@ const entities = [Endpoint, Argument, Navigation, Polling];
         password: process.env.PG_PASSWORD,
         database: process.env.PG_DATABASE,
         entities,
-        synchronize: true,
+        synchronize: isTest() || isDev(),
+        dropSchema: isTest(),
       }),
     }),
     TypeOrmModule.forFeature(entities),

@@ -1,19 +1,19 @@
-import { TestingModule } from '@nestjs/testing';
 import { FetchPendingEndpointsJob } from './fetch-pending-endpoints.job';
 import { createTestingModule } from '@test/helpers/createTestingModule';
 import { mockEndpointInstance } from '@test/helpers/mockEndpoint';
+import { INestApplication } from '@nestjs/common';
 
 describe(FetchPendingEndpointsJob.name, () => {
-  let moduleRef: TestingModule;
+  let app: INestApplication;
   let job: FetchPendingEndpointsJob;
 
   beforeEach(async () => {
-    moduleRef = await createTestingModule();
-    job = moduleRef.get<FetchPendingEndpointsJob>(FetchPendingEndpointsJob);
+    app = await createTestingModule();
+    job = app.get<FetchPendingEndpointsJob>(FetchPendingEndpointsJob);
   });
 
   afterEach(async () => {
-    await moduleRef.close();
+    await app.close();
   });
 
   describe('isTimedOut', () => {

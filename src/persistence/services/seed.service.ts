@@ -1,57 +1,32 @@
+import { ConvertEndpointArraysPipe } from '@api/pipes/convert-endpoint-arrays.pipe';
+import { RequestTypeStringToEnumPipe } from '@api/pipes/request-type-string-to-enum.pipe';
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Argument } from '@persistence/entities/argument.entity';
-import { Endpoint } from '@persistence/entities/endpoint.entity';
-import { Navigation } from '@persistence/entities/navigation.entity';
-import { argTypeFromValue } from '@persistence/enum/arg-type.enum';
-import { RequestType } from '@persistence/enum/request-type.enum';
-import { Repository } from 'typeorm';
+import { EndpointsService } from './endpoints.service';
 
 @Injectable()
 export class SeedService {
-  constructor(
-    @InjectRepository(Endpoint)
-    private endpointsRepository: Repository<Endpoint>,
-  ) {}
+  constructor(private endpointsService: EndpointsService) {}
 
   async populateFromJson(jsonData: any[]) {
-    for (const endpoint of jsonData) {
-      const {
-        rule,
-        title,
-        url,
-        enabled,
-        periodMinutes,
-        notificationMessage,
-        not,
-      } = endpoint;
-      const e = this.endpointsRepository.create({
-        rule,
-        title,
-        url,
-        enabled,
-        periodMinutes,
-        notificationMessage,
-        not,
-        type: RequestType.HTML,
-        navigations: [],
-        arguments: [],
-      });
+    const createdIds = [];
 
-      e.navigations = (endpoint.navigation || []).map((selector: string) => {
-        const n = new Navigation();
-        n.selector = selector;
-        return n;
-      });
+    for (const { enabled = false, ...endpointData } of jsonData) {
+      const pipes = [
+        new RequestTypeStringToEnumPipe(),
+        new ConvertEndpointArraysPipe(),
+      ];
 
-      e.arguments = (endpoint.args || []).map((val: string) => {
-        const a = new Argument();
-        a.type = argTypeFromValue(val);
-        a.value = String(val);
-        return a;
-      });
+      const converted = pipes.reduce(
+        (accum, pipe: any) => pipe.transform(accum),
+        endpointData,
+      );
 
-      await this.endpointsRepository.save(e);
+      const created = await this.endpointsService.create(converted);
+      createdIds.push(created.id);
+
+      await this.endpointsService.enable(created.id, enabled);
     }
+
+    return createdIds;
   }
 }

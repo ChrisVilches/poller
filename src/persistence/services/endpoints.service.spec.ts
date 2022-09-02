@@ -1,4 +1,3 @@
-import { TestingModule } from '@nestjs/testing';
 import { EndpointsService } from './endpoints.service';
 import { Endpoint } from '@persistence/entities/endpoint.entity';
 import { mockEndpoint } from '@test/helpers/mockEndpoint';
@@ -7,18 +6,19 @@ import '@test/matchers/toThrowErrorType';
 import { createTestingModule } from '@test/helpers/createTestingModule';
 import { convertNav } from '@test/helpers/convertNav';
 import { convertArgs } from '@test/helpers/convertArgs';
+import { INestApplication } from '@nestjs/common';
 
 describe(EndpointsService.name, () => {
+  let app: INestApplication;
   let service: EndpointsService;
-  let moduleRef: TestingModule;
 
   beforeEach(async () => {
-    moduleRef = await createTestingModule();
-    service = moduleRef.get<EndpointsService>(EndpointsService);
+    app = await createTestingModule();
+    service = app.get<EndpointsService>(EndpointsService);
   });
 
   afterEach(async () => {
-    await moduleRef.close();
+    await app.close();
   });
 
   it('should be defined', () => {
@@ -154,13 +154,7 @@ describe(EndpointsService.name, () => {
         await service.update(
           endpoint.id,
           mockEndpoint({
-            arguments: [
-              ' a ',
-              ' b ',
-              () => {
-                console.log();
-              },
-            ],
+            arguments: [' a ', ' b ', () => 0],
           }),
         );
       }).toThrowErrorType(ValidationError);
@@ -222,13 +216,12 @@ describe(EndpointsService.name, () => {
   describe('updateTimeout', () => {
     let endpoint: Endpoint;
     beforeEach(async () => {
-      await service.create(
+      endpoint = await service.create(
         mockEndpoint({
           periodMinutes: 25,
           waitAfterNotificationMinutes: 107,
         }),
       );
-      endpoint = await service.findOne(1);
     });
 
     it('has a null default timeout value', async () => {
@@ -238,7 +231,7 @@ describe(EndpointsService.name, () => {
     it('uses periodMinutes when there is no notification', async () => {
       const now = new Date('2022-01-05');
       await service.updateTimeout(false, endpoint, now);
-      expect((await service.findOne(1)).timeout).toStrictEqual(
+      expect((await service.findOne(endpoint.id)).timeout).toStrictEqual(
         new Date('2022-01-05 00:25:00.000Z'),
       );
     });
@@ -247,7 +240,7 @@ describe(EndpointsService.name, () => {
       const now = new Date('2022-01-05');
       endpoint.periodMinutes = 200;
       await service.updateTimeout(true, endpoint, now);
-      expect((await service.findOne(1)).timeout).toStrictEqual(
+      expect((await service.findOne(endpoint.id)).timeout).toStrictEqual(
         new Date('2022-01-05 03:20:00.000Z'),
       );
     });
@@ -255,7 +248,7 @@ describe(EndpointsService.name, () => {
     it('chooses largest value (waitAfterNotificationMinutes, has notification)', async () => {
       const now = new Date('2022-01-05');
       await service.updateTimeout(true, endpoint, now);
-      expect((await service.findOne(1)).timeout).toStrictEqual(
+      expect((await service.findOne(endpoint.id)).timeout).toStrictEqual(
         new Date('2022-01-05 01:47:00.000Z'),
       );
     });
@@ -265,7 +258,7 @@ describe(EndpointsService.name, () => {
       endpoint.periodMinutes = 19;
       endpoint.waitAfterNotificationMinutes = undefined;
       await service.updateTimeout(true, endpoint, now);
-      expect((await service.findOne(1)).timeout).toStrictEqual(
+      expect((await service.findOne(endpoint.id)).timeout).toStrictEqual(
         new Date('2022-01-05 00:19:00.000Z'),
       );
     });

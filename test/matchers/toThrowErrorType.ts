@@ -25,12 +25,12 @@ expect.extend({
 
     if (hasError) {
       return {
-        message: () => `expected callback not to throw ${type}`,
+        message: () => `expected callback not to throw ${type.name}`,
         pass: true,
       };
     } else {
       return {
-        message: () => `expected callback to throw ${type}`,
+        message: () => `expected callback to throw ${type.name}`,
         pass: false,
       };
     }

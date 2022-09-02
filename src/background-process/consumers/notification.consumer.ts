@@ -24,9 +24,9 @@ export class NotificationConsumer {
     notifiers.forEach((notif: Notifiable) => {
       try {
         notif.notify(title, content);
-      } catch(e){
-        this.logger.error(`Error while notifying: ${e}`)
-        this.logger.error(e.stack)
+      } catch (e) {
+        this.logger.error(`Error while notifying: ${e}`);
+        this.logger.error(e.stack);
       }
     });
   }

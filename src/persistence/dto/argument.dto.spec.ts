@@ -1,4 +1,4 @@
-import { ArgType } from '@persistence/entities/argument.entity';
+import { ArgType } from '@persistence/enum/arg-type.enum';
 import { plainToInstance } from 'class-transformer';
 import { validateSync } from 'class-validator';
 import { ArgumentDto } from './argument.dto';
@@ -12,12 +12,12 @@ describe(ArgumentDto.name, () => {
     expect(plainToInstance(ArgumentDto, { value: 'a' })).toStrictEqual(arg);
 
     arg = new ArgumentDto();
-    arg.value = '1';
+    arg.value = 1;
     arg.type = ArgType.NUMBER;
     expect(plainToInstance(ArgumentDto, { value: 1 })).toStrictEqual(arg);
 
     arg = new ArgumentDto();
-    arg.value = 'true';
+    arg.value = true;
     arg.type = ArgType.BOOLEAN;
     expect(plainToInstance(ArgumentDto, { value: true })).toStrictEqual(arg);
   });
@@ -26,9 +26,7 @@ describe(ArgumentDto.name, () => {
     expect(
       validateSync(
         plainToInstance(ArgumentDto, {
-          value: () => {
-            console.log();
-          },
+          value: () => 0,
         }),
       ),
     ).not.toHaveLength(0);

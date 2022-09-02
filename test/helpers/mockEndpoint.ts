@@ -1,5 +1,6 @@
 import { EndpointDto } from '@persistence/dto/endpoint.dto';
 import { Endpoint } from '@persistence/entities/endpoint.entity';
+import { RequestType } from '@persistence/enum/request-type.enum';
 import { validateAndTransform } from '../../src/util';
 import { convertArgs } from './convertArgs';
 import { convertNav } from './convertNav';
@@ -9,8 +10,8 @@ export const mockEndpoint = (props: object = {}) => {
     title: 'endpoint mock',
     url: 'https://www.some-url.com',
     notificationMessage: 'my message',
-    type: 'html',
-    rule: 'WhenHasTextRaw',
+    type: RequestType.HTML,
+    rule: 'HasOccurrencesRule',
     periodMinutes: 15,
     waitAfterNotificationMinutes: 120,
     navigations: [],

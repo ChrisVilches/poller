@@ -1,7 +1,7 @@
-import { ContentEquals } from './content-equals.rule';
-import { WhenHasTextRaw } from './WhenHasTextRaw';
+import { ContentEqualsRule } from './content-equals.rule';
+import { HasOccurrencesRule } from './has-occurrences.rule';
 
 export const allRules = {
-  WhenHasTextRaw,
-  ContentEquals
+  HasOccurrencesRule,
+  ContentEqualsRule,
 };

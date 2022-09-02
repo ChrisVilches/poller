@@ -7,7 +7,7 @@ import {
 } from '../util';
 import { Rule } from './Rule';
 
-export class WhenHasTextRaw implements Rule {
+export class HasOccurrencesRule implements Rule {
   private latestCount = 0;
 
   execute(args: (string | number | boolean)[]) {

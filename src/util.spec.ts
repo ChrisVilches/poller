@@ -1,4 +1,5 @@
-import cheerio from 'cheerio';
+import { ArgType } from '@persistence/enum/arg-type.enum';
+import { load } from 'cheerio';
 import {
   ComparisonOperator,
   comparisonOperator,
@@ -6,6 +7,7 @@ import {
   navigate,
   removeUrlQueryString,
   replaceTokens,
+  valueToArgType,
 } from './util';
 
 describe(comparisonOperator.name, () => {
@@ -114,10 +116,10 @@ describe(replaceTokens.name, () => {
   it('replaces multiple tokens', () => {
     expect(
       replaceTokens('My name is %name% and my age is %age%', {
-        name: 'John',
+        name: ' John  ',
         age: 100,
       }),
-    ).toBe('My name is John and my age is 100');
+    ).toBe('My name is  John   and my age is 100');
   });
 
   it('ignores tokens that are not present', () => {
@@ -212,7 +214,7 @@ describe(navigate.name, () => {
   `;
 
   it('should traverse a DOM using IDs', () => {
-    const dom = cheerio.load(htmlNestedIds);
+    const dom = load(htmlNestedIds);
     const result1 = navigate(dom, ['#second']);
     expect(result1.html()).toMatch(/^\s*How are you/);
 
@@ -221,7 +223,7 @@ describe(navigate.name, () => {
   });
 
   it('should traverse a DOM using tag names, using the first element', () => {
-    const dom = cheerio.load(htmlTable);
+    const dom = load(htmlTable);
     expect(navigate(dom, ['table', 'tr', 'td', 'span']).html()).toMatch(
       /^\s*text inside span/,
     );
@@ -230,7 +232,34 @@ describe(navigate.name, () => {
   });
 
   it('should throw error when navigation is incorrect', () => {
-    const dom = cheerio.load(htmlNestedIds);
+    const dom = load(htmlNestedIds);
     expect(() => navigate(dom, ['#first', '#second'])).toThrow();
+  });
+});
+
+describe(valueToArgType.name, () => {
+  it('handles strings', () => {
+    expect(valueToArgType('aaa')).toBe(ArgType.STRING);
+    expect(valueToArgType(' ')).toBe(ArgType.STRING);
+    expect(valueToArgType('')).toBe(ArgType.STRING);
+    expect(valueToArgType('a a a')).toBe(ArgType.STRING);
+  });
+  it('handles booleans', () => {
+    expect(valueToArgType(true)).toBe(ArgType.BOOLEAN);
+    expect(valueToArgType(false)).toBe(ArgType.BOOLEAN);
+  });
+  it('handles numbers', () => {
+    expect(valueToArgType(-1)).toBe(ArgType.NUMBER);
+    expect(valueToArgType(0)).toBe(ArgType.NUMBER);
+    expect(valueToArgType(100)).toBe(ArgType.NUMBER);
+  });
+  it('handles invalid values', () => {
+    expect(valueToArgType({})).toBe(ArgType.INVALID);
+    expect(valueToArgType(() => 0)).toBe(ArgType.INVALID);
+    expect(valueToArgType([])).toBe(ArgType.INVALID);
+    expect(valueToArgType(undefined)).toBe(ArgType.INVALID);
+    expect(valueToArgType(null)).toBe(ArgType.INVALID);
+    expect(valueToArgType(Symbol)).toBe(ArgType.INVALID);
+    expect(valueToArgType(ArgType)).toBe(ArgType.INVALID);
   });
 });

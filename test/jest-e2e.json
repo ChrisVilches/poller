@@ -1,9 +1,23 @@
 {
-  "moduleFileExtensions": ["js", "json", "ts"],
-  "rootDir": ".",
+  "moduleFileExtensions": [
+    "js",
+    "json",
+    "ts"
+  ],
+  "rootDir": "../",
   "testEnvironment": "node",
   "testRegex": ".e2e-spec.ts$",
   "transform": {
     "^.+\\.(t|j)s$": "ts-jest"
+  },
+  "moduleNameMapper": {
+    "@persistence/(.*)": "<rootDir>/src/persistence/$1",
+    "@background-process/(.*)": "<rootDir>/src/background-process/$1",
+    "@api/(.*)": "<rootDir>/src/api/$1",
+    "@interfaces/(.*)": "<rootDir>/src/interfaces/$1",
+    "@notifiers/(.*)": "<rootDir>/src/notifiers/$1",
+    "@rules/(.*)": "<rootDir>/src/rules/$1",
+    "@test/(.*)": "<rootDir>/test/$1",
+    "@scraping/(.*)": "<rootDir>/src/scraping/$1"
   }
 }

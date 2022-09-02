@@ -4,9 +4,8 @@ import { EndpointDto } from './endpoint.dto';
 import { PartialType } from '@nestjs/mapped-types';
 import { NavigationDto } from './navigation.dto';
 import { ArgumentDto } from './argument.dto';
-import { validateAndTransform } from '../../util';
 import '@test/matchers/toThrowErrorType';
-import { argTypeFromValue } from '@persistence/enum/arg-type.enum';
+import { validateAndTransform, valueToArgType } from '../../util';
 
 describe(EndpointDto.name, () => {
   it('trims title', () => {
@@ -32,8 +31,8 @@ describe(EndpointDto.name, () => {
     const e = new EndpointDto();
     e.arguments = [1, 'some string', true].map((value: any) => {
       const a = new ArgumentDto();
-      a.type = argTypeFromValue(value);
-      a.value = `${value}`;
+      a.type = valueToArgType(value);
+      a.value = value;
       return a;
     }) as any;
 

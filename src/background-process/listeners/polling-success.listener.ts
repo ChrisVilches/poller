@@ -18,6 +18,12 @@ export class PollingSuccessListener {
     const title = endpoint.formattedTitle();
     const content = polling.computedMessage || '';
 
+    /**
+     * TODO: With the rule "content-equals", the message content may get
+     * huge in some cases, so it's necessary to trim the message. Then, the user
+     * can read the whole message in the UI.
+     */
+
     this.notificationsQueue.add({
       title,
       content,
