@@ -6,17 +6,10 @@ import {
   NestInterceptor,
   NotFoundException,
 } from '@nestjs/common';
+import { isArrayOf } from '@util/misc';
 import { ValidationError } from 'class-validator';
 import { catchError, Observable } from 'rxjs';
 import { EntityNotFoundError } from 'typeorm';
-
-const isArrayOf = (data: any, type: any) => {
-  if (!(data instanceof Array)) {
-    return false;
-  }
-
-  return data.reduce((accum, elem) => accum && elem instanceof type, true);
-};
 
 /**
  * This interceptor is used to transform some errors coming from other classes

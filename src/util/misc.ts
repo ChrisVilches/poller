@@ -14,6 +14,14 @@ export const navigate = ($: any, navigationList: string[]) => {
 export const inspectArray = (arr: any[]) =>
   arr.map((v) => `${v} (${typeof v})`).join(', ');
 
+export const isArrayOf = (data: any, type: any) => {
+  if (!(data instanceof Array)) {
+    return false;
+  }
+
+  return data.reduce((accum, elem) => accum && elem instanceof type, true);
+};
+
 export const valueToArgType = (value: any): ArgType => {
   const types = {
     string: ArgType.STRING,

@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 
+import { isArrayOf } from "@util/misc";
+
 export {};
 
 declare global {
@@ -23,14 +25,9 @@ expect.extend({
     try {
       await received();
     } catch (e) {
-      if (e instanceof type) {
+      // TODO: This should be a separate matcher. Something like "toThrowArrayOfType"
+      if (e instanceof type || isArrayOf(e, type)) {
         hasError = true;
-      } else if (e instanceof Array) {
-        // TODO: This should be a separate matcher. Something like "toThrowArrayOfType"
-        hasError = e.reduce(
-          (accum, elem) => accum && elem instanceof type,
-          true,
-        );
       }
     }
 
