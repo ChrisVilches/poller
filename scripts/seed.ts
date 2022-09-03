@@ -1,15 +1,14 @@
-
 import { runContext } from './runner';
 import { INestApplicationContext } from '@nestjs/common';
 import { EndpointsService } from '@persistence/services/endpoints.service';
 import { SeedService } from '@persistence/services/seed.service';
 import { readFileSync } from 'fs';
 
-const inputJsonPath = process.argv[2]
+const inputJsonPath = process.argv[2];
 
-if(!inputJsonPath){
-  console.error('First argument must be a file (JSON)')
-  process.exit(1)
+if (!inputJsonPath) {
+  console.error('First argument must be a file (JSON)');
+  process.exit(1);
 }
 
 const seedData = JSON.parse(readFileSync(inputJsonPath).toString());

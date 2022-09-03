@@ -1,11 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { validateAndTransform } from '../../util';
 import { EntityNotFoundError, Repository } from 'typeorm';
 import { Endpoint } from '@persistence/entities/endpoint.entity';
 import * as moment from 'moment';
-import { EndpointDto } from '@persistence/dto/endpoint.dto';
-import { PartialType } from '@nestjs/mapped-types';
+import { EndpointDto, PartialEndpointDto } from '@persistence/dto/endpoint.dto';
+import { transformAndValidate } from 'class-transformer-validator';
 
 @Injectable()
 export class EndpointsService {
@@ -15,9 +14,9 @@ export class EndpointsService {
   ) {}
 
   async create(endpointDto: EndpointDto): Promise<Endpoint> {
-    const created = await this.endpointsRepository.save({
-      ...(await validateAndTransform(EndpointDto, endpointDto)),
-    });
+    const created = await this.endpointsRepository.save(
+      (await transformAndValidate(EndpointDto, endpointDto)) as Endpoint,
+    );
 
     return await this.findOne(created.id);
   }
@@ -26,19 +25,15 @@ export class EndpointsService {
     await this.endpointsRepository.update({ id }, { timeout: null } as any);
   }
 
-  async update(
-    id: number,
-    endpointDto: Partial<EndpointDto>,
-  ): Promise<Endpoint> {
+  async update(id: number, endpointDto: PartialEndpointDto): Promise<Endpoint> {
     if ((await this.findOne(id)) === null) {
       throw new EntityNotFoundError(Endpoint.name, {});
     }
 
-    const objectToSave = {
+    await this.endpointsRepository.save({
       id,
-      ...(await validateAndTransform(PartialType(EndpointDto), endpointDto)),
-    };
-    await this.endpointsRepository.save(objectToSave);
+      ...(await transformAndValidate(PartialEndpointDto, endpointDto)),
+    } as any);
 
     return await this.findOne(id);
   }

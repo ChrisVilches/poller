@@ -1,5 +1,5 @@
 import { CheerioAPI } from 'cheerio';
-import { replaceTokens } from '../util';
+import { replaceTokens } from '@util/strings';
 import { Rule } from './Rule';
 
 export class ContentEqualsRule implements Rule {

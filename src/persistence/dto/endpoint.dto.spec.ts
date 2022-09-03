@@ -5,7 +5,8 @@ import { PartialType } from '@nestjs/mapped-types';
 import { NavigationDto } from './navigation.dto';
 import { ArgumentDto } from './argument.dto';
 import '@test/matchers/toThrowErrorType';
-import { validateAndTransform, valueToArgType } from '../../util';
+import { transformAndValidate } from 'class-transformer-validator';
+import { valueToArgType } from '@util/misc';
 
 describe(EndpointDto.name, () => {
   it('trims title', () => {
@@ -23,7 +24,7 @@ describe(EndpointDto.name, () => {
 
   it('trims the title before validating it is not empty (therefore throws error)', () => {
     expect(() =>
-      validateAndTransform(PartialType(EndpointDto), { title: '      ' }),
+      transformAndValidate(PartialType(EndpointDto), { title: '      ' }),
     ).toThrowErrorType(ValidationError);
   });
 

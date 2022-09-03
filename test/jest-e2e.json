@@ -18,6 +18,7 @@
     "@notifiers/(.*)": "<rootDir>/src/notifiers/$1",
     "@rules/(.*)": "<rootDir>/src/rules/$1",
     "@test/(.*)": "<rootDir>/test/$1",
-    "@scraping/(.*)": "<rootDir>/src/scraping/$1"
+    "@scraping/(.*)": "<rootDir>/src/scraping/$1",
+    "@util/(.*)": "<rootDir>/src/util/$1"
   }
 }

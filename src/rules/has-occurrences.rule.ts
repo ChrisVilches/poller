@@ -1,10 +1,10 @@
-import { CheerioAPI } from 'cheerio';
 import {
-  isValidComparisonOperator,
   comparisonOperator,
   ComparisonOperator,
-  replaceTokens,
-} from '../util';
+  isValidComparisonOperator,
+} from '@util/operators';
+import { replaceTokens } from '@util/strings';
+import { CheerioAPI } from 'cheerio';
 import { Rule } from './Rule';
 
 export class HasOccurrencesRule implements Rule {

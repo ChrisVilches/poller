@@ -8,6 +8,9 @@ declare global {
       /**
        * This matcher makes sure a function throws an error with the type specified.
        * The built-in toThrow() doesn't work as expected, so this was created.
+       *
+       * @todo For now, this also works when the function throws an array of errors
+       * of the specified type (in the future, it should be a separate matcher).
        */
       toThrowErrorType(type: any): R;
     }
@@ -20,7 +23,15 @@ expect.extend({
     try {
       await received();
     } catch (e) {
-      hasError = e instanceof type;
+      if (e instanceof type) {
+        hasError = true;
+      } else if (e instanceof Array) {
+        // TODO: This should be a separate matcher. Something like "toThrowArrayOfType"
+        hasError = e.reduce(
+          (accum, elem) => accum && elem instanceof type,
+          true,
+        );
+      }
     }
 
     if (hasError) {

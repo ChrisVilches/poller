@@ -35,7 +35,7 @@ export class EndpointDto {
   rule: string;
 
   @IsIn([RequestType.HTML, RequestType.JSON], {
-    message: 'Only HTML and JSON are supported',
+    message: 'only HTML and JSON are supported',
   })
   type: RequestType;
 

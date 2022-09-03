@@ -5,6 +5,7 @@ import {
   UseInterceptors,
   ParseIntPipe,
   Get,
+  ClassSerializerInterceptor,
 } from '@nestjs/common';
 import { EmptyReturnInterceptor } from '../interceptors/empty-return.interceptor';
 import { ProcessErrorInterceptor } from '../interceptors/process-error.interceptor';
@@ -14,6 +15,7 @@ import { PollingsService } from '@persistence/services/pollings.service';
 
 @UseInterceptors(ProcessErrorInterceptor)
 @UseInterceptors(EmptyReturnInterceptor)
+@UseInterceptors(ClassSerializerInterceptor)
 @Controller('pollings')
 export class PollingsController {
   constructor(

@@ -5,7 +5,7 @@ import { LessThan, Repository } from 'typeorm';
 import { Endpoint } from '@persistence/entities/endpoint.entity';
 import { Polling } from '@persistence/entities/polling.entity';
 import { PollingDto } from '@persistence/dto/polling.dto';
-import { validateAndTransform } from '../../util';
+import { transformAndValidate } from 'class-transformer-validator';
 
 @Injectable()
 export class PollingsService {
@@ -53,7 +53,7 @@ export class PollingsService {
 
   async create(createPollingDto: PollingDto): Promise<Polling> {
     const polling: Polling = this.pollingsRepository.create(
-      await validateAndTransform(PollingDto, createPollingDto),
+      await transformAndValidate(PollingDto, createPollingDto),
     );
 
     const saved: Polling = await this.pollingsRepository.save(polling);

@@ -1,7 +1,7 @@
 import { EndpointDto } from '@persistence/dto/endpoint.dto';
 import { Endpoint } from '@persistence/entities/endpoint.entity';
 import { RequestType } from '@persistence/enum/request-type.enum';
-import { validateAndTransform } from '../../src/util';
+import { transformAndValidate } from 'class-transformer-validator';
 import { convertArgs } from './convertArgs';
 import { convertNav } from './convertNav';
 
@@ -34,5 +34,5 @@ export const mockEndpoint = (props: object = {}) => {
 
 export const mockEndpointInstance = async (props: object = {}) => {
   const endpointPlain = mockEndpoint(props);
-  return (await validateAndTransform(EndpointDto, endpointPlain)) as Endpoint;
+  return (await transformAndValidate(EndpointDto, endpointPlain)) as Endpoint;
 };

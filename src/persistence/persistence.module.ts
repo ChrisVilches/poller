@@ -1,25 +1,19 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { getEnvFilePath, isTest, isDev } from '@util/env';
 import * as Joi from 'joi';
-import { getEnvFilePath } from '../../src/util';
 import { Argument } from './entities/argument.entity';
 import { Endpoint } from './entities/endpoint.entity';
 import { Navigation } from './entities/navigation.entity';
 import { Polling } from './entities/polling.entity';
+import { Tag } from './entities/tag.entity';
 import { EndpointsService } from './services/endpoints.service';
 import { PollingsService } from './services/pollings.service';
 import { SeedService } from './services/seed.service';
+import { TagsService } from './services/tags.service';
 
-const entities = [Endpoint, Argument, Navigation, Polling];
-
-const isTest = () => {
-  return process.env.NODE_ENV === 'test';
-};
-
-const isDev = () => {
-  return process.env.NODE_ENV === 'development';
-};
+const entities = [Endpoint, Argument, Navigation, Polling, Tag];
 
 @Module({
   imports: [
@@ -49,7 +43,7 @@ const isDev = () => {
     }),
     TypeOrmModule.forFeature(entities),
   ],
-  providers: [EndpointsService, PollingsService, SeedService],
-  exports: [EndpointsService, PollingsService],
+  providers: [EndpointsService, PollingsService, SeedService, TagsService],
+  exports: [EndpointsService, PollingsService, TagsService],
 })
 export class PersistenceModule {}

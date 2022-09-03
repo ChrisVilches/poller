@@ -7,8 +7,9 @@ export class TestConsumer {
   private readonly logger = new Logger(TestConsumer.name);
 
   @Process()
-  execute(job: Job<Date>) {
-    this.logger.debug(`Test queue OK (event date ${job.data})`);
+  execute(job: Job<any>) {
+    const { env, date } = job.data;
+    this.logger.debug(`Test queue OK (${env}, ${date})`);
   }
 
   @OnQueueError()

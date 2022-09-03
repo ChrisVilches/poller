@@ -4,7 +4,7 @@ import * as Joi from 'joi';
 import { AppController } from './app.controller';
 import { BackgroundProcessModule } from '@background-process/background-process.module';
 import { ApiModule } from '@api/api.module';
-import { getEnvFilePath } from './util';
+import { getEnvFilePath } from '@util/env';
 
 @Module({
   imports: [
@@ -15,6 +15,7 @@ import { getEnvFilePath } from './util';
           .required()
           .valid('development', 'production', 'test', 'provision'),
         PORT: Joi.number().required(),
+        PUSH_NOTIFICATION_MESSAGE_MAX_LENGTH: Joi.number().required(),
       }),
     }),
     ApiModule,

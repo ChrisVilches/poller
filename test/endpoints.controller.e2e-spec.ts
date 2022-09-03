@@ -34,7 +34,7 @@ describe(`${EndpointsController.name} (e2e)`, () => {
       expect(res.statusCode).toBe(404);
     });
 
-    it('returns 404 if the ID does not exist', async () => {
+    it('finds the correct endpoint if it exists', async () => {
       const { body } = await request(app.getHttpServer())
         .post('/endpoints')
         .send({
@@ -178,7 +178,7 @@ describe(`${EndpointsController.name} (e2e)`, () => {
 
   // TODO: A lot of duplicated code.
 
-  describe('/endpoints (PATCH)', () => {
+  describe('/endpoints/:id (PATCH)', () => {
     let id: number;
 
     beforeEach(async () => {

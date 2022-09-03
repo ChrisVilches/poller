@@ -8,9 +8,11 @@ import {
   OneToMany,
   UpdateDateColumn,
   CreateDateColumn,
+  ManyToMany,
 } from 'typeorm';
 import { Argument } from './argument.entity';
 import { Navigation } from './navigation.entity';
+import { Tag } from './tag.entity';
 
 const sortById = (arr: (Navigation | Argument)[]) =>
   arr.sort((a, b) => a.id - b.id);
@@ -101,6 +103,9 @@ export class Endpoint {
 
   @Column({ default: true })
   staticHtml: boolean;
+
+  @ManyToMany(() => Tag)
+  tags: Tag[];
 
   @CreateDateColumn()
   createdAt: Date;

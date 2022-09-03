@@ -1,4 +1,5 @@
 import { Logger } from '@nestjs/common';
+import { limitMessageLength } from '@util/strings';
 import { spawnSync } from 'child_process';
 import { Notifiable } from './Notifiable';
 
@@ -10,6 +11,11 @@ export class NotifyMe implements Notifiable {
 
   notify(title: string, content: string) {
     const args = [];
+
+    content = limitMessageLength(
+      content,
+      Number(process.env.PUSH_NOTIFICATION_MESSAGE_MAX_LENGTH),
+    );
 
     if (title) {
       args.push(['-title', title]);

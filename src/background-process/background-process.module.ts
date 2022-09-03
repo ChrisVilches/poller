@@ -12,7 +12,7 @@ import { FetchPendingEndpointsJob } from './jobs/fetch-pending-endpoints.job';
 import { PollingSuccessListener } from './listeners/polling-success.listener';
 import * as Joi from 'joi';
 import { ConfigModule } from '@nestjs/config';
-import { getEnvFilePath } from '../../src/util';
+import { getEnvFilePath } from '@util/env';
 
 @Module({
   imports: [
@@ -51,6 +51,9 @@ export class BackgroundProcessModule implements OnModuleInit {
   constructor(@InjectQueue('test') private testQueue: Queue) {}
 
   onModuleInit() {
-    this.testQueue.add(new Date());
+    this.testQueue.add({
+      date: new Date(),
+      env: process.env.NODE_ENV,
+    });
   }
 }

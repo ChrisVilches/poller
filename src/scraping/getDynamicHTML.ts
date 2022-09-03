@@ -1,6 +1,6 @@
+import { removeUrlQueryString } from '@util/strings';
 import puppeteer from 'puppeteer';
 import * as blockedData from './blocked-request-urls.json';
-import { removeUrlQueryString } from '../util';
 
 const { blockedUrls, blockedTypes, blockedExtensions } = blockedData;
 

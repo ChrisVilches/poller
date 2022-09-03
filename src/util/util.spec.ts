@@ -1,14 +1,12 @@
 import { ArgType } from '@persistence/enum/arg-type.enum';
 import { load } from 'cheerio';
+import { inspectArray, navigate, valueToArgType } from './misc';
+import { comparisonOperator, ComparisonOperator } from './operators';
 import {
-  ComparisonOperator,
-  comparisonOperator,
-  inspectArray,
-  navigate,
   removeUrlQueryString,
   replaceTokens,
-  valueToArgType,
-} from './util';
+  limitMessageLength,
+} from './strings';
 
 describe(comparisonOperator.name, () => {
   it('should compare correctly using ==', () => {
@@ -261,5 +259,21 @@ describe(valueToArgType.name, () => {
     expect(valueToArgType(null)).toBe(ArgType.INVALID);
     expect(valueToArgType(Symbol)).toBe(ArgType.INVALID);
     expect(valueToArgType(ArgType)).toBe(ArgType.INVALID);
+  });
+});
+
+describe(limitMessageLength.name, () => {
+  it('trims and limits', () => {
+    expect(limitMessageLength('  hello world ', 3)).toBe('hel...');
+    expect(limitMessageLength('hello world ', 3)).toBe('hel...');
+    expect(limitMessageLength('hello world ', 12)).toBe('hello world');
+    expect(limitMessageLength('hello world ', 11)).toBe('hello world');
+    expect(limitMessageLength('   hello world ', 12)).toBe('hello world');
+    expect(limitMessageLength(' hello world   ', 11)).toBe('hello world');
+    expect(limitMessageLength(' hello world   ', 10)).toBe('hello worl...');
+    expect(limitMessageLength('hello', 5)).toBe('hello');
+    expect(limitMessageLength('hello', 4)).toBe('hell...');
+    expect(limitMessageLength('   hello  ', 5)).toBe('hello');
+    expect(limitMessageLength('  hello    ', 4)).toBe('hell...');
   });
 });
