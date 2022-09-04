@@ -1,6 +1,6 @@
 import { ArgType } from '@persistence/enum/arg-type.enum';
 import { plainToInstance } from 'class-transformer';
-import { validateSync } from 'class-validator';
+import { validate } from 'class-validator';
 import { ArgumentDto } from './argument.dto';
 
 describe(ArgumentDto.name, () => {
@@ -22,19 +22,14 @@ describe(ArgumentDto.name, () => {
     expect(plainToInstance(ArgumentDto, { value: true })).toStrictEqual(arg);
   });
 
-  it('validates incorrect types', () => {
-    expect(
-      validateSync(
-        plainToInstance(ArgumentDto, {
-          value: () => 0,
-        }),
-      ),
-    ).not.toHaveLength(0);
-    expect(
-      validateSync(plainToInstance(ArgumentDto, { value: { a: 5 } })),
-    ).not.toHaveLength(0);
-    expect(
-      validateSync(plainToInstance(ArgumentDto, { value: null })),
-    ).not.toHaveLength(0);
+  it('validates incorrect types', async () => {
+    const validateArgument = async (plain: any) =>
+      await validate(plainToInstance(ArgumentDto, plain));
+
+    expect(await validateArgument({ value: () => 0 })).not.toHaveLength(0);
+    expect(await validateArgument({ value: { a: 5 } })).not.toHaveLength(0);
+    expect(await validateArgument({ value: null })).not.toHaveLength(0);
+    expect(await validateArgument({ value: [] })).not.toHaveLength(0);
+    expect(await validateArgument({ value: undefined })).not.toHaveLength(0);
   });
 });

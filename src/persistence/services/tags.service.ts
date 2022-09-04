@@ -117,6 +117,7 @@ export class TagsService {
   private async checkCanUseName(name?: string, id?: number): Promise<void> {
     // Should be validated elsewhere.
     if (!name) return;
+    name = (name || '').trim();
 
     const tag = await this.findByName(name);
 

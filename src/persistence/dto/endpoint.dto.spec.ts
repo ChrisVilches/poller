@@ -1,5 +1,5 @@
 import { plainToInstance } from 'class-transformer';
-import { validateSync, ValidationError } from 'class-validator';
+import { validate, ValidationError } from 'class-validator';
 import { EndpointDto } from './endpoint.dto';
 import { PartialType } from '@nestjs/mapped-types';
 import { NavigationDto } from './navigation.dto';
@@ -15,16 +15,17 @@ describe(EndpointDto.name, () => {
     expect(plainToInstance(EndpointDto, { title: '  a  ' })).toStrictEqual(e);
   });
 
-  it('validates incorrect title', () => {
-    const err = validateSync(
+  it('validates incorrect title', async () => {
+    const err = await validate(
       plainToInstance(PartialType(EndpointDto), { title: true }),
     );
     expect(err).not.toHaveLength(0);
   });
 
-  it('trims the title before validating it is not empty (therefore throws error)', () => {
-    expect(() =>
-      transformAndValidate(PartialType(EndpointDto), { title: '      ' }),
+  it('trims the title before validating it is not empty (therefore throws error)', async () => {
+    await expect(
+      async () =>
+        await transformAndValidate(PartialType(EndpointDto), { title: '   ' }),
     ).toThrowErrorType(ValidationError);
   });
 
@@ -54,9 +55,9 @@ describe(EndpointDto.name, () => {
     expect(
       plainToInstance(EndpointDto, {
         navigations: [
-          { selector: 'aa' },
-          { selector: 'bb' },
-          { selector: 'cc' },
+          { selector: ' aa ' },
+          { selector: 'bb  ' },
+          { selector: '  cc' },
         ],
       }),
     ).toStrictEqual(e);

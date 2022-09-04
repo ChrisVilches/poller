@@ -19,10 +19,10 @@ const previewData = (seedData: any[]) => {
   console.log('Will create the following endpoints:');
 
   for (const { enabled, ...endpointData } of seedData) {
-    const endpoint: EndpointDto = convertEndpointDto(endpointData)
+    const endpoint: EndpointDto = convertEndpointDto(endpointData);
     console.log(JSON.stringify(endpoint, null, 2));
   }
-}
+};
 
 runContext(async (app: INestApplicationContext) => {
   previewData(seedData);
