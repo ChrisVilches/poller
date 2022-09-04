@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 
-import { isArrayOf } from "@util/misc";
+import { isArrayOf } from '@util/misc';
 
 export {};
 
@@ -25,7 +25,6 @@ expect.extend({
     try {
       await received();
     } catch (e) {
-      // TODO: This should be a separate matcher. Something like "toThrowArrayOfType"
       if (e instanceof type || isArrayOf(e, type)) {
         hasError = true;
       }

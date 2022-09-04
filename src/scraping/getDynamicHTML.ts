@@ -1,3 +1,4 @@
+import { RequestResult } from '@interfaces/RequestResult';
 import { removeUrlQueryString } from '@util/strings';
 import puppeteer from 'puppeteer';
 import * as blockedData from './blocked-request-urls.json';
@@ -38,11 +39,6 @@ const shouldBlockRequest = (request: puppeteer.HTTPRequest): boolean => {
   return false;
 };
 
-interface RequestResult {
-  data: string;
-  status: number;
-}
-
 /**
  * Use this function to manage the browser and page.
  * This function should provide the callback with a page.
@@ -66,6 +62,11 @@ const withPage = async (
 
   return result;
 };
+
+/**
+ * TODO:
+ * @todo Must implement requests using other methods (POST, PUT, etc)
+ */
 
 const getDataFromPage = (url: string) => async (page: puppeteer.Page) => {
   let mainDocumentName = '';

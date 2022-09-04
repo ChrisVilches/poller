@@ -18,6 +18,17 @@ import 'reflect-metadata';
 import { PartialType } from '@nestjs/mapped-types';
 import { Type } from 'class-transformer';
 import { RequestType } from '@persistence/enum/request-type.enum';
+import { Method } from '@persistence/enum/method.enum';
+import { enumKeysToString } from '@util/misc';
+
+const allowedTypes = [RequestType.HTML, RequestType.DHTML, RequestType.JSON];
+const allowedMethods = [
+  Method.GET,
+  Method.POST,
+  Method.PUT,
+  Method.PATCH,
+  Method.DELETE,
+];
 
 export class EndpointDto {
   @IsOptional()
@@ -34,8 +45,11 @@ export class EndpointDto {
   @IsIn(Object.keys(allRules))
   rule: string;
 
-  @IsIn([RequestType.HTML, RequestType.JSON], {
-    message: 'only HTML and JSON are supported',
+  @IsIn(allowedTypes, {
+    message: `type must be one of the following values: ${enumKeysToString(
+      RequestType,
+      allowedTypes,
+    ).join(', ')}`,
   })
   type: RequestType;
 
@@ -50,6 +64,14 @@ export class EndpointDto {
   @IsOptional()
   @IsBoolean()
   not: boolean;
+
+  @IsIn(allowedMethods, {
+    message: `method must be one of the following values: ${enumKeysToString(
+      Method,
+      allowedMethods,
+    ).join(', ')}`,
+  })
+  method: Method;
 
   @IsOptional()
   @IsInt()
@@ -67,10 +89,6 @@ export class EndpointDto {
   @ValidateNested({ each: true })
   @Type(() => NavigationDto)
   navigations: NavigationDto[];
-
-  @IsOptional()
-  @IsBoolean()
-  staticHtml: boolean;
 }
 
 /**

@@ -9,16 +9,17 @@ const payload = {
   notificationMessage: '  the message ',
   rule: 'HasOccurrencesRule',
   type: 'html',
+  method: 'get',
 };
 
 describe(`${EndpointsController.name} (e2e)`, () => {
   let app: INestApplication;
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     app = await createTestingModule();
   });
 
-  afterAll(async () => {
+  afterEach(async () => {
     await app.close();
   });
 
@@ -73,7 +74,7 @@ describe(`${EndpointsController.name} (e2e)`, () => {
       expect(body.title).toBe('new title');
       expect(body.notificationMessage).toBe('the message');
       expect(body.rule).toBe('HasOccurrencesRule');
-      expect(body.type).toBe('html');
+      expect(body.type).toBe('HTML');
       expect(body.enabled).toBeFalsy();
       expect(body.arguments).toStrictEqual([]);
       expect(body.navigations).toStrictEqual([]);
@@ -147,10 +148,10 @@ describe(`${EndpointsController.name} (e2e)`, () => {
         .post('/endpoints')
         .send({
           ...payload,
-          type: 'HTML',
+          type: 'HTmL',
         });
 
-      expect(res.body.type).toBe('html');
+      expect(res.body.type).toBe('HTML');
 
       res = await request(app.getHttpServer())
         .post('/endpoints')
@@ -158,7 +159,7 @@ describe(`${EndpointsController.name} (e2e)`, () => {
           ...payload,
           type: 'JsOn',
         });
-      expect(res.body.type).toBe('json');
+      expect(res.body.type).toBe('JSON');
     });
 
     it('returns the created endpoint with converted navigation and argument arrays', async () => {
@@ -175,8 +176,6 @@ describe(`${EndpointsController.name} (e2e)`, () => {
       expect(body.arguments).toStrictEqual(arg);
     });
   });
-
-  // TODO: A lot of duplicated code.
 
   describe('/endpoints/:id (PATCH)', () => {
     let id: number;
@@ -276,7 +275,7 @@ describe(`${EndpointsController.name} (e2e)`, () => {
           type: 'HTML',
         });
 
-      expect(res.body.type).toBe('html');
+      expect(res.body.type).toBe('HTML');
 
       res = await request(app.getHttpServer())
         .patch(`/endpoints/${id}`)
@@ -284,7 +283,26 @@ describe(`${EndpointsController.name} (e2e)`, () => {
           ...payload,
           type: 'JsOn',
         });
-      expect(res.body.type).toBe('json');
+      expect(res.body.type).toBe('JSON');
+
+      res = await request(app.getHttpServer())
+        .patch(`/endpoints/${id}`)
+        .send({
+          ...payload,
+          type: 'dHTMl',
+        });
+      expect(res.body.type).toBe('DHTML');
+    });
+
+    it('accepts method as string', async () => {
+      const res = await request(app.getHttpServer())
+        .patch(`/endpoints/${id}`)
+        .send({
+          ...payload,
+          method: 'deLEtE',
+        });
+
+      expect(res.body.method).toBe('DELETE');
     });
 
     it('returns the created endpoint with converted navigation and argument arrays', async () => {

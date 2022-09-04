@@ -1,6 +1,13 @@
 import { ArgType } from '@persistence/enum/arg-type.enum';
+import { Method } from '@persistence/enum/method.enum';
 import { load } from 'cheerio';
-import { inspectArray, navigate, valueToArgType } from './misc';
+import { isDev, isProd, isTest } from './env';
+import {
+  enumKeysToString,
+  inspectArray,
+  navigate,
+  valueToArgType,
+} from './misc';
 import { comparisonOperator, ComparisonOperator } from './operators';
 import {
   removeUrlQueryString,
@@ -275,5 +282,43 @@ describe(limitMessageLength.name, () => {
     expect(limitMessageLength('hello', 4)).toBe('hell...');
     expect(limitMessageLength('   hello  ', 5)).toBe('hello');
     expect(limitMessageLength('  hello    ', 4)).toBe('hell...');
+  });
+});
+
+describe(isDev.name, () => {
+  it('is always false during testing', () => {
+    expect(isDev()).toBeFalsy();
+  });
+});
+describe(isProd.name, () => {
+  it('is always false during testing', () => {
+    expect(isProd()).toBeFalsy();
+  });
+});
+describe(isTest.name, () => {
+  it('is always true during testing', () => {
+    expect(isTest()).toBeTruthy();
+  });
+});
+
+describe(enumKeysToString.name, () => {
+  it('obtains the existing keys correctly', () => {
+    expect(enumKeysToString(Method, [Method.GET, Method.DELETE])).toStrictEqual(
+      ['GET', 'DELETE'],
+    );
+    expect(enumKeysToString(Method, [Method.DELETE, Method.GET])).toStrictEqual(
+      ['DELETE', 'GET'],
+    );
+  });
+
+  it('obtains undefined when the key does not exist', () => {
+    expect(enumKeysToString(Method, [454, Method.PUT])).toStrictEqual([
+      undefined,
+      'PUT',
+    ]);
+    expect(enumKeysToString(Method, [Method.POST, -1])).toStrictEqual([
+      'POST',
+      undefined,
+    ]);
   });
 });

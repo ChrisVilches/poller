@@ -1,8 +1,9 @@
+import { TEST_QUEUE } from '@background-process/queues';
 import { OnQueueError, Process, Processor } from '@nestjs/bull';
 import { Logger } from '@nestjs/common';
 import { Job } from 'bull';
 
-@Processor('test')
+@Processor(TEST_QUEUE)
 export class TestConsumer {
   private readonly logger = new Logger(TestConsumer.name);
 

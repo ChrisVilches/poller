@@ -1,5 +1,6 @@
 import { EndpointDto } from '@persistence/dto/endpoint.dto';
 import { Endpoint } from '@persistence/entities/endpoint.entity';
+import { Method } from '@persistence/enum/method.enum';
 import { RequestType } from '@persistence/enum/request-type.enum';
 import { transformAndValidate } from 'class-transformer-validator';
 import { convertArgs } from './convertArgs';
@@ -17,7 +18,7 @@ export const mockEndpoint = (props: object = {}) => {
     navigations: [],
     arguments: [],
     not: false,
-    staticHtml: true,
+    method: Method.GET,
     ...props,
   };
 

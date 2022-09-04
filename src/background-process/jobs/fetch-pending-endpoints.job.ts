@@ -5,6 +5,7 @@ import { Queue } from 'bull';
 import { PendingEndpoint } from '@interfaces/PendingEndpoint';
 import { EndpointsService } from '@persistence/services/endpoints.service';
 import { Endpoint } from '@persistence/entities/endpoint.entity';
+import { PENDING_ENDPOINTS_QUEUE } from '@background-process/queues';
 
 @Injectable()
 export class FetchPendingEndpointsJob {
@@ -12,7 +13,7 @@ export class FetchPendingEndpointsJob {
 
   constructor(
     private readonly endpointsService: EndpointsService,
-    @InjectQueue('pending-endpoints')
+    @InjectQueue(PENDING_ENDPOINTS_QUEUE)
     private pollingsQueue: Queue<PendingEndpoint>,
   ) {}
 

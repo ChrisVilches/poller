@@ -7,8 +7,11 @@ import { EndpointsService } from '@persistence/services/endpoints.service';
 import { Endpoint } from '@persistence/entities/endpoint.entity';
 import { PollingsService } from '@persistence/services/pollings.service';
 import { Polling } from '@persistence/entities/polling.entity';
+import { performPolling } from '@scraping/performPolling';
+import { PollingDto } from '@persistence/dto/polling.dto';
+import { PENDING_ENDPOINTS_QUEUE } from '@background-process/queues';
 
-@Processor('pending-endpoints')
+@Processor(PENDING_ENDPOINTS_QUEUE)
 export class PendingEndpointsConsumer {
   private readonly logger = new Logger(PendingEndpointsConsumer.name);
 
@@ -23,7 +26,10 @@ export class PendingEndpointsConsumer {
     const { endpointId, manual } = job.data;
 
     const endpoint: Endpoint = await this.endpointsService.findOne(endpointId);
-    const result: Polling = await this.pollingsService.poll(endpoint, manual);
+
+    this.logger.log(`${endpoint} | polling (fetching site)...`);
+    const pollingDto: PollingDto = await performPolling(endpoint, manual);
+    const result: Polling = await this.pollingsService.create(pollingDto);
 
     await this.endpointsService.updateTimeout(
       Boolean(result.shouldNotify),
@@ -37,7 +43,7 @@ export class PendingEndpointsConsumer {
     if (result === null) return;
     const { shouldNotify, responseCode } = result;
     this.logger.log(
-      `(${responseCode} | Notify? ${shouldNotify}) ${endpoint.url}`,
+      `(${responseCode} | Notify? ${shouldNotify}) ${endpoint.title} | ${endpoint.url}`,
     );
   }
 

@@ -17,8 +17,6 @@ import { EntityNotFoundError } from 'typeorm';
  * by the HTTP client (such as 404, etc).
  *
  * Note: Not all validations can be done with pipes, so this is necessary.
- *
- * TODO: Try to use something from https://docs.nestjs.com/exception-filters
  */
 @Injectable()
 export class ProcessErrorInterceptor implements NestInterceptor {
@@ -34,6 +32,7 @@ export class ProcessErrorInterceptor implements NestInterceptor {
             statusCode: 400,
             message: err.flatMap((e: any) => Object.values(e.constraints)),
             error: 'Bad Request',
+            interceptor: true,
           });
         }
         throw err;

@@ -35,13 +35,25 @@ export class TagsController {
   }
 
   @Post()
-  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
+  @UsePipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+    }),
+  )
   create(@Body() tagDto: TagDto) {
     return this.tagsService.create(tagDto);
   }
 
   @Patch(':id')
-  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
+  @UsePipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+    }),
+  )
   update(@Param('id', ParseIntPipe) id: number, @Body() tagDto: TagDto) {
     return this.tagsService.update(id, tagDto);
   }

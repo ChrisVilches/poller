@@ -4,10 +4,11 @@ import { Queue } from 'bull';
 import { NotificationArguments } from '@interfaces/NotificationArguments';
 import { Endpoint } from '@persistence/entities/endpoint.entity';
 import { Polling } from '@persistence/entities/polling.entity';
+import { NOTIFICATIONS_QUEUE } from '@background-process/queues';
 
 export class PollingSuccessListener {
   constructor(
-    @InjectQueue('notifications')
+    @InjectQueue(NOTIFICATIONS_QUEUE)
     private notificationsQueue: Queue<NotificationArguments>,
   ) {}
 

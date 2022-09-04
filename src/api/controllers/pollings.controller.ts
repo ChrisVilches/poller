@@ -12,6 +12,8 @@ import { ProcessErrorInterceptor } from '../interceptors/process-error.intercept
 import { Polling } from '@persistence/entities/polling.entity';
 import { EndpointsService } from '@persistence/services/endpoints.service';
 import { PollingsService } from '@persistence/services/pollings.service';
+import { performPolling } from '@scraping/performPolling';
+import { PollingDto } from '@persistence/dto/polling.dto';
 
 @UseInterceptors(ProcessErrorInterceptor)
 @UseInterceptors(EmptyReturnInterceptor)
@@ -41,6 +43,7 @@ export class PollingsController {
   @Post(':id/poll')
   async poll(@Param('id', ParseIntPipe) id: number): Promise<Polling | null> {
     const endpoint = await this.endpointsService.findOne(id);
-    return await this.pollingsService.poll(endpoint, true);
+    const pollingDto: PollingDto = await performPolling(endpoint, true);
+    return await this.pollingsService.create(pollingDto);
   }
 }

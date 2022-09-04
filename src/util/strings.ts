@@ -23,3 +23,11 @@ export const limitMessageLength = (msg: string, maxLength: number): string => {
 
   return msg.substring(0, maxLength) + '...';
 };
+
+export const isStringPresent = (str?: string) => {
+  if (typeof str !== 'string') {
+    return false;
+  }
+
+  return str.trim().length > 0;
+};

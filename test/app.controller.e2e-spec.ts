@@ -6,11 +6,11 @@ import { createTestingModule } from './helpers/createTestingModule';
 describe(`${AppController.name} (e2e)`, () => {
   let app: INestApplication;
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     app = await createTestingModule();
   });
 
-  afterAll(async () => {
+  afterEach(async () => {
     await app.close();
   });
 

@@ -35,3 +35,6 @@ export const valueToArgType = (value: any): ArgType => {
   }
   return ArgType.INVALID;
 };
+
+export const enumKeysToString = (enumType: any, keys: number[]): string[] =>
+  keys.map((key: number) => enumType[String(key)]);

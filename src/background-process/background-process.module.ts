@@ -13,6 +13,11 @@ import { PollingSuccessListener } from './listeners/polling-success.listener';
 import * as Joi from 'joi';
 import { ConfigModule } from '@nestjs/config';
 import { getEnvFilePath } from '@util/env';
+import {
+  NOTIFICATIONS_QUEUE,
+  TEST_QUEUE,
+  PENDING_ENDPOINTS_QUEUE,
+} from './queues';
 
 @Module({
   imports: [
@@ -32,9 +37,9 @@ import { getEnvFilePath } from '@util/env';
         port: Number(process.env.REDIS_PORT),
       },
     }),
-    BullModule.registerQueue({ name: 'notifications' }),
-    BullModule.registerQueue({ name: 'test' }),
-    BullModule.registerQueue({ name: 'pending-endpoints' }),
+    BullModule.registerQueue({ name: NOTIFICATIONS_QUEUE }),
+    BullModule.registerQueue({ name: TEST_QUEUE }),
+    BullModule.registerQueue({ name: PENDING_ENDPOINTS_QUEUE }),
     PersistenceModule,
   ],
   controllers: [],
@@ -48,7 +53,7 @@ import { getEnvFilePath } from '@util/env';
   ],
 })
 export class BackgroundProcessModule implements OnModuleInit {
-  constructor(@InjectQueue('test') private testQueue: Queue) {}
+  constructor(@InjectQueue(TEST_QUEUE) private testQueue: Queue) {}
 
   onModuleInit() {
     this.testQueue.add({

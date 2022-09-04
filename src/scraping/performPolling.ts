@@ -1,10 +1,13 @@
 import axios from 'axios';
-import cheerio from 'cheerio';
+import { CheerioAPI, load } from 'cheerio';
 import { allRules } from '@rules/allRules';
 import { Endpoint } from '@persistence/entities/endpoint.entity';
 import { getDynamicHTML } from './getDynamicHTML';
 import { Rule } from '@rules/Rule';
 import { inspectArray, navigate } from '@util/misc';
+import { PollingDto } from '@persistence/dto/polling.dto';
+import { RequestType } from '@persistence/enum/request-type.enum';
+import { RequestResult } from '@interfaces/RequestResult';
 
 interface PollingResult {
   shouldNotify: boolean;
@@ -12,43 +15,62 @@ interface PollingResult {
   computedMessage?: string;
 }
 
-export const performPolling = async (
-  endpoint: Endpoint,
-): Promise<PollingResult> => {
-  const { url, rule, not = false } = endpoint;
+const request = async (endpoint: Endpoint): Promise<RequestResult> => {
+  const aux = async () => {
+    switch (endpoint.type) {
+      case RequestType.HTML:
+        return await axios.request({
+          url: endpoint.url,
+          method: endpoint.methodLowerCase(),
+        });
+      case RequestType.DHTML:
+        return await getDynamicHTML(endpoint.url);
+      default:
+        throw new Error('JSON not supported yet');
+    }
+  };
 
-  const args = endpoint.args();
+  const { data, status } = await aux();
+  return { data, status };
+};
 
+/**
+ * @throws {Error}
+ */
+const ensureNavigate = (html: CheerioAPI, navigation: string[]) => {
+  try {
+    return navigate(html, navigation);
+  } catch (e) {
+    throw new Error(`Incorrect navigations: [${navigation.join(', ')}]`);
+  }
+};
+
+/**
+ * @throws {Error}
+ */
+const ensureRule = (rule: string, args: any[]) => {
   const ruleInstance: Rule = new (allRules as any)[rule]();
 
   if (!ruleInstance.validate(args)) {
     throw new Error(`Invalid arguments: [${inspectArray(args)}]`);
   }
 
-  const ruleFunction = ruleInstance.execute.call(ruleInstance, args);
+  return ruleInstance;
+};
 
-  let data: string, status: number;
+const performPollingAux = async (
+  endpoint: Endpoint,
+): Promise<PollingResult> => {
+  const { rule, not = false } = endpoint;
 
-  if (endpoint.staticHtml) {
-    const res = await axios.get(url);
-    data = res.data;
-    status = res.status;
-  } else {
-    const res = await getDynamicHTML(url);
-    data = res.data;
-    status = res.status;
-  }
+  const ruleInstance: Rule = ensureRule(rule, endpoint.args());
 
-  const htmlResult = cheerio.load(data);
-  let domElement;
+  const ruleFunction = ruleInstance.execute.call(ruleInstance, endpoint.args());
 
-  try {
-    domElement = navigate(htmlResult, endpoint.navigation());
-  } catch (e) {
-    throw new Error(
-      `Incorrect navigations: [${endpoint.navigation().join(', ')}]`,
-    );
-  }
+  const { data, status } = await request(endpoint);
+
+  const htmlResult = load(data);
+  const domElement = ensureNavigate(htmlResult, endpoint.navigation());
   const shouldNotify = ruleFunction(domElement);
 
   return {
@@ -58,4 +80,27 @@ export const performPolling = async (
       endpoint.notificationMessage,
     ),
   };
+};
+
+export const performPolling = async (
+  endpoint: Endpoint,
+  manual: boolean,
+): Promise<PollingDto> => {
+  const polling = new PollingDto();
+  polling.endpointId = endpoint.id;
+  polling.manual = manual;
+  polling.shouldNotify = false;
+
+  try {
+    const { status, shouldNotify, computedMessage } = await performPollingAux(
+      endpoint,
+    );
+    polling.responseCode = status;
+    polling.shouldNotify = shouldNotify;
+    polling.computedMessage = computedMessage;
+    return polling;
+  } catch (e) {
+    polling.error = e.message;
+    return polling;
+  }
 };

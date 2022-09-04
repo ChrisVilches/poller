@@ -1,5 +1,7 @@
 import { ArgType } from '@persistence/enum/arg-type.enum';
+import { Method } from '@persistence/enum/method.enum';
 import { RequestType } from '@persistence/enum/request-type.enum';
+import { enumKeysToString } from '@util/misc';
 import { Expose, Transform, TransformFnParams } from 'class-transformer';
 import {
   Entity,
@@ -45,15 +47,13 @@ export class Endpoint {
   @Column({ default: false })
   enabled: boolean;
 
-  @Column({
-    type: 'enum',
-    enum: RequestType,
-    default: RequestType.HTML,
-  })
-  @Transform((params: TransformFnParams) =>
-    params.value === RequestType.HTML ? 'html' : 'json',
-  )
+  @Column({ type: 'enum', enum: RequestType })
+  @Transform((params: TransformFnParams) => RequestType[params.value])
   type: RequestType;
+
+  @Column({ type: 'enum', enum: Method })
+  @Transform((params: TransformFnParams) => Method[params.value])
+  method: Method;
 
   @Column()
   url: string;
@@ -78,8 +78,20 @@ export class Endpoint {
     return cleanArguments(this.arguments);
   }
 
+  methodLowerCase() {
+    return enumKeysToString(Method, [this.method])[0].toLowerCase();
+  }
+
+  typeFormatted() {
+    return enumKeysToString(RequestType, [this.type])[0].toLowerCase();
+  }
+
   formattedTitle() {
     return this.title || this.url;
+  }
+
+  toString(): string {
+    return `${this.formattedTitle()} (${this.typeFormatted()}, ${this.methodLowerCase()})`;
   }
 
   @Transform((params: TransformFnParams) => cleanNavigations(params.value))
@@ -100,9 +112,6 @@ export class Endpoint {
 
   @Column({ nullable: true })
   timeout?: Date;
-
-  @Column({ default: true })
-  staticHtml: boolean;
 
   @ManyToMany(() => Tag)
   tags: Tag[];
