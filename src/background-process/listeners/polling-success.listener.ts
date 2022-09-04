@@ -18,10 +18,12 @@ export class PollingSuccessListener {
 
     const title = endpoint.formattedTitle();
     const content = polling.computedMessage || '';
+    const url = polling.endpoint.url;
 
     this.notificationsQueue.add({
       title,
       content,
+      url,
     });
   }
 }

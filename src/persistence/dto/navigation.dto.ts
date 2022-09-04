@@ -1,4 +1,4 @@
-import { Trim } from '@persistence/transformations/trim.transformation';
+import { Trim } from '@transformations/trim.transformation';
 import { IsString, MinLength } from 'class-validator';
 
 export class NavigationDto {

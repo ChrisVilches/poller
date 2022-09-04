@@ -12,7 +12,6 @@ export class PushNotification implements Notifiable {
     this.apiKey = this.apiKey.trim();
   }
 
-  // TODO: I think this is wrong. The title becomes the API Key.
   buildParams(title?: string, content?: string, url?: string) {
     const queryParams = {
       k: this.apiKey,
@@ -33,17 +32,13 @@ export class PushNotification implements Notifiable {
     return queryParams;
   }
 
-  async notify(title: string, content: string) {
+  async notify(title: string, content: string, url?: string) {
     content = limitMessageLength(
       content,
       Number(process.env.PUSH_NOTIFICATION_MESSAGE_MAX_LENGTH),
     );
 
-    const params = this.buildParams(
-      process.env.PUSH_NOTIFICATION_API_KEY as string,
-      title,
-      content,
-    );
+    const params = this.buildParams(title, content, url);
 
     const debugMessage = `${title} | ${content}`;
 

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, EntityNotFoundError, Repository } from 'typeorm';
 import { Tag } from '@persistence/entities/tag.entity';
-import { PartialTagDto, TagDto } from '@persistence/dto/tag.dto';
+import { TagPartialDto, TagDto } from '@persistence/dto/tag.dto';
 import { Endpoint } from '@persistence/entities/endpoint.entity';
 import { transformAndValidate } from 'class-transformer-validator';
 import { ValidationError } from 'class-validator';
@@ -59,12 +59,12 @@ export class TagsService {
     return this.tagsRepository.save(await transformAndValidate(TagDto, tagDto));
   }
 
-  async update(id: number, tagDto: PartialTagDto): Promise<Tag> {
+  async update(id: number, tagDto: TagPartialDto): Promise<Tag> {
     await this.checkCanUseName(tagDto.name, id);
 
     await this.tagsRepository.update(
       { id },
-      await transformAndValidate(PartialTagDto, tagDto),
+      await transformAndValidate(TagPartialDto, tagDto),
     );
 
     return await this.findOne(id);

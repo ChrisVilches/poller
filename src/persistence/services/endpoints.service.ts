@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { EntityNotFoundError, Repository } from 'typeorm';
 import { Endpoint } from '@persistence/entities/endpoint.entity';
 import * as moment from 'moment';
-import { EndpointDto, PartialEndpointDto } from '@persistence/dto/endpoint.dto';
+import { EndpointDto, EndpointPartialDto } from '@persistence/dto/endpoint.dto';
 import { transformAndValidate } from 'class-transformer-validator';
 
 @Injectable()
@@ -25,14 +25,14 @@ export class EndpointsService {
     await this.endpointsRepository.update({ id }, { timeout: null } as any);
   }
 
-  async update(id: number, endpointDto: PartialEndpointDto): Promise<Endpoint> {
+  async update(id: number, endpointDto: EndpointPartialDto): Promise<Endpoint> {
     if ((await this.findOne(id)) === null) {
       throw new EntityNotFoundError(Endpoint.name, {});
     }
 
     await this.endpointsRepository.save({
       id,
-      ...(await transformAndValidate(PartialEndpointDto, endpointDto)),
+      ...(await transformAndValidate(EndpointPartialDto, endpointDto)),
     } as any);
 
     return await this.findOne(id);

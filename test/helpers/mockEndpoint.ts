@@ -1,39 +1,34 @@
+import { EndpointCreateDto } from '@api/dto/endpoint-create.dto';
+import { EndpointUpdateDto } from '@api/dto/endpoint-update.dto';
 import { EndpointDto } from '@persistence/dto/endpoint.dto';
-import { Endpoint } from '@persistence/entities/endpoint.entity';
-import { Method } from '@persistence/enum/method.enum';
-import { RequestType } from '@persistence/enum/request-type.enum';
-import { transformAndValidate } from 'class-transformer-validator';
-import { convertArgs } from './convertArgs';
-import { convertNav } from './convertNav';
+import { convertEndpointDto } from '@util/endpoints';
 
-export const mockEndpoint = (props: object = {}) => {
-  const result = {
+/**
+ * Creates a valid dummy object.
+ *
+ * Missing attributes are assigned a dummy value. The object will still be valid even if
+ * the argument is empty.
+ *
+ * @param props Endpoint partial object in the same format that's required by the API.
+ * @returns {EndpointDto} Object converted to `EndpointDto`.
+ */
+export const mockEndpoint = (
+  props: EndpointCreateDto | EndpointUpdateDto = {},
+): EndpointDto => {
+  const result: EndpointCreateDto | EndpointUpdateDto = {
     title: 'endpoint mock',
     url: 'https://www.some-url.com',
     notificationMessage: 'my message',
-    type: RequestType.HTML,
+    type: 'HTML',
     rule: 'HasOccurrencesRule',
     periodMinutes: 15,
     waitAfterNotificationMinutes: 120,
     navigations: [],
     arguments: [],
     not: false,
-    method: Method.GET,
+    method: 'GET',
     ...props,
   };
 
-  if (result.navigations) {
-    result.navigations = convertNav(result.navigations) as any;
-  }
-
-  if (result.arguments) {
-    result.arguments = convertArgs(result.arguments) as any;
-  }
-
-  return result;
-};
-
-export const mockEndpointInstance = async (props: object = {}) => {
-  const endpointPlain = mockEndpoint(props);
-  return (await transformAndValidate(EndpointDto, endpointPlain)) as Endpoint;
+  return convertEndpointDto(result);
 };

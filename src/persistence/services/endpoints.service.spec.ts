@@ -4,9 +4,8 @@ import { mockEndpoint } from '@test/helpers/mockEndpoint';
 import { ValidationError } from 'class-validator';
 import '@test/matchers/toThrowErrorType';
 import { createTestingModule } from '@test/helpers/createTestingModule';
-import { convertNav } from '@test/helpers/convertNav';
-import { convertArgs } from '@test/helpers/convertArgs';
 import { INestApplication } from '@nestjs/common';
+import { convertArgs, convertNav } from '@util/endpoints';
 
 describe(EndpointsService.name, () => {
   let app: INestApplication;
@@ -75,7 +74,7 @@ describe(EndpointsService.name, () => {
     it('rejects incorrect arguments', async () => {
       await expect(async () => {
         await service.create(
-          mockEndpoint({ arguments: [' a ', null, ' b ', ''] }),
+          mockEndpoint({ arguments: [' a ', null, ' b ', ''] as any }),
         );
       }).toThrowErrorType(ValidationError);
     });
@@ -135,7 +134,7 @@ describe(EndpointsService.name, () => {
       await expect(async () => {
         await service.update(
           endpoint.id,
-          mockEndpoint({ navigations: [' a ', true] }),
+          mockEndpoint({ navigations: [' a ', true] as any }),
         );
       }).toThrowErrorType(ValidationError);
     });
@@ -144,7 +143,7 @@ describe(EndpointsService.name, () => {
       await expect(async () => {
         await service.update(
           endpoint.id,
-          mockEndpoint({ arguments: [' a ', null, ' b '] }),
+          mockEndpoint({ arguments: [' a ', null, ' b '] as any }),
         );
       }).toThrowErrorType(ValidationError);
     });
@@ -154,7 +153,7 @@ describe(EndpointsService.name, () => {
         await service.update(
           endpoint.id,
           mockEndpoint({
-            arguments: [' a ', ' b ', () => 0],
+            arguments: [' a ', ' b ', () => 0] as any,
           }),
         );
       }).toThrowErrorType(ValidationError);

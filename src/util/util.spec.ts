@@ -5,6 +5,7 @@ import { isDev, isProd, isTest } from './env';
 import {
   enumKeysToString,
   inspectArray,
+  isArrayOf,
   navigate,
   valueToArgType,
 } from './misc';
@@ -320,5 +321,20 @@ describe(enumKeysToString.name, () => {
       'POST',
       undefined,
     ]);
+  });
+});
+
+describe(isArrayOf.name, () => {
+  it('checks array of objects', () => {
+    expect(isArrayOf([new Function(), new Function()], Function)).toBeTruthy();
+    expect(isArrayOf([new Function(), []], Function)).toBeFalsy();
+    expect(isArrayOf([[], []], Function)).toBeFalsy();
+    expect(isArrayOf([[], []], Array)).toBeTruthy();
+  });
+
+  it('checks array of primitive values', () => {
+    expect(isArrayOf([1, 2, 3], 'number')).toBeTruthy();
+    expect(isArrayOf(['a', 'b', 'c'], 'string')).toBeTruthy();
+    expect(isArrayOf([true, false, true], 'boolean')).toBeTruthy();
   });
 });

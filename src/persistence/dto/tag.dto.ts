@@ -1,5 +1,5 @@
 import { PartialType } from '@nestjs/mapped-types';
-import { Trim } from '@persistence/transformations/trim.transformation';
+import { Trim } from '@transformations/trim.transformation';
 import { IsString, MinLength } from 'class-validator';
 
 export class TagDto {
@@ -9,4 +9,4 @@ export class TagDto {
   name: string;
 }
 
-export class PartialTagDto extends PartialType(TagDto) {}
+export class TagPartialDto extends PartialType(TagDto) {}

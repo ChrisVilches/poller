@@ -3,6 +3,8 @@ import { INestApplicationContext } from '@nestjs/common';
 import { EndpointsService } from '@persistence/services/endpoints.service';
 import { SeedService } from '@persistence/services/seed.service';
 import { readFileSync } from 'fs';
+import { convertEndpointDto } from '@util/endpoints';
+import { EndpointDto } from '@persistence/dto/endpoint.dto';
 
 const inputJsonPath = process.argv[2];
 
@@ -13,7 +15,18 @@ if (!inputJsonPath) {
 
 const seedData = JSON.parse(readFileSync(inputJsonPath).toString());
 
+const previewData = (seedData: any[]) => {
+  console.log('Will create the following endpoints:');
+
+  for (const { enabled, ...endpointData } of seedData) {
+    const endpoint: EndpointDto = convertEndpointDto(endpointData)
+    console.log(JSON.stringify(endpoint, null, 2));
+  }
+}
+
 runContext(async (app: INestApplicationContext) => {
+  previewData(seedData);
+
   const endpointsService = app.get(EndpointsService);
   const seedService = app.get(SeedService);
 

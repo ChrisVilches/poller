@@ -8,22 +8,21 @@ import {
   Patch,
   Post,
   UseInterceptors,
-  UsePipes,
-  ValidationPipe,
 } from '@nestjs/common';
 import { ProcessErrorInterceptor } from '../interceptors/process-error.interceptor';
 import { EmptyReturnInterceptor } from '../interceptors/empty-return.interceptor';
-import { EndpointDto, PartialEndpointDto } from '@persistence/dto/endpoint.dto';
 import { EndpointsService } from '@persistence/services/endpoints.service';
 import { Endpoint } from '@persistence/entities/endpoint.entity';
-import { ConvertEndpointArraysPipe } from '@api/pipes/convert-endpoint-arrays.pipe';
-import { RequestTypeStringToEnumPipe } from '@api/pipes/request-type-string-to-enum.pipe';
-import { MethodStringToEnumPipe } from '@api/pipes/method-string-to-enum.pipe';
+import { EndpointCreateDto } from '@api/dto/endpoint-create.dto';
+import { EndpointUpdateDto } from '@api/dto/endpoint-update.dto';
+import { ApiTags } from '@nestjs/swagger';
+import { convertEndpointDto } from '@util/endpoints';
 
 @UseInterceptors(EmptyReturnInterceptor)
 @UseInterceptors(ProcessErrorInterceptor)
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('endpoints')
+@ApiTags('Endpoints')
 export class EndpointsController {
   constructor(private readonly endpointsService: EndpointsService) {}
 
@@ -38,36 +37,16 @@ export class EndpointsController {
   }
 
   @Post()
-  @UsePipes(
-    new ValidationPipe({
-      whitelist: true,
-      forbidNonWhitelisted: true,
-      transform: true,
-    }),
-  )
-  @UsePipes(new ConvertEndpointArraysPipe())
-  @UsePipes(new MethodStringToEnumPipe())
-  @UsePipes(new RequestTypeStringToEnumPipe())
-  create(@Body() endpointDto: EndpointDto) {
-    return this.endpointsService.create(endpointDto);
+  create(@Body() params: EndpointCreateDto) {
+    return this.endpointsService.create(convertEndpointDto(params));
   }
 
   @Patch(':id')
-  @UsePipes(
-    new ValidationPipe({
-      whitelist: true,
-      forbidNonWhitelisted: true,
-      transform: true,
-    }),
-  )
-  @UsePipes(new ConvertEndpointArraysPipe())
-  @UsePipes(new MethodStringToEnumPipe())
-  @UsePipes(new RequestTypeStringToEnumPipe())
   update(
     @Param('id', ParseIntPipe) id: number,
-    @Body() endpointDto: PartialEndpointDto,
+    @Body() params: EndpointUpdateDto,
   ) {
-    return this.endpointsService.update(id, endpointDto);
+    return this.endpointsService.update(id, convertEndpointDto(params));
   }
 
   @Patch(':id/enable')
@@ -81,7 +60,7 @@ export class EndpointsController {
   }
 
   @Patch(':id/clear_timeout')
-  async clearTimeout(@Param('id') id: number): Promise<Endpoint> {
+  async clearTimeout(@Param('id', ParseIntPipe) id: number): Promise<Endpoint> {
     await this.endpointsService.clearTimeout(id);
     return await this.endpointsService.findOne(id);
   }

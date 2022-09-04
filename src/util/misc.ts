@@ -19,6 +19,10 @@ export const isArrayOf = (data: any, type: any) => {
     return false;
   }
 
+  if (typeof type === 'string') {
+    return data.reduce((accum, elem) => accum && typeof elem === type, true);
+  }
+
   return data.reduce((accum, elem) => accum && elem instanceof type, true);
 };
 

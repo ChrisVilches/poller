@@ -15,7 +15,7 @@ export class NotificationConsumer {
 
   @Process()
   sendNotifications(job: Job<NotificationArguments>) {
-    const { title, content } = job.data;
+    const { title, content, url } = job.data;
 
     const notifiers: Notifiable[] = [new Mailer()];
 
@@ -33,7 +33,7 @@ export class NotificationConsumer {
 
     notifiers.forEach((notif: Notifiable) => {
       try {
-        notif.notify(title, content);
+        notif.notify(title, content, url);
       } catch (e) {
         this.logger.error(`Error while notifying: ${e}`);
         this.logger.error(e.stack);

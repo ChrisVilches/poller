@@ -8,18 +8,17 @@ import {
   IsString,
   IsUrl,
   MinLength,
-  ValidateNested,
+  Validate,
 } from 'class-validator';
 import { allRules } from '@rules/allRules';
-import { ArgumentDto } from './argument.dto';
-import { NavigationDto } from './navigation.dto';
 import { Trim } from '@transformations/trim.transformation';
 import 'reflect-metadata';
-import { PartialType } from '@nestjs/mapped-types';
-import { Type } from 'class-transformer';
 import { RequestType } from '@persistence/enum/request-type.enum';
 import { Method } from '@persistence/enum/method.enum';
 import { enumKeysToString } from '@util/misc';
+import { TrimEach } from '@transformations/trim-each.transformation';
+import { Uppercase } from '@transformations/uppercase.transformation';
+import { CorrectArgsType } from '@api/validators/correct-args-type.validator';
 
 const allowedTypes = [RequestType.HTML, RequestType.DHTML, RequestType.JSON];
 const allowedMethods = [
@@ -30,7 +29,7 @@ const allowedMethods = [
   Method.DELETE,
 ];
 
-export class EndpointDto {
+export class EndpointCreateDto {
   @IsOptional()
   @IsString()
   @Trim()
@@ -45,13 +44,10 @@ export class EndpointDto {
   @IsIn(Object.keys(allRules))
   rule: string;
 
-  @IsIn(allowedTypes, {
-    message: `type must be one of the following values: ${enumKeysToString(
-      RequestType,
-      allowedTypes,
-    ).join(', ')}`,
-  })
-  type: RequestType;
+  @IsIn(enumKeysToString(RequestType, allowedTypes))
+  @IsString()
+  @Uppercase()
+  type: string;
 
   @IsUrl()
   url: string;
@@ -65,13 +61,9 @@ export class EndpointDto {
   @IsBoolean()
   not: boolean;
 
-  @IsIn(allowedMethods, {
-    message: `method must be one of the following values: ${enumKeysToString(
-      Method,
-      allowedMethods,
-    ).join(', ')}`,
-  })
-  method: Method;
+  @IsIn(enumKeysToString(Method, allowedMethods))
+  @Uppercase()
+  method: string;
 
   @IsOptional()
   @IsInt()
@@ -80,18 +72,13 @@ export class EndpointDto {
 
   @IsOptional()
   @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => ArgumentDto)
-  arguments: ArgumentDto[];
+  @Validate(CorrectArgsType)
+  arguments: (string | number | boolean)[];
 
   @IsOptional()
   @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => NavigationDto)
-  navigations: NavigationDto[];
+  @IsString({ each: true })
+  @MinLength(1, { each: true })
+  @TrimEach()
+  navigations: string[];
 }
-
-/**
- * Must use this class for patch method. Using `Partial<T>` does not work.
- */
-export class EndpointPartialDto extends PartialType(EndpointDto) {}

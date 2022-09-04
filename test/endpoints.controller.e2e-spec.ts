@@ -30,6 +30,14 @@ describe(`${EndpointsController.name} (e2e)`, () => {
   });
 
   describe('/endpoints/:id (GET)', () => {
+    it('fails if ID is not numeric', async () => {
+      const res = await request(app.getHttpServer()).get('/endpoints/1ee');
+      expect(res.statusCode).toBe(400);
+      expect(res.body.message).toBe(
+        'Validation failed (numeric string is expected)',
+      );
+    });
+
     it('returns 404 if the ID does not exist', async () => {
       const res = await request(app.getHttpServer()).get('/endpoints/123128');
       expect(res.statusCode).toBe(404);
@@ -165,6 +173,7 @@ describe(`${EndpointsController.name} (e2e)`, () => {
     it('returns the created endpoint with converted navigation and argument arrays', async () => {
       const nav = ['nav1', '  nav2 ', 'nav3   '];
       const arg = [1, 2, true, 'str', 'aa', 2];
+
       const { body } = await request(app.getHttpServer())
         .post('/endpoints')
         .send({
@@ -172,6 +181,7 @@ describe(`${EndpointsController.name} (e2e)`, () => {
           navigations: nav,
           arguments: arg,
         });
+
       expect(body.navigations).toStrictEqual(['nav1', 'nav2', 'nav3']);
       expect(body.arguments).toStrictEqual(arg);
     });

@@ -11,13 +11,13 @@ import {
   Patch,
   Post,
   UseInterceptors,
-  UsePipes,
-  ValidationPipe,
 } from '@nestjs/common';
-import { TagDto } from '@persistence/dto/tag.dto';
+import { ApiTags } from '@nestjs/swagger';
+import { TagPartialDto, TagDto } from '@persistence/dto/tag.dto';
 import { TagsService } from '@persistence/services/tags.service';
 
 @Controller('tags')
+@ApiTags('Tags')
 @UseInterceptors(EmptyReturnInterceptor)
 @UseInterceptors(ClassSerializerInterceptor)
 @UseInterceptors(ProcessErrorInterceptor)
@@ -35,41 +35,27 @@ export class TagsController {
   }
 
   @Post()
-  @UsePipes(
-    new ValidationPipe({
-      whitelist: true,
-      forbidNonWhitelisted: true,
-      transform: true,
-    }),
-  )
-  create(@Body() tagDto: TagDto) {
-    return this.tagsService.create(tagDto);
+  create(@Body() params: TagDto) {
+    return this.tagsService.create(params);
   }
 
   @Patch(':id')
-  @UsePipes(
-    new ValidationPipe({
-      whitelist: true,
-      forbidNonWhitelisted: true,
-      transform: true,
-    }),
-  )
-  update(@Param('id', ParseIntPipe) id: number, @Body() tagDto: TagDto) {
-    return this.tagsService.update(id, tagDto);
+  update(@Param('id', ParseIntPipe) id: number, @Body() params: TagPartialDto) {
+    return this.tagsService.update(id, params);
   }
 
-  @Post(':id/add/:endpoint_id')
+  @Post(':id/add/:endpointId')
   add(
     @Param('id', ParseIntPipe) id: number,
-    @Param('endpoint_id', ParseIntPipe) endpointId: number,
+    @Param('endpointId', ParseIntPipe) endpointId: number,
   ) {
     return this.tagsService.addEndpoint(id, endpointId);
   }
 
-  @Delete(':id/remove/:endpoint_id')
+  @Delete(':id/remove/:endpointId')
   remove(
     @Param('id', ParseIntPipe) id: number,
-    @Param('endpoint_id', ParseIntPipe) endpointId: number,
+    @Param('endpointId', ParseIntPipe) endpointId: number,
   ) {
     return this.tagsService.removeEndpoint(id, endpointId);
   }

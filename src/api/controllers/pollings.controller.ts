@@ -3,9 +3,9 @@ import {
   Post,
   Param,
   UseInterceptors,
-  ParseIntPipe,
   Get,
   ClassSerializerInterceptor,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { EmptyReturnInterceptor } from '../interceptors/empty-return.interceptor';
 import { ProcessErrorInterceptor } from '../interceptors/process-error.interceptor';
@@ -14,11 +14,13 @@ import { EndpointsService } from '@persistence/services/endpoints.service';
 import { PollingsService } from '@persistence/services/pollings.service';
 import { performPolling } from '@scraping/performPolling';
 import { PollingDto } from '@persistence/dto/polling.dto';
+import { ApiTags } from '@nestjs/swagger';
 
 @UseInterceptors(ProcessErrorInterceptor)
 @UseInterceptors(EmptyReturnInterceptor)
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('pollings')
+@ApiTags('Pollings')
 export class PollingsController {
   constructor(
     private readonly pollingsService: PollingsService,

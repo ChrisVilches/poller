@@ -1,15 +1,19 @@
 import { FetchPendingEndpointsJob } from './fetch-pending-endpoints.job';
 import { createTestingModule } from '@test/helpers/createTestingModule';
-import { mockEndpointInstance } from '@test/helpers/mockEndpoint';
+import { mockEndpoint } from '@test/helpers/mockEndpoint';
 import { INestApplication } from '@nestjs/common';
+import { EndpointsService } from '@persistence/services/endpoints.service';
+import { Endpoint } from '@persistence/entities/endpoint.entity';
 
 describe(FetchPendingEndpointsJob.name, () => {
   let app: INestApplication;
   let job: FetchPendingEndpointsJob;
+  let endpointsService: EndpointsService;
 
   beforeEach(async () => {
     app = await createTestingModule();
     job = app.get<FetchPendingEndpointsJob>(FetchPendingEndpointsJob);
+    endpointsService = app.get<EndpointsService>(EndpointsService);
   });
 
   afterEach(async () => {
@@ -17,20 +21,23 @@ describe(FetchPendingEndpointsJob.name, () => {
   });
 
   describe('isTimedOut', () => {
+    let endpoint: Endpoint;
+
+    beforeEach(async () => {
+      endpoint = await endpointsService.create(mockEndpoint());
+    });
+
     it('verifies the endpoint is not timed out (timeout is null)', async () => {
-      const endpoint = await mockEndpointInstance();
       endpoint.timeout = undefined;
       expect(job.isTimedOut(new Date('2022-01-05'), endpoint)).toBeFalsy();
     });
 
     it('verifies the endpoint is not timed out (timeout is not null)', async () => {
-      const endpoint = await mockEndpointInstance();
       endpoint.timeout = new Date('2022-01-05');
       expect(job.isTimedOut(new Date('2022-01-08'), endpoint)).toBeFalsy();
     });
 
     it('verifies the endpoint is timed out', async () => {
-      const endpoint = await mockEndpointInstance();
       endpoint.timeout = new Date('2022-01-05');
       expect(job.isTimedOut(new Date('2022-01-04'), endpoint)).toBeTruthy();
     });

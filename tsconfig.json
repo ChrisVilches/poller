@@ -48,6 +48,9 @@
       ],
       "@util/*": [
         "src/util/*"
+      ],
+      "@transformations/*": [
+        "src/transformations/*"
       ]
     }
   }
