@@ -15,6 +15,11 @@ import { PollingsService } from '@persistence/services/pollings.service';
 import { performPolling } from '@scraping/performPolling';
 import { PollingDto } from '@persistence/dto/polling.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { PENDING_ENDPOINTS_QUEUE } from '@background-process/queues';
+import { PendingEndpoint } from '@interfaces/PendingEndpoint';
+import { InjectQueue } from '@nestjs/bull';
+import { Queue } from 'bull';
+import { Endpoint } from '@persistence/entities/endpoint.entity';
 
 @UseInterceptors(ProcessErrorInterceptor)
 @UseInterceptors(EmptyReturnInterceptor)
@@ -25,6 +30,8 @@ export class PollingsController {
   constructor(
     private readonly pollingsService: PollingsService,
     private readonly endpointsService: EndpointsService,
+    @InjectQueue(PENDING_ENDPOINTS_QUEUE)
+    private pollingsQueue: Queue<PendingEndpoint>,
   ) {}
 
   @Get()
@@ -40,6 +47,16 @@ export class PollingsController {
   @Get(':endpointId/latest')
   findLatest(@Param('endpointId', ParseIntPipe) endpointId: number) {
     return this.pollingsService.findLatest(endpointId);
+  }
+
+  @Post(':id/enqueue')
+  async enqueue(@Param('id', ParseIntPipe) id: number): Promise<Endpoint | null> {
+    const endpoint = await this.endpointsService.findOne(id);
+    this.pollingsQueue.add({
+      endpointId: endpoint.id,
+      manual: true,
+    });
+    return endpoint
   }
 
   @Post(':id/poll')
