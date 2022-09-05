@@ -17,7 +17,7 @@ const createHtmlContent = (title: string, url: string): string => `
 `
 
 export class SendinblueAPI implements Notifiable {
-  private readonly logger = new Logger(SendinblueAPI.name);
+  private readonly logger = new Logger(this.constructor.name);
 
   constructor(
     private readonly config: SendinblueConfig

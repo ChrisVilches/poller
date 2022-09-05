@@ -9,7 +9,7 @@ export class LogNotification implements Notifiable {
     this.output = winston.createLogger({
       level: 'info',
       format: winston.format.json(),
-      defaultMeta: { service: LogNotification.name },
+      defaultMeta: { service: this.constructor.name },
       transports: [new winston.transports.File({ filename: filePath })],
     });
 

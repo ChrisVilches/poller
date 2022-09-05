@@ -6,7 +6,7 @@ import { Notifiable } from './Notifiable';
 // Get API KEY
 // https://play.google.com/store/apps/details?id=net.xdroid.pn
 export class PushNotification implements Notifiable {
-  private readonly logger = new Logger(PushNotification.name);
+  private readonly logger = new Logger(this.constructor.name);
 
   constructor(private readonly apiKey: string) {
     this.apiKey = this.apiKey.trim();

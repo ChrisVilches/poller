@@ -13,7 +13,7 @@ import { PENDING_ENDPOINTS_QUEUE } from '@background-process/queues';
 
 @Processor(PENDING_ENDPOINTS_QUEUE)
 export class PendingEndpointsConsumer {
-  private readonly logger = new Logger(PendingEndpointsConsumer.name);
+  private readonly logger = new Logger(this.constructor.name);
 
   constructor(
     private readonly pollingsService: PollingsService,

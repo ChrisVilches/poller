@@ -13,7 +13,7 @@ import { SendinblueAPI, SendinblueConfig } from '@notifiers/SendinblueAPI';
 
 @Processor(NOTIFICATIONS_QUEUE)
 export class NotificationConsumer {
-  private readonly logger = new Logger(NotificationConsumer.name);
+  private readonly logger = new Logger(this.constructor.name);
 
   @Process()
   sendNotifications(job: Job<NotificationArguments>) {
@@ -21,8 +21,8 @@ export class NotificationConsumer {
 
     const notifiers: Notifiable[] = this.getEnabledNotifiers()
 
-    this.logger.debug('Enabled notifiers:')
-    this.logger.debug(notifiers.map((cls: any) => cls.constructor.name).join(', '))
+    const notifierNames = notifiers.map((cls: any) => cls.constructor.name)
+    this.logger.debug(`Enabled notifiers: ${notifierNames.join(', ')}`)
 
     notifiers.forEach((notif: Notifiable) => {
       try {

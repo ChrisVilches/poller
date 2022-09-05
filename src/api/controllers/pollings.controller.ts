@@ -49,9 +49,9 @@ export class PollingsController {
     return this.pollingsService.findLatest(endpointId);
   }
 
-  @Post(':id/enqueue')
-  async enqueue(@Param('id', ParseIntPipe) id: number): Promise<Endpoint | null> {
-    const endpoint = await this.endpointsService.findOne(id);
+  @Post(':endpointId/enqueue')
+  async enqueue(@Param('endpointId', ParseIntPipe) endpointId: number): Promise<Endpoint | null> {
+    const endpoint = await this.endpointsService.findOne(endpointId);
     this.pollingsQueue.add({
       endpointId: endpoint.id,
       manual: true,
@@ -59,9 +59,9 @@ export class PollingsController {
     return endpoint
   }
 
-  @Post(':id/poll')
-  async poll(@Param('id', ParseIntPipe) id: number): Promise<Polling | null> {
-    const endpoint = await this.endpointsService.findOne(id);
+  @Post(':endpointId/poll')
+  async poll(@Param('endpointId', ParseIntPipe) endpointId: number): Promise<Polling | null> {
+    const endpoint = await this.endpointsService.findOne(endpointId);
     const pollingDto: PollingDto = await performPolling(endpoint, true);
     return await this.pollingsService.create(pollingDto);
   }

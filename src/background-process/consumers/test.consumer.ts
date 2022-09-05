@@ -5,7 +5,7 @@ import { Job } from 'bull';
 
 @Processor(TEST_QUEUE)
 export class TestConsumer {
-  private readonly logger = new Logger(TestConsumer.name);
+  private readonly logger = new Logger(this.constructor.name);
 
   @Process()
   execute(job: Job<any>) {

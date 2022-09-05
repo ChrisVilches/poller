@@ -5,7 +5,7 @@ import { PollingsService } from '@persistence/services/pollings.service';
 
 @Injectable()
 export class CleanOldPollingRecordsJob {
-  private readonly logger = new Logger(CleanOldPollingRecordsJob.name);
+  private readonly logger = new Logger(this.constructor.name);
 
   constructor(private readonly pollingsService: PollingsService) {}
 

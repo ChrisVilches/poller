@@ -9,7 +9,7 @@ import { PENDING_ENDPOINTS_QUEUE } from '@background-process/queues';
 
 @Injectable()
 export class FetchPendingEndpointsJob {
-  private readonly logger = new Logger(FetchPendingEndpointsJob.name);
+  private readonly logger = new Logger(this.constructor.name);
 
   constructor(
     private readonly endpointsService: EndpointsService,
