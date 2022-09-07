@@ -50,7 +50,7 @@ export class TagsService {
   }
 
   async find(query: TagQueryDto): Promise<Tag | null> {
-    const result = await this.tagsRepository.findBy(query)
+    const result = await this.tagsRepository.findBy(query);
     return result[0];
   }
 
