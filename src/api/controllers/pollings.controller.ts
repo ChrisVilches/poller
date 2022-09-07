@@ -31,7 +31,7 @@ export class PollingsController {
     private readonly pollingsService: PollingsService,
     private readonly endpointsService: EndpointsService,
     @InjectQueue(PENDING_ENDPOINTS_QUEUE)
-    private pollingsQueue: Queue<PendingEndpoint>,
+    private pendingEndpointsQueue: Queue<PendingEndpoint>,
   ) {}
 
   @Get()
@@ -50,17 +50,21 @@ export class PollingsController {
   }
 
   @Post(':endpointId/enqueue')
-  async enqueue(@Param('endpointId', ParseIntPipe) endpointId: number): Promise<Endpoint | null> {
+  async enqueue(
+    @Param('endpointId', ParseIntPipe) endpointId: number,
+  ): Promise<Endpoint | null> {
     const endpoint = await this.endpointsService.findOne(endpointId);
-    this.pollingsQueue.add({
+    this.pendingEndpointsQueue.add({
       endpointId: endpoint.id,
       manual: true,
     });
-    return endpoint
+    return endpoint;
   }
 
   @Post(':endpointId/poll')
-  async poll(@Param('endpointId', ParseIntPipe) endpointId: number): Promise<Polling | null> {
+  async poll(
+    @Param('endpointId', ParseIntPipe) endpointId: number,
+  ): Promise<Polling | null> {
     const endpoint = await this.endpointsService.findOne(endpointId);
     const pollingDto: PollingDto = await performPolling(endpoint, true);
     return await this.pollingsService.create(pollingDto);

@@ -1,4 +1,4 @@
-import { PartialType } from '@nestjs/swagger';
+import { PartialType } from '@nestjs/mapped-types';
 import { Trim } from '@transformations/trim.transformation';
 import { IsString, MinLength } from 'class-validator';
 

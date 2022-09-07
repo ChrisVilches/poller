@@ -14,7 +14,7 @@ export class FetchPendingEndpointsJob {
   constructor(
     private readonly endpointsService: EndpointsService,
     @InjectQueue(PENDING_ENDPOINTS_QUEUE)
-    private pollingsQueue: Queue<PendingEndpoint>,
+    private pendingEndpointsQueue: Queue<PendingEndpoint>,
   ) {}
 
   @Cron(CronExpression.EVERY_30_SECONDS)
@@ -36,7 +36,7 @@ export class FetchPendingEndpointsJob {
     );
 
     for (const endpoint of toPoll) {
-      this.pollingsQueue.add({
+      this.pendingEndpointsQueue.add({
         endpointId: endpoint.id,
         manual: false,
       });

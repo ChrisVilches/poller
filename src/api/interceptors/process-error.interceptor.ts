@@ -31,8 +31,7 @@ export class ProcessErrorInterceptor implements NestInterceptor {
           throw new BadRequestException({
             statusCode: 400,
             message: err.flatMap((e: any) => Object.values(e.constraints)),
-            error: 'Bad Request',
-            interceptor: true,
+            error: 'Bad Request'
           });
         }
         throw err;

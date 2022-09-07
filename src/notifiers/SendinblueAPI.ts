@@ -14,29 +14,30 @@ const createHtmlContent = (title: string, url: string): string => `
   <p>
     <a href="${url}">${url}</a>
   </p>
-`
+`;
 
 export class SendinblueAPI implements Notifiable {
   private readonly logger = new Logger(this.constructor.name);
 
-  constructor(
-    private readonly config: SendinblueConfig
-  ) {}
+  constructor(private readonly config: SendinblueConfig) {}
 
   async notify(title: string, content: string, url: string) {
     try {
-      const campaignId: number = await this.createCampaign(title, content, url)
-      this.logger.debug(`Campaign created (ID: ${campaignId}). Sending now...`)
+      const campaignId: number = await this.createCampaign(title, content, url);
+      this.logger.debug(`Campaign created (ID: ${campaignId}). Sending now...`);
 
-      const { status, statusText } = await this.sendNow(campaignId)
-      this.logger.debug(`${status} | ${statusText}`)
-
-    } catch(e) {
-      this.logger.error(JSON.stringify(e.response.data))
+      const { status, statusText } = await this.sendNow(campaignId);
+      this.logger.debug(`${status} | ${statusText}`);
+    } catch (e) {
+      this.logger.error(JSON.stringify(e.response.data));
     }
   }
 
-  private async createCampaign(title: string, content: string, url: string): Promise<number> {
+  private async createCampaign(
+    title: string,
+    content: string,
+    url: string,
+  ): Promise<number> {
     const payload = {
       name: `Notification: ${title}`,
       subject: title,
@@ -55,8 +56,8 @@ export class SendinblueAPI implements Notifiable {
       url: 'https://api.sendinblue.com/v3/emailCampaigns',
       method: 'post',
       headers: { 'api-key': this.config.apiKey },
-      data: payload
-    })
+      data: payload,
+    });
 
     return data.id;
   }
@@ -65,7 +66,7 @@ export class SendinblueAPI implements Notifiable {
     return axios.request({
       url: `https://api.sendinblue.com/v3/emailCampaigns/${campaignId}/sendNow`,
       method: 'post',
-      headers: { 'api-key': this.config.apiKey }
-    })
+      headers: { 'api-key': this.config.apiKey },
+    });
   }
 }

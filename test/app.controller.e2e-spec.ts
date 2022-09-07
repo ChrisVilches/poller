@@ -18,6 +18,6 @@ describe(`${AppController.name} (e2e)`, () => {
     return request(app.getHttpServer())
       .get('/')
       .expect(200)
-      .expect('The app is online! port 3000, test');
+      .expect(`The app is online! port ${process.env.PORT}, test`);
   });
 });

@@ -70,6 +70,8 @@ export class TagsService {
     return await this.findOne(id);
   }
 
+  // TODO: Database should have composite index, so that no two pairs (tag - endpoint) are the same.
+  //       otherwise an endpoint could be added multiple times. Doing this at database level is enough.
   async addEndpoint(id: number, endpointId: number) {
     const tag = await this.tagsRepository.findOneBy({ id });
     const endpoint = await this.endpointsRepository.findOneBy({

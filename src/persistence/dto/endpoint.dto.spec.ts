@@ -1,7 +1,7 @@
 import { plainToInstance } from 'class-transformer';
 import { validate, ValidationError } from 'class-validator';
 import { EndpointDto } from './endpoint.dto';
-import { PartialType } from '@nestjs/swagger';
+import { PartialType } from '@nestjs/mapped-types';
 import { NavigationDto } from './navigation.dto';
 import { ArgumentDto } from './argument.dto';
 import '@test/matchers/toThrowErrorType';

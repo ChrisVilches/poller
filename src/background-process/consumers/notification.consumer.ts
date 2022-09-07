@@ -19,10 +19,10 @@ export class NotificationConsumer {
   sendNotifications(job: Job<NotificationArguments>) {
     const { title, content, url } = job.data;
 
-    const notifiers: Notifiable[] = this.getEnabledNotifiers()
+    const notifiers: Notifiable[] = this.getEnabledNotifiers();
 
-    const notifierNames = notifiers.map((cls: any) => cls.constructor.name)
-    this.logger.debug(`Enabled notifiers: ${notifierNames.join(', ')}`)
+    const notifierNames = notifiers.map((cls: any) => cls.constructor.name);
+    this.logger.debug(`Enabled notifiers: ${notifierNames.join(', ')}`);
 
     notifiers.forEach((notif: Notifiable) => {
       try {
@@ -49,13 +49,13 @@ export class NotificationConsumer {
       );
     }
 
-    const sendinblueConfig: SendinblueConfig | null = getSendinblueConfig()
+    const sendinblueConfig: SendinblueConfig | null = getSendinblueConfig();
 
     if (sendinblueConfig) {
-      notifiers.push(new SendinblueAPI(sendinblueConfig))
+      notifiers.push(new SendinblueAPI(sendinblueConfig));
     }
 
-    return notifiers
+    return notifiers;
   }
 
   @OnQueueError()

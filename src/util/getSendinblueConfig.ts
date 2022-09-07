@@ -5,8 +5,8 @@ const schema = Joi.object({
   apiKey: Joi.string().required(),
   senderName: Joi.string().required(),
   senderEmail: Joi.string().required(),
-  recipientsListIds: Joi.array().items(Joi.number().required()).required()
-})
+  recipientsListIds: Joi.array().items(Joi.number().required()).required(),
+});
 
 export const getSendinblueConfig = (): SendinblueConfig | null => {
   const sendinBlueConfig = {
@@ -14,13 +14,13 @@ export const getSendinblueConfig = (): SendinblueConfig | null => {
     senderName: process.env.SENDINBLUE_SENDER_NAME,
     senderEmail: process.env.SENDINBLUE_SENDER_EMAIL,
     recipientsListIds: process.env.SENDINBLUE_RECIPIENTS_LIST_IDS?.split(','),
-  }
-  
-  const obj = schema.validate(sendinBlueConfig)
+  };
 
-  if(obj.error) {
-    return null
+  const obj = schema.validate(sendinBlueConfig);
+
+  if (obj.error) {
+    return null;
   }
 
-  return obj.value as SendinblueConfig
-}
+  return obj.value as SendinblueConfig;
+};

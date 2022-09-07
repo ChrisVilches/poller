@@ -15,7 +15,7 @@ import { ArgumentDto } from './argument.dto';
 import { NavigationDto } from './navigation.dto';
 import { Trim } from '@transformations/trim.transformation';
 import 'reflect-metadata';
-import { PartialType } from '@nestjs/swagger';
+import { PartialType } from '@nestjs/mapped-types';
 import { Type } from 'class-transformer';
 import { RequestType } from '@persistence/enum/request-type.enum';
 import { Method } from '@persistence/enum/method.enum';

@@ -7,7 +7,10 @@ import { PollingsController } from './controllers/pollings.controller';
 import { TagsController } from './controllers/tags.controller';
 
 @Module({
-  imports: [PersistenceModule, BullModule.registerQueue({ name: PENDING_ENDPOINTS_QUEUE })],
+  imports: [
+    PersistenceModule,
+    BullModule.registerQueue({ name: PENDING_ENDPOINTS_QUEUE }),
+  ],
   controllers: [EndpointsController, PollingsController, TagsController],
   providers: [],
 })
