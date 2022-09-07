@@ -23,6 +23,6 @@ export class LogNotification implements Notifiable {
   }
 
   notify(title: string, content: string) {
-    this.output.info({ title, content });
+    this.output.info({ title, content, date: new Date() });
   }
 }
