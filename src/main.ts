@@ -18,6 +18,9 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
+  // TODO: Try to find a better (more strict) configuration.
+  //       This is necessary to use the React application.
+  app.enableCors();
   await app.listen(Number(process.env.PORT));
 }
 bootstrap();

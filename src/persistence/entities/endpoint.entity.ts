@@ -42,7 +42,7 @@ export class Endpoint {
   id: number;
 
   @Column({ nullable: true })
-  title?: string;
+  title: string;
 
   @Column({ default: false })
   enabled: boolean;

@@ -31,7 +31,6 @@ const allowedMethods = [
 ];
 
 export class EndpointCreateDto {
-  @IsOptional()
   @IsString()
   @Trim()
   @MinLength(1)
