@@ -19,6 +19,7 @@ import { enumKeysToString } from '@util/misc';
 import { TrimEach } from '@transformations/trim-each.transformation';
 import { Uppercase } from '@transformations/uppercase.transformation';
 import { CorrectArgsType } from '@api/validators/correct-args-type.validator';
+import { ApiProperty } from '@nestjs/swagger';
 
 const allowedTypes = [RequestType.HTML, RequestType.DHTML, RequestType.JSON];
 const allowedMethods = [
@@ -42,14 +43,17 @@ export class EndpointCreateDto {
   notificationMessage: string;
 
   @IsIn(Object.keys(allRules))
+  @ApiProperty()
   rule: string;
 
   @IsIn(enumKeysToString(RequestType, allowedTypes))
   @IsString()
   @Uppercase()
+  @ApiProperty()
   type: string;
 
   @IsUrl()
+  @ApiProperty()
   url: string;
 
   @IsOptional()
@@ -63,6 +67,7 @@ export class EndpointCreateDto {
 
   @IsIn(enumKeysToString(Method, allowedMethods))
   @Uppercase()
+  @ApiProperty()
   method: string;
 
   @IsOptional()
