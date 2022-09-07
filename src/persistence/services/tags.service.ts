@@ -6,6 +6,7 @@ import { TagPartialDto, TagDto } from '@persistence/dto/tag.dto';
 import { Endpoint } from '@persistence/entities/endpoint.entity';
 import { transformAndValidate } from 'class-transformer-validator';
 import { ValidationError } from 'class-validator';
+import { TagQueryDto } from '@api/dto/tag-query.dto';
 
 @Injectable()
 export class TagsService {
@@ -48,7 +49,12 @@ export class TagsService {
     }));
   }
 
-  async findByName(name: string) {
+  async find(query: TagQueryDto): Promise<Tag | null> {
+    const result = await this.tagsRepository.findBy(query)
+    return result[0];
+  }
+
+  findByName(name: string) {
     name = (name || '').trim();
     return this.tagsRepository.findOneBy({ name });
   }

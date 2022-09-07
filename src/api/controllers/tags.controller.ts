@@ -1,3 +1,4 @@
+import { TagQueryDto } from '@api/dto/tag-query.dto';
 import { EmptyReturnInterceptor } from '@api/interceptors/empty-return.interceptor';
 import { ProcessErrorInterceptor } from '@api/interceptors/process-error.interceptor';
 import {
@@ -10,6 +11,7 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Query,
   UseInterceptors,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
@@ -27,6 +29,11 @@ export class TagsController {
   @Get()
   findAll() {
     return this.tagsService.findAll();
+  }
+
+  @Get('find')
+  find(@Query() query: TagQueryDto) {
+    return this.tagsService.find(query);
   }
 
   @Get(':id')
