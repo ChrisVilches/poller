@@ -1,4 +1,7 @@
-import { ApiProperty, PartialType } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
+// TODO: Should be imported from Swagger.
+//       Expected result: (1) Pass tests. (2) Generate docs correctly.
+import { PartialType } from '@nestjs/mapped-types';
 import { Trim } from '@transformations/trim.transformation';
 import { IsString, MinLength } from 'class-validator';
 

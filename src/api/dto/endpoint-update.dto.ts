@@ -1,5 +1,7 @@
 import 'reflect-metadata';
-import { PartialType } from '@nestjs/swagger';
+// TODO: Should be imported from Swagger.
+//       Expected result: (1) Pass tests. (2) Generate docs correctly.
+import { PartialType } from '@nestjs/mapped-types';
 import { EndpointCreateDto } from './endpoint-create.dto';
 import { IsArray, IsInt, IsOptional, IsPositive } from 'class-validator';
 
