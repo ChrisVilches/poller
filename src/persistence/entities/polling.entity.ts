@@ -6,7 +6,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Exclude, Expose } from 'class-transformer';
+import { Expose } from 'class-transformer';
 
 @Entity()
 export class Polling {
@@ -33,13 +33,12 @@ export class Polling {
   @CreateDateColumn()
   createdAt: Date;
 
-  @ManyToOne(() => Endpoint, (endpoint) => endpoint.navigations)
+  @ManyToOne(() => Endpoint, (endpoint) => endpoint.navigations, { onDelete: 'CASCADE' })
   endpoint: Endpoint;
 
   @Column({ nullable: true })
   computedMessage?: string;
 
-  @Exclude()
   @Column()
   endpointId: number;
 }

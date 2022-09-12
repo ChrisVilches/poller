@@ -54,6 +54,15 @@ export class TagsService {
     return result[0];
   }
 
+  async findAllEndpointTags(endpointId: number): Promise<Tag[]> {
+    return this.dataSource
+    .createQueryBuilder('tag', 't')
+    .select('t.id, t.name')
+    .innerJoin('t.endpoints', 'e')
+    .where(`e.id = ${endpointId}`)
+    .getRawMany()
+  }
+
   findByName(name: string) {
     name = (name || '').trim();
     return this.tagsRepository.findOneBy({ name });
@@ -74,6 +83,14 @@ export class TagsService {
     );
 
     return await this.findOne(id);
+  }
+
+  async delete(id: number): Promise<Tag> {
+    const tag: Tag = await this.findOne(id)
+    this.tagsRepository.delete({
+      id: tag.id
+    })
+    return tag
   }
 
   async addEndpoint(id: number, endpointId: number): Promise<Tag | null> {

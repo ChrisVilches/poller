@@ -17,7 +17,7 @@ export class Tag {
   @Column({ unique: true })
   name: string;
 
-  @ManyToMany(() => Endpoint, { eager: true, cascade: true })
+  @ManyToMany(() => Endpoint, (endpoint) => endpoint.tags, { eager: true, cascade: true })
   @JoinTable()
   endpoints: Endpoint[];
 

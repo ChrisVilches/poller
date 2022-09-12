@@ -62,6 +62,9 @@ export const convertEndpointDto = (
   if (input.arguments) {
     plain.arguments = convertArgs(input.arguments);
   }
+  if ((input as EndpointUpdateDto).tags) {
+    plain.tags = (input as EndpointUpdateDto).tags?.map((id: number) => ({ id }))
+  }
 
   return plainToInstance(EndpointDto, plain);
 };

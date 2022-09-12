@@ -32,7 +32,7 @@ export class EndpointsService {
 
     await this.endpointsRepository.save({
       id,
-      ...(await transformAndValidate(EndpointPartialDto, endpointDto)),
+      ...(await transformAndValidate(EndpointPartialDto, endpointDto))
     } as any);
 
     return await this.findOne(id);
@@ -60,6 +60,14 @@ export class EndpointsService {
         navigations: true,
       },
     });
+  }
+
+  async delete(id: number): Promise<Endpoint> {
+    const endpoint: Endpoint = await this.findOne(id)
+    this.endpointsRepository.delete({
+      id: endpoint.id
+    })
+    return endpoint
   }
 
   async updateTimeout(
@@ -95,6 +103,9 @@ export class EndpointsService {
     return saved.enabled;
   }
 
+  /**
+   * @throws {EntityNotFoundError}
+   */
   async findOne(id: number): Promise<Endpoint> {
     const endpoint: Endpoint | null = await this.endpointsRepository.findOne({
       where: { id },

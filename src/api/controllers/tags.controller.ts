@@ -66,4 +66,9 @@ export class TagsController {
   ) {
     return this.tagsService.removeEndpoint(id, endpointId);
   }
+
+  @Delete(':id')
+  delete(@Param('id', ParseIntPipe) id: number) {
+    return this.tagsService.delete(id);
+  }
 }

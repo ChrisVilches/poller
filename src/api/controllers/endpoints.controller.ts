@@ -2,6 +2,7 @@ import {
   Body,
   ClassSerializerInterceptor,
   Controller,
+  Delete,
   Get,
   Param,
   ParseIntPipe,
@@ -17,6 +18,7 @@ import { EndpointCreateDto } from '@api/dto/endpoint-create.dto';
 import { EndpointUpdateDto } from '@api/dto/endpoint-update.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { convertEndpointDto } from '@util/endpoints';
+import { TagsService } from '@persistence/services/tags.service';
 
 @UseInterceptors(EmptyReturnInterceptor)
 @UseInterceptors(ProcessErrorInterceptor)
@@ -24,7 +26,7 @@ import { convertEndpointDto } from '@util/endpoints';
 @Controller('endpoints')
 @ApiTags('Endpoints')
 export class EndpointsController {
-  constructor(private readonly endpointsService: EndpointsService) {}
+  constructor(private readonly endpointsService: EndpointsService, private readonly tagsService: TagsService) {}
 
   @Get()
   findAll() {
@@ -59,9 +61,19 @@ export class EndpointsController {
     return this.endpointsService.enable(id, false);
   }
 
+  @Delete(':id')
+  delete(@Param('id', ParseIntPipe) id: number) {
+    return this.endpointsService.delete(id);
+  }
+
   @Patch(':id/clear_timeout')
   async clearTimeout(@Param('id', ParseIntPipe) id: number): Promise<Endpoint> {
     await this.endpointsService.clearTimeout(id);
     return await this.endpointsService.findOne(id);
+  }
+
+  @Get('/:id/tags')
+  tags(@Param('id', ParseIntPipe) id: number) {
+    return this.tagsService.findAllEndpointTags(id);
   }
 }
