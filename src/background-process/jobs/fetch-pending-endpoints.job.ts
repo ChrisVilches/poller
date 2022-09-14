@@ -6,7 +6,6 @@ import { PendingEndpoint } from '@interfaces/PendingEndpoint';
 import { EndpointsService } from '@persistence/services/endpoints.service';
 import { Endpoint } from '@persistence/entities/endpoint.entity';
 import { PENDING_ENDPOINTS_QUEUE } from '@background-process/queues';
-import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Injectable()
 export class FetchPendingEndpointsJob {
@@ -15,8 +14,7 @@ export class FetchPendingEndpointsJob {
   constructor(
     private readonly endpointsService: EndpointsService,
     @InjectQueue(PENDING_ENDPOINTS_QUEUE)
-    private pendingEndpointsQueue: Queue<PendingEndpoint>,
-    private eventEmitter: EventEmitter2
+    private pendingEndpointsQueue: Queue<PendingEndpoint>
   ) {}
 
   @Cron(CronExpression.EVERY_30_SECONDS)
@@ -30,10 +28,6 @@ export class FetchPendingEndpointsJob {
         toPoll.push(endpoint);
       }
     }
-
-    this.eventEmitter.emit("polling.attempt", {
-      endpointIds: toPoll.map((p) => p.id)
-    });
 
     this.logger.log(
       `Sending ${toPoll.length} endpoints to the pending queue, IDs: [${toPoll

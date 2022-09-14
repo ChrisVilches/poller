@@ -32,7 +32,7 @@ export class EndpointsService {
 
     await this.endpointsRepository.save({
       id,
-      ...(await transformAndValidate(EndpointPartialDto, endpointDto))
+      ...(await transformAndValidate(EndpointPartialDto, endpointDto)),
     } as any);
 
     return await this.findOne(id);
@@ -63,11 +63,11 @@ export class EndpointsService {
   }
 
   async delete(id: number): Promise<Endpoint> {
-    const endpoint: Endpoint = await this.findOne(id)
+    const endpoint: Endpoint = await this.findOne(id);
     this.endpointsRepository.delete({
-      id: endpoint.id
-    })
-    return endpoint
+      id: endpoint.id,
+    });
+    return endpoint;
   }
 
   async updateTimeout(

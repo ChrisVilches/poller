@@ -94,11 +94,13 @@ describe(TagsService.name, () => {
   });
 
   describe('findByName', () => {
+    let favoriteTag: Tag;
+
     beforeEach(async () => {
       await service.create({ name: 'some tag' });
       await service.create({ name: 'another tag' });
       await service.create({ name: 'the name' });
-      await service.create({ name: 'favorites' });
+      favoriteTag = await service.create({ name: 'favorites' });
     });
 
     it('returns nothing if name is empty (with trailing and leading spaces)', async () => {
@@ -109,6 +111,11 @@ describe(TagsService.name, () => {
     it('finds correctly (with trailing and leading spaces)', async () => {
       expect(await service.findByName(' favorites ')).toBeInstanceOf(Tag);
       expect(await service.findByName('favorites')).toBeInstanceOf(Tag);
+    });
+
+    it('finds correctly (case insensitive)', async () => {
+      expect((await service.findByName(' fAvorItes '))!.id).toBe(favoriteTag.id);
+      expect((await service.findByName('favoriTeS'))!.id).toBe(favoriteTag.id);
     });
 
     it('finds nothing if it does not exist', async () => {

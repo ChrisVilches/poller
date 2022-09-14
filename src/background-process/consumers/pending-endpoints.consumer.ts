@@ -28,6 +28,8 @@ export class PendingEndpointsConsumer {
     const endpoint: Endpoint = await this.endpointsService.findOne(endpointId);
 
     this.logger.log(`${endpoint} | polling (fetching site)...`);
+    this.eventEmitter.emit('polling.attempt', endpoint);
+
     const pollingDto: PollingDto = await performPolling(endpoint, manual);
     const result: Polling = await this.pollingsService.create(pollingDto);
 

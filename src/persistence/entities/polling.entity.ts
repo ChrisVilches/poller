@@ -33,7 +33,9 @@ export class Polling {
   @CreateDateColumn()
   createdAt: Date;
 
-  @ManyToOne(() => Endpoint, (endpoint) => endpoint.navigations, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Endpoint, (endpoint) => endpoint.navigations, {
+    onDelete: 'CASCADE',
+  })
   endpoint: Endpoint;
 
   @Column({ nullable: true })

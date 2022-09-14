@@ -17,9 +17,8 @@ export class Argument {
   value: string;
 
   @ManyToOne(() => Endpoint, (endpoint) => endpoint.arguments, {
-    orphanedRowAction: 'delete',
-    // TODO: When and why did I put this onDelete Cascade?
-    // onDelete: 'CASCADE',
+    onDelete: 'CASCADE',
+    orphanedRowAction: 'delete'
   })
   endpoint: Endpoint;
 }

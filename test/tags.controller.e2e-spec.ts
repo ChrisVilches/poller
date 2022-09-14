@@ -101,5 +101,13 @@ describe(`${TagsController.name} (e2e)`, () => {
       expect(res.statusCode).toBe(400);
       expect(res.body.message[0]).toBe("name 'some tag' already exists");
     });
+
+    it('verifies the name is unique (case insensitive)', async () => {
+      const res = await request(app.getHttpServer())
+        .patch(`/tags/${id2}`)
+        .send({ name: ' soMe tAg ' });
+      expect(res.statusCode).toBe(400);
+      expect(res.body.message[0]).toBe("name 'soMe tAg' already exists");
+    });
   });
 });

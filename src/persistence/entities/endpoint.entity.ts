@@ -113,7 +113,10 @@ export class Endpoint {
   @Column({ nullable: true })
   timeout?: Date;
 
-  @ManyToMany(() => Tag, (tag) => tag.endpoints, { cascade: ['insert', 'update'], onDelete: 'CASCADE' })
+  @ManyToMany(() => Tag, (tag) => tag.endpoints, {
+    cascade: ['insert', 'update'],
+    onDelete: 'CASCADE',
+  })
   tags: Tag[];
 
   @CreateDateColumn()

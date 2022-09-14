@@ -73,6 +73,9 @@ export class EndpointDto {
   })
   method: Method;
 
+  // TODO: The error is outputted as follows in the UI:
+  //       "waitAfterNotificationMinutes must be a positive number"
+  //       Should be a human friendly error message.
   @IsOptional()
   @IsInt()
   @IsPositive()

@@ -6,6 +6,7 @@ import {
   Get,
   ClassSerializerInterceptor,
   ParseIntPipe,
+  Query,
 } from '@nestjs/common';
 import { EmptyReturnInterceptor } from '../interceptors/empty-return.interceptor';
 import { ProcessErrorInterceptor } from '../interceptors/process-error.interceptor';
@@ -20,6 +21,9 @@ import { PendingEndpoint } from '@interfaces/PendingEndpoint';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
 import { Endpoint } from '@persistence/entities/endpoint.entity';
+import { PaginatedQueryDto } from '@api/dto/paginated-query.dto';
+import { PaginatedResultDto } from '@api/dto/paginated-result.dto';
+import { PollingPaginatedQueryDto } from '@api/dto/polling-paginated-query.dto';
 
 @UseInterceptors(ProcessErrorInterceptor)
 @UseInterceptors(EmptyReturnInterceptor)
@@ -35,13 +39,18 @@ export class PollingsController {
   ) {}
 
   @Get()
-  findAll() {
-    return this.pollingsService.findAll();
+  findAll(
+    @Query() query: PollingPaginatedQueryDto,
+  ): Promise<PaginatedResultDto<Polling>> {
+    return this.pollingsService.findAll(query);
   }
 
   @Get(':endpointId')
-  findAllForEndpoint(@Param('endpointId', ParseIntPipe) endpointId: number) {
-    return this.pollingsService.findAllForEndpoint(endpointId);
+  findAllForEndpoint(
+    @Param('endpointId', ParseIntPipe) endpointId: number,
+    @Query() query: PaginatedQueryDto,
+  ): Promise<PaginatedResultDto<Polling>> {
+    return this.pollingsService.findAll(query, endpointId);
   }
 
   @Get(':endpointId/latest')

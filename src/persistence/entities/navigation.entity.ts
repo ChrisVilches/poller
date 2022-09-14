@@ -9,10 +9,11 @@ export class Navigation {
   @Column()
   selector: string;
 
+  // TODO: There are orphans in this table and argument, it seems.
+  //       I have to make sure they are deleted.
   @ManyToOne(() => Endpoint, (endpoint) => endpoint.navigations, {
-    orphanedRowAction: 'delete',
-    // TODO: When and why did I put this onDelete Cascade?
-    // onDelete: 'CASCADE',
+    onDelete: 'CASCADE',
+    orphanedRowAction: 'delete'
   })
   endpoint: Endpoint;
 }

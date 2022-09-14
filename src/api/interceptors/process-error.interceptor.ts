@@ -27,12 +27,14 @@ export class ProcessErrorInterceptor implements NestInterceptor {
           throw new NotFoundException();
         }
 
+        if (err instanceof ValidationError) {
+          err = [err];
+        }
+
         if (isArrayOf(err, ValidationError)) {
-          throw new BadRequestException({
-            statusCode: 400,
-            message: err.flatMap((e: any) => Object.values(e.constraints)),
-            error: 'Bad Request',
-          });
+          throw new BadRequestException(
+            err.flatMap((e: any) => Object.values(e.constraints)),
+          );
         }
         throw err;
       }),

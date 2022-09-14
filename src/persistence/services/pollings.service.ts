@@ -4,6 +4,9 @@ import { LessThan, Repository } from 'typeorm';
 import { Polling } from '@persistence/entities/polling.entity';
 import { PollingDto } from '@persistence/dto/polling.dto';
 import { transformAndValidate } from 'class-transformer-validator';
+import { PaginatedQueryDto } from '@api/dto/paginated-query.dto';
+import { PaginatedResultDto } from '@api/dto/paginated-result.dto';
+import { withPagination } from './util';
 
 @Injectable()
 export class PollingsService {
@@ -12,16 +15,20 @@ export class PollingsService {
     private pollingsRepository: Repository<Polling>,
   ) {}
 
-  findAll() {
-    return this.pollingsRepository.find();
-  }
+  async findAll(
+    query: PaginatedQueryDto,
+    endpointId?: number
+  ): Promise<PaginatedResultDto<Polling>> {
+    const where: any = {}
 
-  findAllForEndpoint(endpointId: number) {
-    return this.pollingsRepository.find({
-      where: {
-        endpointId,
-      },
-    });
+    if (endpointId) {
+      where.endpointId = endpointId;
+    }
+
+    return {
+      data: await this.pollingsRepository.find(withPagination(query, { where, relations: ['endpoint'] })),
+      count: await this.pollingsRepository.count({ where })
+    };
   }
 
   findLatest(endpointId: number) {

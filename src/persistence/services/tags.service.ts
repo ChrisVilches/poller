@@ -56,16 +56,20 @@ export class TagsService {
 
   async findAllEndpointTags(endpointId: number): Promise<Tag[]> {
     return this.dataSource
-    .createQueryBuilder('tag', 't')
-    .select('t.id, t.name')
-    .innerJoin('t.endpoints', 'e')
-    .where(`e.id = ${endpointId}`)
-    .getRawMany()
+      .createQueryBuilder('tag', 't')
+      .select('t.id, t.name')
+      .innerJoin('t.endpoints', 'e')
+      .where(`e.id = ${endpointId}`)
+      .getRawMany();
   }
 
   findByName(name: string) {
     name = (name || '').trim();
-    return this.tagsRepository.findOneBy({ name });
+
+    return this.dataSource
+      .createQueryBuilder<Tag>('tag', 't')
+      .where('t.name ILIKE :name', { name })
+      .getOne();
   }
 
   async create(tagDto: TagDto): Promise<Tag> {
@@ -86,11 +90,11 @@ export class TagsService {
   }
 
   async delete(id: number): Promise<Tag> {
-    const tag: Tag = await this.findOne(id)
+    const tag: Tag = await this.findOne(id);
     this.tagsRepository.delete({
-      id: tag.id
-    })
-    return tag
+      id: tag.id,
+    });
+    return tag;
   }
 
   async addEndpoint(id: number, endpointId: number): Promise<Tag | null> {
@@ -109,7 +113,15 @@ export class TagsService {
   }
 
   async findOne(id: number): Promise<Tag> {
-    const tag: Tag | null = await this.tagsRepository.findOneBy({ id });
+    const tag: Tag | null = await this.tagsRepository.findOne({
+      where: { id },
+      relations: {
+        endpoints: {
+          arguments: true,
+          navigations: true
+        }
+      }
+    });
 
     if (tag === null) {
       throw new EntityNotFoundError(Tag.name, {});
@@ -141,7 +153,7 @@ export class TagsService {
 
     const tag = await this.findByName(name);
 
-    if (tag === null) {
+    if (!tag) {
       return;
     }
 
@@ -153,6 +165,6 @@ export class TagsService {
     err.constraints = {
       nameUnique: `name '${name}' already exists`,
     };
-    throw [err];
+    throw err;
   }
 }

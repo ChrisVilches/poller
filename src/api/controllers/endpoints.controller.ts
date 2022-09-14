@@ -26,7 +26,10 @@ import { TagsService } from '@persistence/services/tags.service';
 @Controller('endpoints')
 @ApiTags('Endpoints')
 export class EndpointsController {
-  constructor(private readonly endpointsService: EndpointsService, private readonly tagsService: TagsService) {}
+  constructor(
+    private readonly endpointsService: EndpointsService,
+    private readonly tagsService: TagsService,
+  ) {}
 
   @Get()
   findAll() {

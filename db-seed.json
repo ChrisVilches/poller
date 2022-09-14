@@ -1,0 +1,15 @@
+[
+{
+"title": "   seed example    ",
+  "rule": "HasOccurrencesRule",
+  "url": "https://www.google.com",
+  "type": "jsOnsss",
+  "method": "gEt",
+  "navigations": [
+    "nav1    ",
+    "   nav2 "
+  ],
+  "arguments": [1, "assd", true],
+  "enabled": true
+}
+]

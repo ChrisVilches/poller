@@ -10,5 +10,5 @@ export class EndpointUpdateDto extends PartialType(EndpointCreateDto) {
   @IsInt({ each: true })
   @IsPositive({ each: true })
   @IsOptional()
-  tags?: number[]
+  tags?: number[];
 }
