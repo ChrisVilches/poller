@@ -19,7 +19,7 @@ export class EventsGateway implements OnGatewayConnection {
   handleConnection(socket: Socket, ..._args: any[]) {
     socket.emit('polling.initialize', {
       timestamp: new Date(),
-      message: 'Welcome. New connection received! (initialize)',
+      data: 'Listening to polling events...',
     });
   }
   @WebSocketServer()
