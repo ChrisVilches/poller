@@ -43,7 +43,7 @@ $ npm run test:cov
 * Allow JSON requests.
 * (Done ✅) Allow requests where the HTML content is loaded using Javascript.
 * (Done ✅) Add more polling rules.
-* Create a UI.
+* (Done ✅) Create a UI.
 * Configure request headers (e.g. API key, etc).
 * (Done ✅) Allow rules to modify the notification message using tokens (e.g. `page contains $count occurrences of "hello world"`). Tokens should be specific to each individual rule.
 
