@@ -6,6 +6,8 @@ import {
 } from '@nestjs/common';
 import { Observable, delay } from 'rxjs';
 
+// TODO: This middleware is only for testing. Should be removed in the future.
+
 @Injectable()
 export class DelayInterceptor implements NestInterceptor {
   intercept(_context: ExecutionContext, next: CallHandler): Observable<any> {
