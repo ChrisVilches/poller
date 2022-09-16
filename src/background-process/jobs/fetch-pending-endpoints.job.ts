@@ -14,7 +14,7 @@ export class FetchPendingEndpointsJob {
   constructor(
     private readonly endpointsService: EndpointsService,
     @InjectQueue(PENDING_ENDPOINTS_QUEUE)
-    private pendingEndpointsQueue: Queue<PendingEndpoint>
+    private pendingEndpointsQueue: Queue<PendingEndpoint>,
   ) {}
 
   @Cron(CronExpression.EVERY_30_SECONDS)

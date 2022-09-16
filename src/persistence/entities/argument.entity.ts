@@ -18,7 +18,7 @@ export class Argument {
 
   @ManyToOne(() => Endpoint, (endpoint) => endpoint.arguments, {
     onDelete: 'CASCADE',
-    orphanedRowAction: 'delete'
+    orphanedRowAction: 'delete',
   })
   endpoint: Endpoint;
 }

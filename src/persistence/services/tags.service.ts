@@ -118,9 +118,9 @@ export class TagsService {
       relations: {
         endpoints: {
           arguments: true,
-          navigations: true
-        }
-      }
+          navigations: true,
+        },
+      },
     });
 
     if (tag === null) {

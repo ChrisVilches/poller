@@ -17,17 +17,19 @@ export class PollingsService {
 
   async findAll(
     query: PaginatedQueryDto,
-    endpointId?: number
+    endpointId?: number,
   ): Promise<PaginatedResultDto<Polling>> {
-    const where: any = {}
+    const where: any = {};
 
     if (endpointId) {
       where.endpointId = endpointId;
     }
 
     return {
-      data: await this.pollingsRepository.find(withPagination(query, { where, relations: ['endpoint'] })),
-      count: await this.pollingsRepository.count({ where })
+      data: await this.pollingsRepository.find(
+        withPagination(query, { where, relations: ['endpoint'] }),
+      ),
+      count: await this.pollingsRepository.count({ where }),
     };
   }
 
