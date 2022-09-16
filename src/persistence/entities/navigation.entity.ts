@@ -10,7 +10,8 @@ export class Navigation {
   selector: string;
 
   // TODO: There are orphans in this table and argument, it seems.
-  //       I have to make sure they are deleted.
+  //       I have to make sure they are deleted. Hopefully by making
+  //       the database reject orphans (strict foreign key).
   @ManyToOne(() => Endpoint, (endpoint) => endpoint.navigations, {
     onDelete: 'CASCADE',
     orphanedRowAction: 'delete'
