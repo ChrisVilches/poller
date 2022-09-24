@@ -30,7 +30,7 @@ export class Polling {
   @Column()
   manual: boolean;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 
   @ManyToOne(() => Endpoint, (endpoint) => endpoint.navigations, {
