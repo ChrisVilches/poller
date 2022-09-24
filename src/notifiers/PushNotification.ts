@@ -17,17 +17,9 @@ export class PushNotification implements Notifiable {
       k: this.apiKey,
     } as any;
 
-    if (title) {
-      queryParams.t = title;
-    }
-
-    if (content) {
-      queryParams.c = content;
-    }
-
-    if (url) {
-      queryParams.u = url;
-    }
+    queryParams.t = title || '';
+    queryParams.c = encodeURIComponent(content) || '';
+    queryParams.u = url || '';
 
     return queryParams;
   }
