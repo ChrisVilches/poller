@@ -35,7 +35,7 @@ export class PushNotification implements Notifiable {
     const debugMessage = `${title} | ${content}`;
 
     try {
-      const res = await axios.get('https://xdroid.net/api/message', { params });
+      const res = await axios.post('https://xdroid.net/api/message', { params });
       this.logger.debug(
         `${debugMessage} | Push Notification API status: ${res.statusText}`,
       );
