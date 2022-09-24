@@ -18,7 +18,7 @@ export class PushNotification implements Notifiable {
     } as any;
 
     queryParams.t = title || '';
-    queryParams.c = content || '';
+    queryParams.c = encodeURIComponent(content) || '';
     queryParams.u = url || '';
 
     return queryParams;
