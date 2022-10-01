@@ -114,10 +114,10 @@ describe(TagsService.name, () => {
     });
 
     it('finds correctly (case insensitive)', async () => {
-      expect((await service.findByName(' fAvorItes '))!.id).toBe(
+      expect((await service.findByName(' fAvorItes '))?.id).toBe(
         favoriteTag.id,
       );
-      expect((await service.findByName('favoriTeS'))!.id).toBe(favoriteTag.id);
+      expect((await service.findByName('favoriTeS'))?.id).toBe(favoriteTag.id);
     });
 
     it('finds nothing if it does not exist', async () => {

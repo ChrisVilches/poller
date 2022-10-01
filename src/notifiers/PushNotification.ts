@@ -19,7 +19,7 @@ export class PushNotification implements Notifiable {
 
     queryParams.t = title || '';
     queryParams.c = encodeURIComponent(content) || '';
-    queryParams.u = url || '';
+    queryParams.u = encodeURIComponent(url) || '';
 
     return queryParams;
   }
@@ -35,7 +35,12 @@ export class PushNotification implements Notifiable {
     const debugMessage = `${title} | ${content}`;
 
     try {
-      const res = await axios.post('https://xdroid.net/api/message', { params });
+      const res = await axios.request({
+        url: 'https://xdroid.net/api/message',
+        method: 'POST',
+        data: params,
+      });
+
       this.logger.debug(
         `${debugMessage} | Push Notification API status: ${res.statusText}`,
       );
