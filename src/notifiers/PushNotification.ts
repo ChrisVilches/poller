@@ -18,8 +18,8 @@ export class PushNotification implements Notifiable {
     } as any;
 
     queryParams.t = title || '';
-    queryParams.c = encodeURIComponent(content) || '';
-    queryParams.u = encodeURIComponent(url) || '';
+    queryParams.c = content || '';
+    queryParams.u = url || '';
 
     return queryParams;
   }
