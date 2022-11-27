@@ -21,7 +21,6 @@ import { PendingEndpoint } from '@interfaces/PendingEndpoint';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
 import { Endpoint } from '@persistence/entities/endpoint.entity';
-import { PaginatedQueryDto } from '@api/dto/paginated-query.dto';
 import { PaginatedResultDto } from '@api/dto/paginated-result.dto';
 import { PollingPaginatedQueryDto } from '@api/dto/polling-paginated-query.dto';
 
@@ -45,13 +44,10 @@ export class PollingsController {
     return this.pollingsService.findAll(query);
   }
 
-  // TODO: I'm not sure, but I think the parameter here also should be
-  //       type "PollingPaginatedQueryDto" so that the sortBy validations are executed.
-  //       (Must confirm)
   @Get(':endpointId')
   findAllForEndpoint(
     @Param('endpointId', ParseIntPipe) endpointId: number,
-    @Query() query: PaginatedQueryDto,
+    @Query() query: PollingPaginatedQueryDto,
   ): Promise<PaginatedResultDto<Polling>> {
     return this.pollingsService.findAll(query, endpointId);
   }
