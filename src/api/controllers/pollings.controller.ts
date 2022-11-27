@@ -45,6 +45,9 @@ export class PollingsController {
     return this.pollingsService.findAll(query);
   }
 
+  // TODO: I'm not sure, but I think the parameter here also should be
+  //       type "PollingPaginatedQueryDto" so that the sortBy validations are executed.
+  //       (Must confirm)
   @Get(':endpointId')
   findAllForEndpoint(
     @Param('endpointId', ParseIntPipe) endpointId: number,
