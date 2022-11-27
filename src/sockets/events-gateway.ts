@@ -9,12 +9,7 @@ import { Socket } from 'socket.io';
 
 // TODO: Rename this file?
 
-@WebSocketGateway({
-  cors: {
-    // TODO: Should be more restrictive.
-    origin: '*',
-  },
-})
+@WebSocketGateway()
 export class EventsGateway implements OnGatewayConnection {
   handleConnection(socket: Socket, ..._args: any[]) {
     socket.emit('polling.initialize', {
