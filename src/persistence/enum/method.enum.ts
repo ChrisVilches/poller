@@ -4,5 +4,4 @@ export enum Method {
   PUT,
   PATCH,
   DELETE,
-  INVALID,
 }

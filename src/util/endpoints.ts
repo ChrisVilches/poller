@@ -8,7 +8,7 @@ import { Method } from '@persistence/enum/method.enum';
 import { RequestType } from '@persistence/enum/request-type.enum';
 import { ClassType, transformAndValidate } from 'class-transformer-validator';
 
-const convertMethod = (method = ''): Method => {
+const convertMethod = (method: string): Method => {
   const map = {
     GET: Method.GET,
     POST: Method.POST,
@@ -17,25 +17,17 @@ const convertMethod = (method = ''): Method => {
     DELETE: Method.DELETE,
   };
 
-  const result = map[method.toUpperCase() as keyof typeof map];
-
-  if (typeof result === 'undefined') {
-    return Method.INVALID;
-  }
-
-  return result;
+  return map[method.toUpperCase() as keyof typeof map];
 };
 
-const convertType = (type = ''): RequestType => {
-  if (type.toLowerCase() === 'html') {
-    return RequestType.HTML;
-  } else if (type.toLowerCase() === 'dhtml') {
-    return RequestType.DHTML;
-  } else if (type.toLowerCase() === 'json') {
-    return RequestType.JSON;
-  }
+const convertType = (type: string): RequestType => {
+  const map = {
+    HTML: RequestType.HTML,
+    DHTML: RequestType.DHTML,
+    JSON: RequestType.JSON,
+  };
 
-  return RequestType.INVALID;
+  return map[type.toUpperCase() as keyof typeof map];
 };
 
 export const convertNav = (nav: string[]): Navigation[] =>

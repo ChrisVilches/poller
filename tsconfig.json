@@ -51,6 +51,9 @@
       ],
       "@transformations/*": [
         "src/transformations/*"
+      ],
+      "@validators/*": [
+        "src/validators/*"
       ]
     }
   }

@@ -20,14 +20,14 @@ export class PaginatedQueryDto {
   @IsInt()
   @Min(0, { message: 'page number must be 1 or greater' })
   @IsOptional()
-  @Transform((params: TransformFnParams) => +params.value - 1)
+  @Transform((params: TransformFnParams): number => +params.value - 1)
   page = 1;
 
   @IsInt()
   @IsOptional()
   @Min(1)
   @Max(PAGE_SIZE_MAX)
-  @Transform((params: TransformFnParams) => +params.value)
+  @Transform((params: TransformFnParams): number => +params.value)
   pageSize: number = PAGE_SIZE_DEFAULT;
 
   @IsOptional()

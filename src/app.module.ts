@@ -5,8 +5,8 @@ import { AppController } from './app.controller';
 import { BackgroundProcessModule } from '@background-process/background-process.module';
 import { ApiModule } from '@api/api.module';
 import { getEnvFilePath } from '@util/env';
-import { EventsGateway } from './sockets/events-gateway';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { SocketModule } from './events-gateway/socket.module';
 
 @Module({
   imports: [
@@ -22,12 +22,9 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
     }),
     ApiModule,
     BackgroundProcessModule,
-
-    // TODO: Should create a module for sockets so that
-    //       only that module imports this, not the main module.
+    SocketModule,
     EventEmitterModule.forRoot(),
   ],
   controllers: [AppController],
-  providers: [EventsGateway],
 })
 export class AppModule {}

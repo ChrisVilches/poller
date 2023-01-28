@@ -20,8 +20,6 @@ import { ApiTags } from '@nestjs/swagger';
 import { TagsService } from '@persistence/services/tags.service';
 
 @UseInterceptors(EmptyReturnInterceptor)
-// TODO: Does this catch exceptions thrown (using throw new Error, for example) inside controller functions?
-//       I forgot :/
 @UseInterceptors(ProcessErrorInterceptor)
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('endpoints')

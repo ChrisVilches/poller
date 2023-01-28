@@ -10,6 +10,5 @@ export class EndpointUpdateDto extends PartialType(EndpointCreateDto) {
   @IsInt({ each: true })
   @IsPositive({ each: true })
   @IsOptional()
-  // TODO: Should be called "tagIds" I think (but I'd have to modify the frontend as well)
   tags?: number[];
 }

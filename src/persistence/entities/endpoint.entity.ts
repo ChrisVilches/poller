@@ -21,11 +21,6 @@ import { Argument } from './argument.entity';
 import { Navigation } from './navigation.entity';
 import { Tag } from './tag.entity';
 
-// TODO: Question: Does using class-transformer create a new class?
-//       If it doesn't create a new class, it means the types would get messed up.
-//       My new approach is to just try to avoid changing the type. Did I implement this correctly?
-//       do a quick check.
-
 @Entity()
 export class Endpoint {
   @PrimaryGeneratedColumn()

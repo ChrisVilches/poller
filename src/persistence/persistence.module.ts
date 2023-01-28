@@ -10,7 +10,6 @@ import { Polling } from './entities/polling.entity';
 import { Tag } from './entities/tag.entity';
 import { EndpointsService } from './services/endpoints.service';
 import { PollingsService } from './services/pollings.service';
-import { SeedService } from './services/seed.service';
 import { TagsService } from './services/tags.service';
 
 const entities = [Endpoint, Argument, Navigation, Polling, Tag];
@@ -43,7 +42,7 @@ const entities = [Endpoint, Argument, Navigation, Polling, Tag];
     }),
     TypeOrmModule.forFeature(entities),
   ],
-  providers: [EndpointsService, PollingsService, SeedService, TagsService],
+  providers: [EndpointsService, PollingsService, TagsService],
   exports: [EndpointsService, PollingsService, TagsService],
 })
 export class PersistenceModule {}

@@ -101,7 +101,8 @@
       "@test/(.*)": "<rootDir>/test/$1",
       "@scraping/(.*)": "<rootDir>/src/scraping/$1",
       "@util/(.*)": "<rootDir>/src/util/$1",
-      "@transformations/(.*)": "<rootDir>/src/transformations/$1"
+      "@transformations/(.*)": "<rootDir>/src/transformations/$1",
+      "@validators/(.*)": "<rootDir>/src/validators/$1"
     }
   },
   "_moduleAliases": {
@@ -114,6 +115,7 @@
     "@test": "./test",
     "@scraping": "./src/scraping",
     "@util": "./src/util",
-    "@transformations": "./src/transformations"
+    "@transformations": "./src/transformations",
+    "@validators": "./src/validators"
   }
 }

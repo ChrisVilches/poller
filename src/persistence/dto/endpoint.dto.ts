@@ -18,7 +18,7 @@ import { RequestType } from '@persistence/enum/request-type.enum';
 import { Method } from '@persistence/enum/method.enum';
 import { enumKeysToString } from '@util/misc';
 import { TrimEach } from '@transformations/trim-each.transformation';
-import { CorrectArgsType } from 'src/validators/correct-args-type.validator';
+import { CorrectArgsType } from '@validators/correct-args-type.validator';
 
 const allowedTypes = [RequestType.HTML, RequestType.DHTML, RequestType.JSON];
 const allowedMethods = [

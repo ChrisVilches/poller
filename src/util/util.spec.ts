@@ -1,14 +1,7 @@
-import { ArgType } from '@persistence/enum/arg-type.enum';
 import { Method } from '@persistence/enum/method.enum';
 import { load } from 'cheerio';
 import { isDev, isProd, isTest } from './env';
-import {
-  enumKeysToString,
-  inspectArray,
-  isArrayOf,
-  navigate,
-  valueToArgType,
-} from './misc';
+import { enumKeysToString, inspectArray, isArrayOf, navigate } from './misc';
 import { comparisonOperator, ComparisonOperator } from './operators';
 import {
   removeUrlQueryString,
@@ -240,33 +233,6 @@ describe(navigate.name, () => {
   it('should throw error when navigation is incorrect', () => {
     const dom = load(htmlNestedIds);
     expect(() => navigate(dom, ['#first', '#second'])).toThrow();
-  });
-});
-
-describe(valueToArgType.name, () => {
-  it('handles strings', () => {
-    expect(valueToArgType('aaa')).toBe(ArgType.STRING);
-    expect(valueToArgType(' ')).toBe(ArgType.STRING);
-    expect(valueToArgType('')).toBe(ArgType.STRING);
-    expect(valueToArgType('a a a')).toBe(ArgType.STRING);
-  });
-  it('handles booleans', () => {
-    expect(valueToArgType(true)).toBe(ArgType.BOOLEAN);
-    expect(valueToArgType(false)).toBe(ArgType.BOOLEAN);
-  });
-  it('handles numbers', () => {
-    expect(valueToArgType(-1)).toBe(ArgType.NUMBER);
-    expect(valueToArgType(0)).toBe(ArgType.NUMBER);
-    expect(valueToArgType(100)).toBe(ArgType.NUMBER);
-  });
-  it('handles invalid values', () => {
-    expect(valueToArgType({})).toBe(ArgType.INVALID);
-    expect(valueToArgType(() => 0)).toBe(ArgType.INVALID);
-    expect(valueToArgType([])).toBe(ArgType.INVALID);
-    expect(valueToArgType(undefined)).toBe(ArgType.INVALID);
-    expect(valueToArgType(null)).toBe(ArgType.INVALID);
-    expect(valueToArgType(Symbol)).toBe(ArgType.INVALID);
-    expect(valueToArgType(ArgType)).toBe(ArgType.INVALID);
   });
 });
 
