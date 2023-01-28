@@ -3,8 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { EntityNotFoundError, Repository } from 'typeorm';
 import { Endpoint } from '@persistence/entities/endpoint.entity';
 import * as moment from 'moment';
-import { EndpointDto, EndpointPartialDto } from '@persistence/dto/endpoint.dto';
-import { transformAndValidate } from 'class-transformer-validator';
+import { EndpointCreateDto } from '@api/dto/endpoint-create.dto';
+import { endpointDtoToEntity } from '@util/endpoints';
+import { EndpointUpdateDto } from '@api/dto/endpoint-update.dto';
 
 @Injectable()
 export class EndpointsService {
@@ -13,11 +14,10 @@ export class EndpointsService {
     private endpointsRepository: Repository<Endpoint>,
   ) {}
 
-  async create(endpointDto: EndpointDto): Promise<Endpoint> {
-    const created = await this.endpointsRepository.save(
-      (await transformAndValidate(EndpointDto, endpointDto)) as Endpoint,
-    );
+  async create(dto: EndpointCreateDto): Promise<Endpoint> {
+    const entity = await endpointDtoToEntity(EndpointCreateDto, dto);
 
+    const created = await this.endpointsRepository.save(entity);
     return await this.findOne(created.id);
   }
 
@@ -25,14 +25,16 @@ export class EndpointsService {
     await this.endpointsRepository.update({ id }, { timeout: null } as any);
   }
 
-  async update(id: number, endpointDto: EndpointPartialDto): Promise<Endpoint> {
+  async update(id: number, dto: EndpointUpdateDto): Promise<Endpoint> {
     if ((await this.findOne(id)) === null) {
       throw new EntityNotFoundError(Endpoint.name, {});
     }
 
+    const entity = await endpointDtoToEntity(EndpointUpdateDto, dto);
+
     await this.endpointsRepository.save({
+      ...entity,
       id,
-      ...(await transformAndValidate(EndpointPartialDto, endpointDto)),
     } as any);
 
     return await this.findOne(id);
@@ -44,8 +46,8 @@ export class EndpointsService {
         id: 'ASC',
       },
       relations: {
-        arguments: true,
-        navigations: true,
+        argumentList: true,
+        navigationList: true,
       },
     });
   }
@@ -56,8 +58,8 @@ export class EndpointsService {
         enabled: true,
       },
       relations: {
-        arguments: true,
-        navigations: true,
+        argumentList: true,
+        navigationList: true,
       },
     });
   }
@@ -110,8 +112,8 @@ export class EndpointsService {
     const endpoint: Endpoint | null = await this.endpointsRepository.findOne({
       where: { id },
       relations: {
-        arguments: true,
-        navigations: true,
+        argumentList: true,
+        navigationList: true,
       },
     });
 

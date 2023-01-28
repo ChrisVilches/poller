@@ -87,11 +87,11 @@ describe(`${TagsController.name} (e2e)`, () => {
       expect(res.statusCode).toBe(200);
     });
 
-    it('accepts empty object (payload)', async () => {
+    it('does not accept empty object (payload)', async () => {
       const res = await request(app.getHttpServer())
         .patch(`/tags/${id}`)
         .send({});
-      expect(res.statusCode).toBe(200);
+      expect(res.statusCode).toBe(400);
     });
 
     it('verifies the name is unique (with trailing and leading spaces)', async () => {

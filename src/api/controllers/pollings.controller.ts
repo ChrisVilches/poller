@@ -14,7 +14,6 @@ import { Polling } from '@persistence/entities/polling.entity';
 import { EndpointsService } from '@persistence/services/endpoints.service';
 import { PollingsService } from '@persistence/services/pollings.service';
 import { performPolling } from '@scraping/performPolling';
-import { PollingDto } from '@persistence/dto/polling.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { PENDING_ENDPOINTS_QUEUE } from '@background-process/queues';
 import { PendingEndpoint } from '@interfaces/PendingEndpoint';
@@ -74,7 +73,7 @@ export class PollingsController {
     @Param('endpointId', ParseIntPipe) endpointId: number,
   ): Promise<Polling | null> {
     const endpoint = await this.endpointsService.findOne(endpointId);
-    const pollingDto: PollingDto = await performPolling(endpoint, true);
-    return await this.pollingsService.create(pollingDto);
+    const pollingResult = await performPolling(endpoint, true);
+    return await this.pollingsService.create(pollingResult);
   }
 }

@@ -8,7 +8,6 @@ import { Endpoint } from '@persistence/entities/endpoint.entity';
 import { PollingsService } from '@persistence/services/pollings.service';
 import { Polling } from '@persistence/entities/polling.entity';
 import { performPolling } from '@scraping/performPolling';
-import { PollingDto } from '@persistence/dto/polling.dto';
 import { PENDING_ENDPOINTS_QUEUE } from '@background-process/queues';
 
 @Processor(PENDING_ENDPOINTS_QUEUE)
@@ -30,8 +29,8 @@ export class PendingEndpointsConsumer {
     this.logger.log(`${endpoint} | polling (fetching site)...`);
     this.eventEmitter.emit('polling.attempt', endpoint);
 
-    const pollingDto: PollingDto = await performPolling(endpoint, manual);
-    const result: Polling = await this.pollingsService.create(pollingDto);
+    const pollingResult = await performPolling(endpoint, manual);
+    const result: Polling = await this.pollingsService.create(pollingResult);
 
     await this.endpointsService.updateTimeout(
       Boolean(result.shouldNotify),

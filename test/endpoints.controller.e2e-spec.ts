@@ -84,7 +84,9 @@ describe(`${EndpointsController.name} (e2e)`, () => {
       expect(body.rule).toBe('HasOccurrencesRule');
       expect(body.type).toBe('HTML');
       expect(body.enabled).toBeFalsy();
+      expect(body.argumentList).toBeUndefined();
       expect(body.arguments).toStrictEqual([]);
+      expect(body.navigationList).toBeUndefined();
       expect(body.navigations).toStrictEqual([]);
       expect(body.not).toStrictEqual(false);
     });
@@ -182,7 +184,9 @@ describe(`${EndpointsController.name} (e2e)`, () => {
           arguments: arg,
         });
 
+      expect(body.navigationList).toBeUndefined();
       expect(body.navigations).toStrictEqual(['nav1', 'nav2', 'nav3']);
+      expect(body.argumentList).toBeUndefined();
       expect(body.arguments).toStrictEqual(arg);
     });
   });
@@ -304,6 +308,20 @@ describe(`${EndpointsController.name} (e2e)`, () => {
       expect(res.body.type).toBe('DHTML');
     });
 
+    it('validates request type', async () => {
+      const res = await request(app.getHttpServer())
+        .patch(`/endpoints/${id}`)
+        .send({
+          ...payload,
+          type: 'invalid',
+        });
+
+      expect(res.statusCode).toBe(400);
+      expect(res.body.message[0]).toBe(
+        'type must be one of the following values: HTML, DHTML, JSON',
+      );
+    });
+
     it('accepts method as string', async () => {
       const res = await request(app.getHttpServer())
         .patch(`/endpoints/${id}`)
@@ -325,7 +343,9 @@ describe(`${EndpointsController.name} (e2e)`, () => {
           navigations: nav,
           arguments: arg,
         });
+      expect(body.navigationList).toBeUndefined();
       expect(body.navigations).toStrictEqual(['nav1', 'nav2', 'nav3']);
+      expect(body.argumentList).toBeUndefined();
       expect(body.arguments).toStrictEqual(arg);
     });
   });

@@ -18,7 +18,7 @@ import { Method } from '@persistence/enum/method.enum';
 import { enumKeysToString } from '@util/misc';
 import { TrimEach } from '@transformations/trim-each.transformation';
 import { Uppercase } from '@transformations/uppercase.transformation';
-import { CorrectArgsType } from '@api/validators/correct-args-type.validator';
+import { CorrectArgsType } from 'src/validators/correct-args-type.validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 const allowedTypes = [RequestType.HTML, RequestType.DHTML, RequestType.JSON];

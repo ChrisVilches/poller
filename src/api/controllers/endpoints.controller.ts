@@ -17,10 +17,11 @@ import { Endpoint } from '@persistence/entities/endpoint.entity';
 import { EndpointCreateDto } from '@api/dto/endpoint-create.dto';
 import { EndpointUpdateDto } from '@api/dto/endpoint-update.dto';
 import { ApiTags } from '@nestjs/swagger';
-import { convertEndpointDto } from '@util/endpoints';
 import { TagsService } from '@persistence/services/tags.service';
 
 @UseInterceptors(EmptyReturnInterceptor)
+// TODO: Does this catch exceptions thrown (using throw new Error, for example) inside controller functions?
+//       I forgot :/
 @UseInterceptors(ProcessErrorInterceptor)
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('endpoints')
@@ -43,7 +44,7 @@ export class EndpointsController {
 
   @Post()
   create(@Body() params: EndpointCreateDto) {
-    return this.endpointsService.create(convertEndpointDto(params));
+    return this.endpointsService.create(params);
   }
 
   @Patch(':id')
@@ -51,7 +52,7 @@ export class EndpointsController {
     @Param('id', ParseIntPipe) id: number,
     @Body() params: EndpointUpdateDto,
   ) {
-    return this.endpointsService.update(id, convertEndpointDto(params));
+    return this.endpointsService.update(id, params);
   }
 
   @Patch(':id/enable')

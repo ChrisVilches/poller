@@ -75,9 +75,10 @@ describe(TagsService.name, () => {
       }).toThrowErrorType(EntityNotFoundError);
     });
 
-    it('allows empty object', async () => {
-      const updated: Tag = await service.update(id, {});
-      expect(updated.name).toBe('some tag');
+    it('rejects empty object', async () => {
+      await expect(
+        async () => await service.update(id, {} as any),
+      ).toThrowErrorType(ValidationError);
     });
 
     it('validates name unique', async () => {

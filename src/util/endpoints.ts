@@ -1,9 +1,12 @@
 import { EndpointCreateDto } from '@api/dto/endpoint-create.dto';
 import { EndpointUpdateDto } from '@api/dto/endpoint-update.dto';
-import { EndpointDto } from '@persistence/dto/endpoint.dto';
+import { Argument } from '@persistence/entities/argument.entity';
+import { Endpoint } from '@persistence/entities/endpoint.entity';
+import { Navigation } from '@persistence/entities/navigation.entity';
+import { Tag } from '@persistence/entities/tag.entity';
 import { Method } from '@persistence/enum/method.enum';
 import { RequestType } from '@persistence/enum/request-type.enum';
-import { plainToInstance } from 'class-transformer';
+import { ClassType, transformAndValidate } from 'class-transformer-validator';
 
 const convertMethod = (method = ''): Method => {
   const map = {
@@ -35,38 +38,57 @@ const convertType = (type = ''): RequestType => {
   return RequestType.INVALID;
 };
 
-export const convertNav = (nav: string[]) =>
-  nav.map((selector: string) => ({ selector }));
+export const convertNav = (nav: string[]): Navigation[] =>
+  nav.map((selector: string) => {
+    const nav = new Navigation();
+    nav.selector = selector;
+    return nav;
+  });
 
-export const convertArgs = (args: any[]) =>
-  args.map((value: any) => ({ value }));
+export const convertArgs = (args: any[]): Argument[] =>
+  args.map(Argument.fromValue);
 
 /**
- * @param input Endpoint object in the same format that's required by the API.
- * @returns {EndpointDto} Object converted to `EndpointDto`.
+ * Returns an instance of `Endpoint`, but all fields can be undefined.
+ * // TODO: How can we rename this function so that its intention is more clear?
+ *          It's meant to be used as the final step before executing a CRUD
+ *          operation like create or update (which require an object which structure
+ *          is not very clear, which is why this function is also not very clear as well).
+ *
+ *          Consider using PartialType (all fields can be undefined).
  */
-export const convertEndpointDto = (
-  input: EndpointCreateDto | EndpointUpdateDto,
-): EndpointDto => {
-  const plain: any = { ...input };
+export const endpointDtoToEntity = async <T extends object>(
+  classType: ClassType<T>,
+  dto: EndpointCreateDto | EndpointUpdateDto,
+): Promise<Endpoint> => {
+  dto = await transformAndValidate(classType, dto);
 
-  if (input.type) {
-    plain.type = convertType(input.type);
+  const { arguments: _, navigations: __, ...other } = dto;
+
+  const result = { ...new Endpoint(), ...other } as any;
+
+  if (dto.type) {
+    result.type = convertType(dto.type);
   }
-  if (input.method) {
-    plain.method = convertMethod(input.method);
+  if (dto.method) {
+    result.method = convertMethod(dto.method);
   }
-  if (input.navigations) {
-    plain.navigations = convertNav(input.navigations);
+  if (dto.navigations) {
+    result.navigationList = convertNav(dto.navigations);
   }
-  if (input.arguments) {
-    plain.arguments = convertArgs(input.arguments);
-  }
-  if ((input as EndpointUpdateDto).tags) {
-    plain.tags = (input as EndpointUpdateDto).tags?.map((id: number) => ({
-      id,
-    }));
+  if (dto.arguments) {
+    result.argumentList = convertArgs(dto.arguments);
   }
 
-  return plainToInstance(EndpointDto, plain);
+  if ((dto as EndpointUpdateDto).tags) {
+    const tags = (dto as EndpointUpdateDto).tags?.map((id: number) => {
+      const t = new Tag();
+      t.id = id;
+      return t;
+    });
+
+    result.tags = tags ?? [];
+  }
+
+  return result;
 };

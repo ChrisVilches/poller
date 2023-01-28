@@ -2,11 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, EntityNotFoundError, Repository } from 'typeorm';
 import { Tag } from '@persistence/entities/tag.entity';
-import { TagPartialDto, TagDto } from '@persistence/dto/tag.dto';
 import { Endpoint } from '@persistence/entities/endpoint.entity';
 import { transformAndValidate } from 'class-transformer-validator';
 import { ValidationError } from 'class-validator';
 import { TagQueryDto } from '@api/dto/tag-query.dto';
+import { TagUpsertDto } from '@api/dto/tag-upsert.dto';
 
 @Injectable()
 export class TagsService {
@@ -72,18 +72,20 @@ export class TagsService {
       .getOne();
   }
 
-  async create(tagDto: TagDto): Promise<Tag> {
+  async create(tagDto: TagUpsertDto): Promise<Tag> {
     await this.checkCanUseName(tagDto.name);
 
-    return this.tagsRepository.save(await transformAndValidate(TagDto, tagDto));
+    return this.tagsRepository.save(
+      await transformAndValidate(TagUpsertDto, tagDto),
+    );
   }
 
-  async update(id: number, tagDto: TagPartialDto): Promise<Tag> {
+  async update(id: number, tagDto: TagUpsertDto): Promise<Tag> {
     await this.checkCanUseName(tagDto.name, id);
 
     await this.tagsRepository.update(
       { id },
-      await transformAndValidate(TagPartialDto, tagDto),
+      await transformAndValidate(TagUpsertDto, tagDto),
     );
 
     return await this.findOne(id);
@@ -117,8 +119,8 @@ export class TagsService {
       where: { id },
       relations: {
         endpoints: {
-          arguments: true,
-          navigations: true,
+          argumentList: true,
+          navigationList: true,
         },
       },
     });

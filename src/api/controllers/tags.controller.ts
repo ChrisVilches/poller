@@ -1,4 +1,5 @@
 import { TagQueryDto } from '@api/dto/tag-query.dto';
+import { TagUpsertDto } from '@api/dto/tag-upsert.dto';
 import { EmptyReturnInterceptor } from '@api/interceptors/empty-return.interceptor';
 import { ProcessErrorInterceptor } from '@api/interceptors/process-error.interceptor';
 import {
@@ -15,7 +16,6 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { TagPartialDto, TagDto } from '@persistence/dto/tag.dto';
 import { TagsService } from '@persistence/services/tags.service';
 
 @Controller('tags')
@@ -42,12 +42,12 @@ export class TagsController {
   }
 
   @Post()
-  create(@Body() params: TagDto) {
+  create(@Body() params: TagUpsertDto) {
     return this.tagsService.create(params);
   }
 
   @Patch(':id')
-  update(@Param('id', ParseIntPipe) id: number, @Body() params: TagPartialDto) {
+  update(@Param('id', ParseIntPipe) id: number, @Body() params: TagUpsertDto) {
     return this.tagsService.update(id, params);
   }
 

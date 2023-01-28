@@ -4,6 +4,7 @@ import { mockEndpoint } from '@test/helpers/mockEndpoint';
 import { INestApplication } from '@nestjs/common';
 import { EndpointsService } from '@persistence/services/endpoints.service';
 import { Endpoint } from '@persistence/entities/endpoint.entity';
+import { EndpointCreateDto } from '@api/dto/endpoint-create.dto';
 
 describe(FetchPendingEndpointsJob.name, () => {
   let app: INestApplication;
@@ -24,7 +25,9 @@ describe(FetchPendingEndpointsJob.name, () => {
     let endpoint: Endpoint;
 
     beforeEach(async () => {
-      endpoint = await endpointsService.create(mockEndpoint());
+      endpoint = await endpointsService.create(
+        mockEndpoint() as EndpointCreateDto,
+      );
     });
 
     it('verifies the endpoint is not timed out (timeout is null)', async () => {

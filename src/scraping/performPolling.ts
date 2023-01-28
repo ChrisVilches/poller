@@ -63,14 +63,17 @@ const performPollingAux = async (
 ): Promise<PollingResult> => {
   const { rule, not = false } = endpoint;
 
-  const ruleInstance: Rule = ensureRule(rule, endpoint.args());
+  const ruleInstance: Rule = ensureRule(rule, endpoint.arguments());
 
-  const ruleFunction = ruleInstance.execute.call(ruleInstance, endpoint.args());
+  const ruleFunction = ruleInstance.execute.call(
+    ruleInstance,
+    endpoint.arguments(),
+  );
 
   const { data, status } = await request(endpoint);
 
   const htmlResult = load(data);
-  const domElement = ensureNavigate(htmlResult, endpoint.navigation());
+  const domElement = ensureNavigate(htmlResult, endpoint.navigations());
   const shouldNotify = ruleFunction(domElement);
 
   return {

@@ -1,8 +1,13 @@
 import { ArgType } from '@persistence/enum/arg-type.enum';
 import { Method } from '@persistence/enum/method.enum';
 import { RequestType } from '@persistence/enum/request-type.enum';
-import { enumKeysToString } from '@util/misc';
-import { Expose, Transform, TransformFnParams } from 'class-transformer';
+import { enumKeysToString, sortById } from '@util/misc';
+import {
+  Exclude,
+  Expose,
+  Transform,
+  TransformFnParams,
+} from 'class-transformer';
 import {
   Entity,
   Column,
@@ -16,25 +21,10 @@ import { Argument } from './argument.entity';
 import { Navigation } from './navigation.entity';
 import { Tag } from './tag.entity';
 
-const sortById = (arr: (Navigation | Argument)[]) =>
-  arr.sort((a, b) => a.id - b.id);
-
-const cleanArguments = (args: any[]) =>
-  sortById(args || []).map((a: any) => {
-    switch (a.type) {
-      case ArgType.BOOLEAN:
-        return a.value === 'true';
-      case ArgType.STRING:
-        return a.value;
-      case ArgType.NUMBER:
-        return +a.value;
-      default:
-        throw new Error('Wrong argument type came from the database');
-    }
-  });
-
-const cleanNavigations = (nav: Navigation[]) =>
-  sortById(nav).map((n: Navigation) => n.selector);
+// TODO: Question: Does using class-transformer create a new class?
+//       If it doesn't create a new class, it means the types would get messed up.
+//       My new approach is to just try to avoid changing the type. Did I implement this correctly?
+//       do a quick check.
 
 @Entity()
 export class Endpoint {
@@ -70,12 +60,25 @@ export class Endpoint {
   @Column({ default: 15 })
   periodMinutes: number;
 
-  navigation() {
-    return cleanNavigations(this.navigations);
+  @Expose()
+  navigations(): string[] {
+    return sortById(this.navigationList).map((n: Navigation) => n.selector);
   }
 
-  args() {
-    return cleanArguments(this.arguments);
+  @Expose()
+  arguments(): (number | string | boolean)[] {
+    return sortById(this.argumentList || []).map((a: any) => {
+      switch (a.type) {
+        case ArgType.BOOLEAN:
+          return a.value === 'true';
+        case ArgType.STRING:
+          return a.value;
+        case ArgType.NUMBER:
+          return +a.value;
+        default:
+          throw new Error('Wrong argument type came from the database');
+      }
+    });
   }
 
   methodLowerCase() {
@@ -94,18 +97,17 @@ export class Endpoint {
     return `${this.formattedTitle()} (${this.typeFormatted()}, ${this.methodLowerCase()})`;
   }
 
-  @Transform((params: TransformFnParams) => cleanNavigations(params.value))
+  @Exclude()
   @OneToMany(() => Navigation, (nav) => nav.endpoint, {
     cascade: ['insert', 'update'],
   })
-  navigations: Navigation[];
+  navigationList: Navigation[];
 
-  @Expose()
-  @Transform((params: TransformFnParams) => cleanArguments(params.value))
+  @Exclude()
   @OneToMany(() => Argument, (arg) => arg.endpoint, {
     cascade: ['insert', 'update'],
   })
-  arguments: Argument[];
+  argumentList: Argument[];
 
   @Column({ nullable: true, default: 60 })
   waitAfterNotificationMinutes?: number;

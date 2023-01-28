@@ -42,3 +42,6 @@ export const valueToArgType = (value: any): ArgType => {
 
 export const enumKeysToString = (enumType: any, keys: number[]): string[] =>
   keys.map((key: number) => enumType[String(key)]);
+
+export const sortById = (arr: { id: number }[]) =>
+  arr.sort((a, b) => a.id - b.id);

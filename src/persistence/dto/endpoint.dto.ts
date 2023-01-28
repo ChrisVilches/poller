@@ -8,18 +8,17 @@ import {
   IsString,
   IsUrl,
   MinLength,
-  ValidateNested,
+  Validate,
 } from 'class-validator';
 import { allRules } from '@rules/allRules';
-import { ArgumentDto } from './argument.dto';
-import { NavigationDto } from './navigation.dto';
 import { Trim } from '@transformations/trim.transformation';
 import 'reflect-metadata';
 import { PartialType } from '@nestjs/mapped-types';
-import { Type } from 'class-transformer';
 import { RequestType } from '@persistence/enum/request-type.enum';
 import { Method } from '@persistence/enum/method.enum';
 import { enumKeysToString } from '@util/misc';
+import { TrimEach } from '@transformations/trim-each.transformation';
+import { CorrectArgsType } from 'src/validators/correct-args-type.validator';
 
 const allowedTypes = [RequestType.HTML, RequestType.DHTML, RequestType.JSON];
 const allowedMethods = [
@@ -83,15 +82,15 @@ export class EndpointDto {
 
   @IsOptional()
   @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => ArgumentDto)
-  arguments: ArgumentDto[];
+  @Validate(CorrectArgsType)
+  arguments: (string | number | boolean)[];
 
   @IsOptional()
   @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => NavigationDto)
-  navigations: NavigationDto[];
+  @IsString({ each: true })
+  @MinLength(1, { each: true })
+  @TrimEach()
+  navigations: string[];
 }
 
 /**
