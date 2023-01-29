@@ -1,10 +1,10 @@
 import { FetchPendingEndpointsJob } from './fetch-pending-endpoints.job';
 import { createTestingModule } from '@test/helpers/createTestingModule';
-import { mockEndpoint } from '@test/helpers/mockEndpoint';
 import { INestApplication } from '@nestjs/common';
 import { EndpointsService } from '@persistence/services/endpoints.service';
 import { Endpoint } from '@persistence/entities/endpoint.entity';
 import { EndpointCreateDto } from '@api/dto/endpoint-create.dto';
+import { mockEndpointDto } from '@test/helpers/mock-data';
 
 describe(FetchPendingEndpointsJob.name, () => {
   let app: INestApplication;
@@ -26,7 +26,7 @@ describe(FetchPendingEndpointsJob.name, () => {
 
     beforeEach(async () => {
       endpoint = await endpointsService.create(
-        mockEndpoint() as EndpointCreateDto,
+        mockEndpointDto() as EndpointCreateDto,
       );
     });
 

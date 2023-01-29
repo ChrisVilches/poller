@@ -1,7 +1,8 @@
 import { EndpointCreateDto } from '@api/dto/endpoint-create.dto';
 import { EndpointUpdateDto } from '@api/dto/endpoint-update.dto';
+import { PollingDto } from '@persistence/dto/polling.dto';
 
-export const mockEndpoint = (
+export const mockEndpointDto = (
   props: EndpointCreateDto | EndpointUpdateDto = {},
 ): EndpointCreateDto | EndpointUpdateDto => {
   return {
@@ -18,4 +19,16 @@ export const mockEndpoint = (
     method: 'GET',
     ...props,
   };
+};
+
+export const mockPollingDto = (args: any = {}) => {
+  const res = new PollingDto();
+  res.endpointId = 1;
+  res.manual = true;
+  res.shouldNotify = false;
+  res.responseCode = 200;
+  res.shouldNotify = false;
+  res.computedMessage = 'message';
+  Object.assign(res, args);
+  return res;
 };

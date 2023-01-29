@@ -2,15 +2,13 @@ import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { EndpointsController } from '@api/controllers/endpoints.controller';
 import { createTestingModule } from './helpers/createTestingModule';
+import { mockEndpointDto } from './helpers/mock-data';
 
-const payload = {
+const payload = mockEndpointDto({
+  title: 'new title',
+  notificationMessage: 'the message',
   url: 'https://www.myurl.com',
-  title: '  new title ',
-  notificationMessage: '  the message ',
-  rule: 'HasOccurrencesRule',
-  type: 'html',
-  method: 'get',
-};
+});
 
 describe(`${EndpointsController.name} (e2e)`, () => {
   let app: INestApplication;

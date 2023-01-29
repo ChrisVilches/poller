@@ -1,11 +1,11 @@
 import { EndpointsService } from './endpoints.service';
 import { Endpoint } from '@persistence/entities/endpoint.entity';
-import { mockEndpoint } from '@test/helpers/mockEndpoint';
 import { ValidationError } from 'class-validator';
 import '@test/matchers/toThrowErrorType';
 import { createTestingModule } from '@test/helpers/createTestingModule';
 import { INestApplication } from '@nestjs/common';
 import { EndpointCreateDto } from '@api/dto/endpoint-create.dto';
+import { mockEndpointDto } from '@test/helpers/mock-data';
 
 describe(EndpointsService.name, () => {
   let app: INestApplication;
@@ -27,7 +27,7 @@ describe(EndpointsService.name, () => {
   describe('create', () => {
     it('creates an endpoint', async () => {
       expect(await service.countAll()).toBe(0);
-      await service.create(mockEndpoint() as EndpointCreateDto);
+      await service.create(mockEndpointDto() as EndpointCreateDto);
       expect(await service.countAll()).toBe(1);
     });
 
@@ -35,7 +35,7 @@ describe(EndpointsService.name, () => {
       await expect(
         async () =>
           await service.create(
-            mockEndpoint({ url: '...' }) as EndpointCreateDto,
+            mockEndpointDto({ url: '...' }) as EndpointCreateDto,
           ),
       ).toThrowErrorType(ValidationError);
     });
@@ -44,28 +44,30 @@ describe(EndpointsService.name, () => {
       await expect(
         async () =>
           await service.create(
-            mockEndpoint({ url: 'https://www.hello.com' }) as EndpointCreateDto,
+            mockEndpointDto({
+              url: 'https://www.hello.com',
+            }) as EndpointCreateDto,
           ),
       ).not.toThrowErrorType(ValidationError);
     });
 
     it('trims the title and content message', async () => {
       const endpoint = await service.create(
-        mockEndpoint({ title: '   some title  ' }) as EndpointCreateDto,
+        mockEndpointDto({ title: '   some title  ' }) as EndpointCreateDto,
       );
       expect(endpoint.title).toBe('some title');
     });
 
     it('saves navigations', async () => {
       const endpoint = await service.create(
-        mockEndpoint({ navigations: [' a ', ' b '] }) as EndpointCreateDto,
+        mockEndpointDto({ navigations: [' a ', ' b '] }) as EndpointCreateDto,
       );
       expect(endpoint.navSelectors()).toStrictEqual(['a', 'b']);
     });
 
     it('saves arguments', async () => {
       const endpoint = await service.create(
-        mockEndpoint({
+        mockEndpointDto({
           arguments: [' a ', ' b ', true, 123],
         }) as EndpointCreateDto,
       );
@@ -75,7 +77,7 @@ describe(EndpointsService.name, () => {
     it('rejects incorrect navigation', async () => {
       await expect(async () => {
         await service.create(
-          mockEndpoint({
+          mockEndpointDto({
             navigations: [' a ', ' b ', ''],
           }) as EndpointCreateDto,
         );
@@ -85,7 +87,7 @@ describe(EndpointsService.name, () => {
     it('rejects incorrect arguments', async () => {
       await expect(async () => {
         await service.create(
-          mockEndpoint({
+          mockEndpointDto({
             arguments: [' a ', null, ' b ', ''] as any,
           }) as EndpointCreateDto,
         );
@@ -98,7 +100,7 @@ describe(EndpointsService.name, () => {
 
     beforeEach(async () => {
       endpoint = await service.create(
-        mockEndpoint({
+        mockEndpointDto({
           navigations: [' abc ', ' def  '],
           arguments: ['xyz', 1],
         }) as EndpointCreateDto,
@@ -114,20 +116,21 @@ describe(EndpointsService.name, () => {
 
     it('validates url', async () => {
       await expect(
-        async () => await service.update(1, mockEndpoint({ url: '...' })),
+        async () => await service.update(1, mockEndpointDto({ url: '...' })),
       ).toThrowErrorType(ValidationError);
     });
 
     it('validates request type', async () => {
       await expect(
-        async () => await service.update(1, mockEndpoint({ type: 'invalid' })),
+        async () =>
+          await service.update(1, mockEndpointDto({ type: 'invalid' })),
       ).toThrowErrorType(ValidationError);
     });
 
     it('saves nested navigations', async () => {
       const updated = await service.update(
         endpoint.id,
-        mockEndpoint({ navigations: [' a ', ' b '] }),
+        mockEndpointDto({ navigations: [' a ', ' b '] }),
       );
       expect(updated.navSelectors()).toStrictEqual(['a', 'b']);
     });
@@ -135,7 +138,7 @@ describe(EndpointsService.name, () => {
     it('saves nested arguments', async () => {
       const updated = await service.update(
         endpoint.id,
-        mockEndpoint({ arguments: [' a ', ' b ', true, 123] }),
+        mockEndpointDto({ arguments: [' a ', ' b ', true, 123] }),
       );
       expect(updated.argPrimitives()).toStrictEqual([' a ', ' b ', true, 123]);
     });
@@ -144,7 +147,7 @@ describe(EndpointsService.name, () => {
       await expect(async () => {
         await service.update(
           endpoint.id,
-          mockEndpoint({ navigations: [' a ', ' b ', ''] }),
+          mockEndpointDto({ navigations: [' a ', ' b ', ''] }),
         );
       }).toThrowErrorType(ValidationError);
     });
@@ -153,7 +156,7 @@ describe(EndpointsService.name, () => {
       await expect(async () => {
         await service.update(
           endpoint.id,
-          mockEndpoint({ navigations: [' a ', true] as any }),
+          mockEndpointDto({ navigations: [' a ', true] as any }),
         );
       }).toThrowErrorType(ValidationError);
     });
@@ -162,7 +165,7 @@ describe(EndpointsService.name, () => {
       await expect(async () => {
         await service.update(
           endpoint.id,
-          mockEndpoint({ arguments: [' a ', null, ' b '] as any }),
+          mockEndpointDto({ arguments: [' a ', null, ' b '] as any }),
         );
       }).toThrowErrorType(ValidationError);
     });
@@ -171,7 +174,7 @@ describe(EndpointsService.name, () => {
       await expect(async () => {
         await service.update(
           endpoint.id,
-          mockEndpoint({
+          mockEndpointDto({
             arguments: [' a ', ' b ', () => 0] as any,
           }),
         );
@@ -207,9 +210,9 @@ describe(EndpointsService.name, () => {
 
   describe('findEnabled', () => {
     it('fetches only the enabled ones', async () => {
-      const e1 = await service.create(mockEndpoint() as EndpointCreateDto);
-      const e2 = await service.create(mockEndpoint() as EndpointCreateDto);
-      const e3 = await service.create(mockEndpoint() as EndpointCreateDto);
+      const e1 = await service.create(mockEndpointDto() as EndpointCreateDto);
+      const e2 = await service.create(mockEndpointDto() as EndpointCreateDto);
+      const e3 = await service.create(mockEndpointDto() as EndpointCreateDto);
       await service.enable(e1.id, true);
       await service.enable(e2.id, true);
       await service.enable(e3.id, false);
@@ -219,7 +222,7 @@ describe(EndpointsService.name, () => {
 
   describe('findOne', () => {
     beforeEach(async () => {
-      await service.create(mockEndpoint() as EndpointCreateDto);
+      await service.create(mockEndpointDto() as EndpointCreateDto);
     });
     it('fetches the navigation array', async () => {
       expect(await service.countAll()).toBe(1);
@@ -235,7 +238,7 @@ describe(EndpointsService.name, () => {
     let endpoint: Endpoint;
     beforeEach(async () => {
       endpoint = await service.create(
-        mockEndpoint({
+        mockEndpointDto({
           periodMinutes: 25,
           waitAfterNotificationMinutes: 107,
         }) as EndpointCreateDto,
