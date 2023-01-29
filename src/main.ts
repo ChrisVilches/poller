@@ -4,9 +4,11 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { configureApp } from './configureApp';
 import { DelayInterceptor } from '@api/interceptors/delay.interceptor';
 import { isProd } from '@util/env';
+import * as morgan from 'morgan';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.use(morgan('combined'));
 
   configureApp(app);
 
