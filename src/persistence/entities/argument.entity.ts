@@ -22,7 +22,7 @@ export class Argument {
   @Column()
   value: string;
 
-  @ManyToOne(() => Endpoint, (endpoint) => endpoint.argumentList, {
+  @ManyToOne(() => Endpoint, (endpoint) => endpoint.arguments, {
     onDelete: 'CASCADE',
     orphanedRowAction: 'delete',
   })

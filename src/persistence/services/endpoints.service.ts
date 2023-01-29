@@ -4,8 +4,8 @@ import { EntityNotFoundError, Repository } from 'typeorm';
 import { Endpoint } from '@persistence/entities/endpoint.entity';
 import * as moment from 'moment';
 import { EndpointCreateDto } from '@api/dto/endpoint-create.dto';
-import { endpointDtoToEntity } from '@util/endpoints';
 import { EndpointUpdateDto } from '@api/dto/endpoint-update.dto';
+import { endpointDtoToEntity } from './data-mapper';
 
 @Injectable()
 export class EndpointsService {
@@ -46,8 +46,8 @@ export class EndpointsService {
         id: 'ASC',
       },
       relations: {
-        argumentList: true,
-        navigationList: true,
+        arguments: true,
+        navigations: true,
       },
     });
   }
@@ -58,8 +58,8 @@ export class EndpointsService {
         enabled: true,
       },
       relations: {
-        argumentList: true,
-        navigationList: true,
+        arguments: true,
+        navigations: true,
       },
     });
   }
@@ -112,8 +112,8 @@ export class EndpointsService {
     const endpoint: Endpoint | null = await this.endpointsRepository.findOne({
       where: { id },
       relations: {
-        argumentList: true,
-        navigationList: true,
+        arguments: true,
+        navigations: true,
       },
     });
 

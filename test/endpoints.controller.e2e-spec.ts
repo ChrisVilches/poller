@@ -84,9 +84,7 @@ describe(`${EndpointsController.name} (e2e)`, () => {
       expect(body.rule).toBe('HasOccurrencesRule');
       expect(body.type).toBe('HTML');
       expect(body.enabled).toBeFalsy();
-      expect(body.argumentList).toBeUndefined();
       expect(body.arguments).toStrictEqual([]);
-      expect(body.navigationList).toBeUndefined();
       expect(body.navigations).toStrictEqual([]);
       expect(body.not).toStrictEqual(false);
     });
@@ -184,9 +182,7 @@ describe(`${EndpointsController.name} (e2e)`, () => {
           arguments: arg,
         });
 
-      expect(body.navigationList).toBeUndefined();
       expect(body.navigations).toStrictEqual(['nav1', 'nav2', 'nav3']);
-      expect(body.argumentList).toBeUndefined();
       expect(body.arguments).toStrictEqual(arg);
     });
   });
@@ -343,9 +339,7 @@ describe(`${EndpointsController.name} (e2e)`, () => {
           navigations: nav,
           arguments: arg,
         });
-      expect(body.navigationList).toBeUndefined();
       expect(body.navigations).toStrictEqual(['nav1', 'nav2', 'nav3']);
-      expect(body.argumentList).toBeUndefined();
       expect(body.arguments).toStrictEqual(arg);
     });
   });

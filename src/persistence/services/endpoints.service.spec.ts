@@ -60,7 +60,7 @@ describe(EndpointsService.name, () => {
       const endpoint = await service.create(
         mockEndpoint({ navigations: [' a ', ' b '] }) as EndpointCreateDto,
       );
-      expect(endpoint.navigations()).toStrictEqual(['a', 'b']);
+      expect(endpoint.navSelectors()).toStrictEqual(['a', 'b']);
     });
 
     it('saves arguments', async () => {
@@ -69,7 +69,7 @@ describe(EndpointsService.name, () => {
           arguments: [' a ', ' b ', true, 123],
         }) as EndpointCreateDto,
       );
-      expect(endpoint.arguments()).toStrictEqual([' a ', ' b ', true, 123]);
+      expect(endpoint.argPrimitives()).toStrictEqual([' a ', ' b ', true, 123]);
     });
 
     it('rejects incorrect navigation', async () => {
@@ -129,7 +129,7 @@ describe(EndpointsService.name, () => {
         endpoint.id,
         mockEndpoint({ navigations: [' a ', ' b '] }),
       );
-      expect(updated.navigations()).toStrictEqual(['a', 'b']);
+      expect(updated.navSelectors()).toStrictEqual(['a', 'b']);
     });
 
     it('saves nested arguments', async () => {
@@ -137,7 +137,7 @@ describe(EndpointsService.name, () => {
         endpoint.id,
         mockEndpoint({ arguments: [' a ', ' b ', true, 123] }),
       );
-      expect(updated.arguments()).toStrictEqual([' a ', ' b ', true, 123]);
+      expect(updated.argPrimitives()).toStrictEqual([' a ', ' b ', true, 123]);
     });
 
     it('rejects incorrect navigation', async () => {
@@ -182,8 +182,8 @@ describe(EndpointsService.name, () => {
       await service.update(endpoint.id, { title: ' ....new title.... ' });
       const found = await service.findOne(endpoint.id);
       expect(found.title).toBe('....new title....');
-      expect(found.navigations()).toStrictEqual(['abc', 'def']);
-      expect(found.arguments()).toStrictEqual(['xyz', 1]);
+      expect(found.navSelectors()).toStrictEqual(['abc', 'def']);
+      expect(found.argPrimitives()).toStrictEqual(['xyz', 1]);
     });
 
     it('keeps previous navigations if the data omits that property', async () => {
@@ -191,8 +191,8 @@ describe(EndpointsService.name, () => {
         arguments: ['text', 123],
       });
       const found = await service.findOne(endpoint.id);
-      expect(found.navigations()).toStrictEqual(['abc', 'def']);
-      expect(found.arguments()).toStrictEqual(['text', 123]);
+      expect(found.navSelectors()).toStrictEqual(['abc', 'def']);
+      expect(found.argPrimitives()).toStrictEqual(['text', 123]);
     });
 
     it('keeps previous arguments if the data omits that property', async () => {
@@ -200,8 +200,8 @@ describe(EndpointsService.name, () => {
         navigations: [' nav1 ', 'nav2 '],
       });
       const found = await service.findOne(endpoint.id);
-      expect(found.navigations()).toStrictEqual(['nav1', 'nav2']);
-      expect(found.arguments()).toStrictEqual(['xyz', 1]);
+      expect(found.navSelectors()).toStrictEqual(['nav1', 'nav2']);
+      expect(found.argPrimitives()).toStrictEqual(['xyz', 1]);
     });
   });
 

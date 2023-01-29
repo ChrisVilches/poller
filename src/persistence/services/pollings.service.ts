@@ -33,17 +33,6 @@ export class PollingsService {
     };
   }
 
-  findLatest(endpointId: number) {
-    return this.pollingsRepository.findOne({
-      where: {
-        endpointId,
-      },
-      order: {
-        createdAt: 'DESC',
-      },
-    });
-  }
-
   removeOlderThan(date: Date) {
     return this.pollingsRepository.delete({
       createdAt: LessThan(date),

@@ -119,8 +119,8 @@ export class TagsService {
       where: { id },
       relations: {
         endpoints: {
-          argumentList: true,
-          navigationList: true,
+          arguments: true,
+          navigations: true,
         },
       },
     });

@@ -1,10 +1,14 @@
 export const navigate = ($: any, navigationList: string[]) => {
   $ = $.root();
+  let okNavigations = 0;
   for (const selector of navigationList) {
     $ = $.find(selector).first();
     if ($.length === 0) {
-      throw new Error('DOM Element was not found');
+      throw new Error(
+        `DOM Element was not found (navigated ${okNavigations} steps)`,
+      );
     }
+    okNavigations++;
   }
   return $;
 };

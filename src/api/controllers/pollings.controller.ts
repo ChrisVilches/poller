@@ -51,11 +51,6 @@ export class PollingsController {
     return this.pollingsService.findAll(query, endpointId);
   }
 
-  @Get(':endpointId/latest')
-  findLatest(@Param('endpointId', ParseIntPipe) endpointId: number) {
-    return this.pollingsService.findLatest(endpointId);
-  }
-
   @Post(':endpointId/enqueue')
   async enqueue(
     @Param('endpointId', ParseIntPipe) endpointId: number,

@@ -21,6 +21,7 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
 
   if (!isProd()) {
+    app.enableCors();
     app.useGlobalInterceptors(new DelayInterceptor());
   }
 

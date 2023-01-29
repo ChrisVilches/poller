@@ -2,12 +2,7 @@ import { ArgType } from '@persistence/enum/arg-type.enum';
 import { Method } from '@persistence/enum/method.enum';
 import { RequestType } from '@persistence/enum/request-type.enum';
 import { enumKeysToString, sortById } from '@util/misc';
-import {
-  Exclude,
-  Expose,
-  Transform,
-  TransformFnParams,
-} from 'class-transformer';
+import { Transform, TransformFnParams } from 'class-transformer';
 import {
   Entity,
   Column,
@@ -20,6 +15,23 @@ import {
 import { Argument } from './argument.entity';
 import { Navigation } from './navigation.entity';
 import { Tag } from './tag.entity';
+
+const navSelectors = (navs: Navigation[]): string[] =>
+  sortById(navs).map((n: Navigation) => n.selector);
+
+const argPrimitives = (args: Argument[]) =>
+  sortById(args).map((a: any) => {
+    switch (a.type) {
+      case ArgType.BOOLEAN:
+        return a.value === 'true';
+      case ArgType.STRING:
+        return a.value;
+      case ArgType.NUMBER:
+        return +a.value;
+      default:
+        throw new Error('Wrong argument type came from the database');
+    }
+  });
 
 @Entity()
 export class Endpoint {
@@ -55,27 +67,6 @@ export class Endpoint {
   @Column({ default: 15 })
   periodMinutes: number;
 
-  @Expose()
-  navigations(): string[] {
-    return sortById(this.navigationList).map((n: Navigation) => n.selector);
-  }
-
-  @Expose()
-  arguments(): (number | string | boolean)[] {
-    return sortById(this.argumentList || []).map((a: any) => {
-      switch (a.type) {
-        case ArgType.BOOLEAN:
-          return a.value === 'true';
-        case ArgType.STRING:
-          return a.value;
-        case ArgType.NUMBER:
-          return +a.value;
-        default:
-          throw new Error('Wrong argument type came from the database');
-      }
-    });
-  }
-
   methodLowerCase() {
     return enumKeysToString(Method, [this.method])[0].toLowerCase();
   }
@@ -92,17 +83,25 @@ export class Endpoint {
     return `${this.formattedTitle()} (${this.typeFormatted()}, ${this.methodLowerCase()})`;
   }
 
-  @Exclude()
+  navSelectors(): string[] {
+    return navSelectors(this.navigations);
+  }
+
+  argPrimitives(): (string | number | boolean)[] {
+    return argPrimitives(this.arguments);
+  }
+
   @OneToMany(() => Navigation, (nav) => nav.endpoint, {
     cascade: ['insert', 'update'],
   })
-  navigationList: Navigation[];
+  @Transform((params: TransformFnParams) => navSelectors(params.value))
+  navigations: Navigation[];
 
-  @Exclude()
   @OneToMany(() => Argument, (arg) => arg.endpoint, {
     cascade: ['insert', 'update'],
   })
-  argumentList: Argument[];
+  @Transform((params: TransformFnParams) => argPrimitives(params.value))
+  arguments: Argument[];
 
   @Column({ nullable: true, default: 60 })
   waitAfterNotificationMinutes?: number;
@@ -121,4 +120,10 @@ export class Endpoint {
 
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
+
+  static from(obj: Record<string, any>): Endpoint {
+    const e = new Endpoint();
+    Object.assign(e, obj);
+    return e;
+  }
 }

@@ -41,7 +41,7 @@ const ensureNavigate = (html: CheerioAPI, navigation: string[]) => {
   try {
     return navigate(html, navigation);
   } catch (e) {
-    throw new Error(`Incorrect navigations: [${navigation.join(', ')}]`);
+    throw new Error(`Incorrect navigations: [${navigation.join(', ')}]. ${e}`);
   }
 };
 
@@ -63,17 +63,17 @@ const performPollingAux = async (
 ): Promise<PollingResult> => {
   const { rule, not = false } = endpoint;
 
-  const ruleInstance: Rule = ensureRule(rule, endpoint.arguments());
+  const ruleInstance: Rule = ensureRule(rule, endpoint.argPrimitives());
 
   const ruleFunction = ruleInstance.execute.call(
     ruleInstance,
-    endpoint.arguments(),
+    endpoint.argPrimitives(),
   );
 
   const { data, status } = await request(endpoint);
 
   const htmlResult = load(data);
-  const domElement = ensureNavigate(htmlResult, endpoint.navigations());
+  const domElement = ensureNavigate(htmlResult, endpoint.navSelectors());
   const shouldNotify = ruleFunction(domElement);
 
   return {
