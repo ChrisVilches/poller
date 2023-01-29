@@ -35,7 +35,9 @@ describe(TagsService.name, () => {
 
     it('converts name', async () => {
       const created: Tag = await service.create({ name: '   a  ' });
-      expect(created.name).toBe('a');
+      const allTags = await service.findAll();
+      const addedTag = allTags.find((t: Tag) => t.id === created.id);
+      expect(addedTag.name).toBe('a');
     });
 
     it('validates name unique', async () => {
@@ -65,8 +67,10 @@ describe(TagsService.name, () => {
     });
 
     it('converts name', async () => {
-      const updated: Tag = await service.update(id, { name: '   a  ' });
-      expect(updated.name).toBe('a');
+      await service.update(id, { name: '   a  ' });
+      const allTags = await service.findAll();
+      const updatedTag = allTags.find((t: Tag) => t.id === id);
+      expect(updatedTag.name).toBe('a');
     });
 
     it('errors when ID does not exist', async () => {

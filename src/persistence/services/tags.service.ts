@@ -153,6 +153,15 @@ export class TagsService {
     if (!name) return;
     name = (name || '').trim();
 
+    // TODO: Actually this is not 100% safe, because the query does ILIKE,
+    //       but the index doesn't support case insensitive (I think), so it
+    //       might still fail and add a repeated tag (with different cases).
+    //       This is very rare, since it'd only happen if two queries are in parallel
+    //       and they meet this race condition problem.
+    //
+    //       Ways to fix:
+    //       1. Add case insensitive index (is it possible?)
+    //       2. Wrap all operations with this validation in a transaction.
     const tag = await this.findByName(name);
 
     if (!tag) {
