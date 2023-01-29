@@ -1,12 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, EntityNotFoundError, Repository } from 'typeorm';
+import {
+  DataSource,
+  EntityManager,
+  EntityNotFoundError,
+  Repository,
+} from 'typeorm';
 import { Tag } from '@persistence/entities/tag.entity';
 import { Endpoint } from '@persistence/entities/endpoint.entity';
-import { transformAndValidate } from 'class-transformer-validator';
 import { ValidationError } from 'class-validator';
 import { TagQueryDto } from '@api/dto/tag-query.dto';
 import { TagUpsertDto } from '@api/dto/tag-upsert.dto';
+import { tagDtoToEntity } from './data-mapper';
 
 @Injectable()
 export class TagsService {
@@ -63,30 +68,44 @@ export class TagsService {
       .getRawMany();
   }
 
-  findByName(name: string) {
+  findByName(
+    name: string,
+    entityManager: EntityManager | DataSource = this.dataSource,
+  ) {
     name = (name || '').trim();
 
-    return this.dataSource
+    return entityManager
       .createQueryBuilder<Tag>('tag', 't')
       .where('t.name ILIKE :name', { name })
       .getOne();
   }
 
-  async create(tagDto: TagUpsertDto): Promise<Tag> {
-    await this.checkCanUseName(tagDto.name);
+  // TODO: Transaction code is very verbose. Can I simplify this?
 
-    return this.tagsRepository.save(
-      await transformAndValidate(TagUpsertDto, tagDto),
+  async create(tagDto: TagUpsertDto): Promise<Tag> {
+    return await this.dataSource.transaction(
+      async (transactionalEntityManager) => {
+        await this.checkCanUseName(
+          tagDto.name,
+          null,
+          transactionalEntityManager,
+        );
+
+        return transactionalEntityManager.save(await tagDtoToEntity(tagDto));
+      },
     );
   }
 
   async update(id: number, tagDto: TagUpsertDto): Promise<Tag> {
-    await this.checkCanUseName(tagDto.name, id);
+    await this.dataSource.transaction(async (transactionalEntityManager) => {
+      await this.checkCanUseName(tagDto.name, id, transactionalEntityManager);
 
-    await this.tagsRepository.update(
-      { id },
-      await transformAndValidate(TagUpsertDto, tagDto),
-    );
+      return transactionalEntityManager.update(
+        Tag,
+        { id },
+        await tagDtoToEntity(tagDto),
+      );
+    });
 
     return await this.findOne(id);
   }
@@ -148,27 +167,15 @@ export class TagsService {
   /**
    * @throws {ValidationError}
    */
-  private async checkCanUseName(name?: string, id?: number): Promise<void> {
-    // Should be validated elsewhere.
-    if (!name) return;
+  private async checkCanUseName(
+    name: string | null,
+    id: number | null,
+    entityManager: EntityManager,
+  ): Promise<void> {
     name = (name || '').trim();
+    const tag = await this.findByName(name, entityManager);
 
-    // TODO: Actually this is not 100% safe, because the query does ILIKE,
-    //       but the index doesn't support case insensitive (I think), so it
-    //       might still fail and add a repeated tag (with different cases).
-    //       This is very rare, since it'd only happen if two queries are in parallel
-    //       and they meet this race condition problem.
-    //
-    //       Ways to fix:
-    //       1. Add case insensitive index (is it possible?)
-    //       2. Wrap all operations with this validation in a transaction.
-    const tag = await this.findByName(name);
-
-    if (!tag) {
-      return;
-    }
-
-    if (tag.id === id) {
+    if (!tag || tag.id === id) {
       return;
     }
 

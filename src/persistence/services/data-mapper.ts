@@ -1,5 +1,6 @@
 import { EndpointCreateDto } from '@api/dto/endpoint-create.dto';
 import { EndpointUpdateDto } from '@api/dto/endpoint-update.dto';
+import { TagUpsertDto } from '@api/dto/tag-upsert.dto';
 import { Endpoint } from '@persistence/entities/endpoint.entity';
 import { Tag } from '@persistence/entities/tag.entity';
 import {
@@ -46,4 +47,11 @@ export const endpointDtoToEntity = async <T extends object>(
   }
 
   return Endpoint.from(result);
+};
+
+export const tagDtoToEntity = async (dto: TagUpsertDto): Promise<Tag> => {
+  dto = await transformAndValidate(TagUpsertDto, dto);
+  const result = new Tag();
+  result.name = dto.name;
+  return result;
 };
