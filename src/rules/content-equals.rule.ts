@@ -27,7 +27,7 @@ export class ContentEqualsRule implements Rule {
 
       this.latestMatch = html;
 
-      return html.toLowerCase() === text.toLowerCase();
+      return html.toLowerCase().trim() === text.toLowerCase().trim();
     };
   }
 

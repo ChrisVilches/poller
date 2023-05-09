@@ -40,11 +40,16 @@ describe(ContentEqualsRule.name, () => {
       expect(rule.execute(['hello'])(load(html))).toBe(true);
     });
 
-    it('trims the text using cheerio specifications', () => {
-      expect(rule.execute(['hello'])(load(' hello '))).toBe(false);
-      expect(rule.execute(['hello '])(load(' hello '))).toBe(true);
-      expect(rule.execute(['hello'])(load('<p> hello  </p>'))).toBe(false);
-      expect(rule.execute([' hello  '])(load('<p> hello  </p>'))).toBe(true);
+    it('trims both texts', () => {
+      expect(rule.execute(['hello'])(load(' hello '))).toBe(true);
+      expect(rule.execute(['hello'])(load(' hello '))).toBe(true);
+      expect(rule.execute(['hello'])(load('<p> hello  </p>'))).toBe(true);
+      expect(rule.execute(['hello'])(load('  <p> hello  </p>  '))).toBe(true);
+
+      expect(rule.execute([' hello '])(load(' hello '))).toBe(true);
+      expect(rule.execute(['  hello   '])(load(' hello '))).toBe(true);
+      expect(rule.execute(['hello '])(load('<p> hello  </p>'))).toBe(true);
+      expect(rule.execute([' hello'])(load('  <p> hello  </p>  '))).toBe(true);
     });
   });
 
