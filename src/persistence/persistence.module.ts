@@ -19,22 +19,14 @@ const entities = [Endpoint, Argument, Navigation, Polling, Tag];
     ConfigModule.forRoot({
       envFilePath: getEnvFilePath(),
       validationSchema: Joi.object({
-        PG_HOST: Joi.string().required(),
-        PG_PORT: Joi.number().required(),
-        PG_USERNAME: Joi.string().required(),
-        PG_PASSWORD: Joi.string().required(),
-        PG_DATABASE: Joi.string().required(),
+        PG_DATABASE_URL: Joi.string().required(),
       }),
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: () => ({
         type: 'postgres',
-        host: process.env.PG_HOST,
-        port: +(process.env.PG_PORT as string),
-        username: process.env.PG_USERNAME,
-        password: process.env.PG_PASSWORD,
-        database: process.env.PG_DATABASE,
+        url: process.env.PG_DATABASE_URL,
         entities,
         synchronize: isTest() || isDev(),
         dropSchema: isTest(),
