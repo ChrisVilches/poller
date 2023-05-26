@@ -48,7 +48,7 @@ const shouldBlockRequest = (request: puppeteer.HTTPRequest): boolean => {
 const withPage = async (
   callback: (page: puppeteer.Page) => Promise<RequestResult>,
 ): Promise<RequestResult> => {
-  const browser = await puppeteer.launch({ args: ['--no-sandbox'] });
+  const browser = await puppeteer.launch();
   const page = await browser.newPage();
   await page.setRequestInterception(true);
   let result;
